@@ -1,0 +1,21 @@
+<div class="dashboard-layout">
+
+  <!-- Sidebar -->
+  <aside class="dashboard-layout__sidebar">
+    <app-sidebar></app-sidebar>
+  </aside>
+
+  <!-- Right panel: header + content -->
+  <div class="dashboard-layout__right">
+
+    <!-- Header (sticky, present on all pages) -->
+    <app-header></app-header>
+
+    <!-- Page content -->
+    <main class="dashboard-layout__main">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+
+</div>

@@ -1,0 +1,616 @@
+// ── Tokens charte graphique ───────────────────────────────────────────────────
+$blue:         #2563EB;
+$blue-light:   #EFF6FF;
+$blue-mid:     #DBEAFE;
+$cyan:         #0EA5E9;
+$green:        #10B981;
+$green-light:  #D1FAE5;
+$red:          #EF4444;
+$red-light:    #FEF2F2;
+$orange:       #F59E0B;
+$orange-light: #FEF3C7;
+$purple:       #8B5CF6;
+$purple-light: #EDE9FE;
+
+$border:      #E5E7EB;
+$text-dark:   #111827;
+$text-mid:    #374151;
+$text-muted:  #6B7280;
+$text-subtle: #9CA3AF;
+$bg-page:     #F8F9FB;
+$bg-card:     #FFFFFF;
+$bg-head:     #F9FAFB;
+
+$radius-sm:   8px;
+$radius-md:   12px;
+$radius-lg:   16px;
+$shadow-sm:   0 1px 4px rgba(0,0,0,.06);
+$shadow-modal:0 20px 60px rgba(0,0,0,.18);
+
+// ── Host ─────────────────────────────────────────────────────────────────────
+:host { display: block; min-height: 100%; }
+
+// ── Page wrapper ─────────────────────────────────────────────────────────────
+.students {
+  background: $bg-page;
+  min-height: 100%;
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+
+  // ── Header ────────────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  &__title-wrap {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+  }
+
+  &__title-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: $radius-md;
+    background: linear-gradient(135deg, $blue, $cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba($blue, .28);
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0 0 2px;
+  }
+
+  &__subtitle {
+    font-size: .8125rem;
+    color: $text-muted;
+    margin: 0;
+  }
+
+  // ── Actions ───────────────────────────────────────────────────
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    position: relative;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: .75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-subtle;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    padding: .5625rem 1rem .5625rem 2.25rem;
+    background: $bg-card;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    font-size: .875rem;
+    color: $text-dark;
+    outline: none;
+    width: 260px;
+    transition: border-color .15s, box-shadow .15s;
+
+    &::placeholder { color: $text-subtle; }
+
+    &:focus {
+      border-color: $blue;
+      box-shadow: 0 0 0 3px rgba($blue, .1);
+    }
+  }
+
+  &__filter-btn {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .5625rem .875rem;
+    background: $bg-card;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $text-mid;
+    cursor: pointer;
+    transition: background .12s, border-color .12s, box-shadow .15s;
+
+    &:hover { background: $bg-page; }
+
+    &--active {
+      background: $blue-light;
+      border-color: $blue-mid;
+      color: $blue;
+    }
+  }
+
+  &__refresh-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $bg-card;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    color: $text-muted;
+    cursor: pointer;
+    transition: background .12s, color .12s;
+
+    &:hover:not(:disabled) { background: $bg-page; color: $blue; }
+    &:disabled { opacity: .5; cursor: not-allowed; }
+  }
+
+  // ── Table wrapper ──────────────────────────────────────────────
+  &__table-wrap {
+    background: $bg-card;
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-sm;
+  }
+}
+
+// ── Filters bar ───────────────────────────────────────────────────────────────
+.filters-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  flex-wrap: wrap;
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  &__label {
+    font-size: .75rem;
+    font-weight: 600;
+    color: $text-mid;
+  }
+
+  &__select {
+    padding: .5rem .75rem;
+    background: $bg-card;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    font-size: .875rem;
+    color: $text-dark;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+
+    &:focus {
+      border-color: $blue;
+      box-shadow: 0 0 0 3px rgba($blue, .1);
+    }
+  }
+
+  &__reset {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .5rem .875rem;
+    background: transparent;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $text-muted;
+    cursor: pointer;
+    transition: background .12s, color .12s;
+    white-space: nowrap;
+
+    &:hover { background: $bg-page; color: $red; border-color: lighten($red, 25%); }
+  }
+}
+
+// ── State blocks ──────────────────────────────────────────────────────────────
+.state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .875rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  color: $text-muted;
+
+  &__spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid $blue-mid;
+    border-top-color: $blue;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+
+  p { font-size: .9rem; margin: 0; }
+
+  &--error { color: $red; svg { color: $red; } }
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.students-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  &__head { background: $bg-head; }
+
+  &__th {
+    padding: .75rem 1.25rem;
+    text-align: left;
+    font-size: .6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: $text-muted;
+    white-space: nowrap;
+    border-bottom: 1px solid $border;
+  }
+
+  &__row {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background .12s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #fafafa; }
+  }
+
+  &__td {
+    padding: .875rem 1.25rem;
+    font-size: .875rem;
+    color: $text-dark;
+    white-space: nowrap;
+
+    &--muted { color: $text-muted; font-size: .8125rem; }
+    &--name  { font-weight: 600; }
+  }
+
+  &__empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+}
+
+// ── Student cell (avatar + nom) ───────────────────────────────────────────────
+.student-cell {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+
+  &__avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: .6875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    // Couleur selon le rôle
+    background: linear-gradient(135deg, $blue, $cyan);
+
+    &--admin      { background: linear-gradient(135deg, $purple, #a78bfa); }
+    &--conseiller { background: linear-gradient(135deg, $blue, $cyan);     }
+    &--responsable{ background: linear-gradient(135deg, $orange, #fbbf24); }
+    &--etudiant   { background: linear-gradient(135deg, $green, #34d399);  }
+  }
+
+  &__name {
+    display: block;
+    font-size: .875rem;
+    font-weight: 600;
+    color: $text-dark;
+    line-height: 1.3;
+  }
+
+  &__username {
+    display: block;
+    font-size: .7rem;
+    color: $text-subtle;
+    line-height: 1.3;
+  }
+}
+
+// ── Role badge ────────────────────────────────────────────────────────────────
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: .7rem;
+  font-weight: 700;
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &--admin {
+    background: $purple-light;
+    color: darken($purple, 5%);
+    .role-badge__dot { background: $purple; }
+  }
+
+  &--conseiller {
+    background: $blue-light;
+    color: $blue;
+    .role-badge__dot { background: $blue; }
+  }
+
+  &--responsable {
+    background: $orange-light;
+    color: darken($orange, 15%);
+    .role-badge__dot { background: $orange; }
+  }
+
+  &--etudiant {
+    background: $green-light;
+    color: darken($green, 12%);
+    .role-badge__dot { background: $green; }
+  }
+}
+
+// ── Status badge ──────────────────────────────────────────────────────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: .7rem;
+  font-weight: 700;
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &--active {
+    background: $green-light;
+    color: darken($green, 12%);
+    .status-badge__dot { background: $green; }
+  }
+
+  &--inactive {
+    background: #F3F4F6;
+    color: $text-muted;
+    .status-badge__dot { background: $text-subtle; }
+  }
+}
+
+// ── Action group ──────────────────────────────────────────────────────────────
+.action-group {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+.icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
+  background: $bg-card;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .12s, border-color .12s, transform .1s;
+  flex-shrink: 0;
+
+  &:disabled { opacity: .45; cursor: not-allowed; transform: none !important; }
+  &:hover:not(:disabled) { transform: scale(1.08); }
+
+  &--activate  { &:hover:not(:disabled) { background: $green-light; border-color: #a7f3d0; } }
+  &--deactivate{ &:hover:not(:disabled) { background: $red-light;   border-color: #fecaca; } }
+  &--delete    { &:hover:not(:disabled) { background: $red-light;   border-color: #fecaca; } }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem 1rem;
+  font-size: .8125rem;
+  font-weight: 600;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  border: none;
+  transition: background .15s, box-shadow .15s, opacity .15s;
+
+  &:disabled { opacity: .6; cursor: not-allowed; }
+
+  &--sm { padding: .3rem .75rem; font-size: .75rem; }
+
+  &--outline {
+    background: $bg-card;
+    border: 1px solid $border;
+    color: $text-mid;
+    &:hover:not(:disabled) { background: $bg-page; }
+  }
+
+  &--danger {
+    background: $red;
+    color: #fff;
+    &:hover:not(:disabled) {
+      background: darken($red, 6%);
+      box-shadow: 0 4px 14px rgba($red, .35);
+    }
+  }
+}
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+.btn-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255,255,255,.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+
+  &--white { border-color: rgba(255,255,255,.35); border-top-color: #fff; }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+  color: $text-muted;
+
+  p { font-size: .875rem; margin: 0; }
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17,24,39,.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn .15s ease;
+}
+
+.modal {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: $shadow-modal;
+  animation: slideUp .18s ease;
+
+  &--sm { max-width: 420px; }
+}
+
+// ── Delete confirm ────────────────────────────────────────────────────────────
+.delete-confirm {
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .875rem;
+  text-align: center;
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: $red-light;
+    border: 2px solid #fecaca;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0;
+  }
+
+  &__text {
+    font-size: .875rem;
+    color: $text-muted;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 320px;
+    strong { color: $text-dark; }
+  }
+
+  &__username {
+    font-family: monospace;
+    font-size: .8rem;
+    color: $text-muted;
+  }
+
+  &__actions {
+    display: flex;
+    gap: .75rem;
+    margin-top: .25rem;
+  }
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .75rem 1rem;
+  border-radius: $radius-md;
+  font-size: .875rem;
+  font-weight: 500;
+  box-shadow: 0 8px 28px rgba(0,0,0,.12);
+  z-index: 2000;
+  max-width: 380px;
+  animation: slideToast .2s ease;
+
+  &--success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+  }
+
+  &--error {
+    background: $red-light;
+    color: darken($red, 8%);
+    border: 1px solid #fecaca;
+  }
+}
+
+// ── Spin (bouton refresh) ─────────────────────────────────────────────────────
+.spin { animation: spin .7s linear infinite; }
+
+// ── Animations ────────────────────────────────────────────────────────────────
+@keyframes spin       { to { transform: rotate(360deg); } }
+@keyframes fadeIn     { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp    { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideToast { from { opacity: 0; transform: translateY(8px);  } to { opacity: 1; transform: translateY(0); } }

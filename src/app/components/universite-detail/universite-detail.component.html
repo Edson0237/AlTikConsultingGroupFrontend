@@ -1,0 +1,167 @@
+<div class="detail-page">
+
+  <!-- ═══ LOADING ═════════════════════════════════════════════ -->
+  <div class="state-block" *ngIf="loading()">
+    <div class="state-block__spinner"></div>
+    <p class="state-block__text">Chargement de l'établissement…</p>
+  </div>
+
+  <!-- ═══ ERROR ════════════════════════════════════════════════ -->
+  <div class="state-block state-block--error" *ngIf="error() && !loading()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p>{{ error() }}</p>
+    <button class="btn btn--outline" (click)="goBack()">← Retour</button>
+  </div>
+
+  <!-- ═══ CONTENT ══════════════════════════════════════════════ -->
+  <ng-container *ngIf="!loading() && !error() && etablissement() as etab">
+
+    <!-- ── Breadcrumb / Back ── -->
+    <div class="breadcrumb">
+      <button class="breadcrumb__back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Retour
+      </button>
+      <span class="breadcrumb__sep">/</span>
+      <span class="breadcrumb__current">{{ etab.nom }}</span>
+    </div>
+
+    <!-- ── Hero Card ── -->
+    <div class="hero-card">
+      <div class="hero-card__main">
+
+        <!-- Logo -->
+        <div class="hero-card__logo">{{ getLogoText(etab.nom) }}</div>
+
+        <!-- Info -->
+        <div class="hero-card__info">
+          <div class="hero-card__top">
+            <div>
+              <h1 class="hero-card__name">{{ etab.nom }}</h1>
+              <div class="hero-card__location">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                {{ etab.ville }}, {{ etab.pays }}
+                <span *ngIf="etab.adresse"> — {{ etab.adresse }}</span>
+              </div>
+            </div>
+            <div class="hero-card__badges">
+              <span class="badge" [ngClass]="getStatutClass(etab.statut)">
+                {{ getStatutLabel(etab.statut) }}
+              </span>
+              <span class="type-badge">{{ etab.type_display }}</span>
+            </div>
+          </div>
+
+          <p class="hero-card__desc" *ngIf="etab.description">{{ etab.description }}</p>
+
+          <!-- Meta pills -->
+          <div class="hero-card__meta">
+            <span class="meta-pill" *ngIf="etab.classement">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              #{{ etab.classement }} {{ etab.classement_source }}
+            </span>
+            <span class="meta-pill" *ngIf="etab.annee_fondation">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              Fondée en {{ etab.annee_fondation }}
+            </span>
+            <span class="meta-pill" *ngIf="etab.langue_enseignement">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+              {{ etab.langue_enseignement }}
+            </span>
+            <span class="meta-pill" *ngIf="etab.partenaire_depuis">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              Partenaire depuis {{ etab.partenaire_depuis | date:'yyyy' }}
+            </span>
+          </div>
+
+          <!-- Contact links -->
+          <div class="hero-card__links">
+            <a *ngIf="etab.site_web" class="link-btn"
+              (click)="openSite(etab.site_web)" tabindex="0" role="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+              Site web
+            </a>
+            <a *ngIf="etab.email_contact" class="link-btn" [href]="'mailto:' + etab.email_contact">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+              {{ etab.email_contact }}
+            </a>
+            <span *ngIf="etab.telephone" class="link-btn link-btn--plain">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.68 11.1 19.79 19.79 0 0 1 1.58 2.57 2 2 0 0 1 3.55.36h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 15z"/>
+              </svg>
+              {{ etab.telephone }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Strip -->
+      <div class="kpi-strip">
+        <div class="kpi-strip__item">
+          <span class="kpi-strip__val kpi-strip__val--blue">{{ etab.nb_filieres }}</span>
+          <span class="kpi-strip__label">Filières</span>
+        </div>
+        <div class="kpi-strip__sep"></div>
+        <div class="kpi-strip__item">
+          <span class="kpi-strip__val kpi-strip__val--green">{{ getTotalBourses(etab) }}</span>
+          <span class="kpi-strip__label">Bourses</span>
+        </div>
+        <div class="kpi-strip__sep"></div>
+        <div class="kpi-strip__item">
+          <span class="kpi-strip__val kpi-strip__val--purple">
+            {{ etab.classement ? '#' + etab.classement : '—' }}
+          </span>
+          <span class="kpi-strip__label">Classement {{ etab.classement_source }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         MANAGER FILIÈRES & BOURSES
+    ════════════════════════════════════════════════════════════════ -->
+    <app-filiere-bourse-manager [etabId]="etabId()!"></app-filiere-bourse-manager>
+
+  </ng-container>
+</div>

@@ -1,0 +1,312 @@
+:host { display: block; }
+
+.header {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 1.5rem;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  &__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  // ── Search ────────────────────────────────────────────────────────
+  &__search {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 2.25rem;
+    font-size: 0.875rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+
+    &::placeholder { color: #9ca3af; }
+    &:focus {
+      background: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+  }
+
+  // ── Right actions ─────────────────────────────────────────────────
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  // ── Language button ───────────────────────────────────────────────
+  &__lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.4375rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: transparent;
+    color: #374151;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover { background: #f9fafb; }
+  }
+
+  &__lang-label {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  // ── Notification button ───────────────────────────────────────────
+  &__notif-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover { background: #f3f4f6; color: #111827; }
+  }
+
+  &__notif-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 99px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    border: 2px solid #ffffff;
+  }
+
+  // ── User wrap ─────────────────────────────────────────────────────
+  &__user-wrap { position: relative; }
+
+  // ── Bouton principal (avatar + nom + rôle + chevron) ──────────────
+  &__user-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3125rem 0.625rem 0.3125rem 0.3125rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+  }
+
+  // ── Avatar initiales ──────────────────────────────────────────────
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+    color: #ffffff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  // ── Infos textuelles (nom + rôle) ─────────────────────────────────
+  &__user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  &__user-name {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
+    line-height: 1;
+  }
+
+  // ── Rôle badge inline ─────────────────────────────────────────────
+  &__user-role {
+    font-size: 0.625rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 99px;
+    line-height: 1.4;
+    text-transform: capitalize;
+
+    &--admin       { background: #ede9fe; color: #6d28d9; }
+    &--conseiller  { background: #dcfce7; color: #15803d; }
+    &--responsable { background: #fff7ed; color: #c2410c; }
+    &--etudiant    { background: #dbeafe; color: #1d4ed8; }
+  }
+
+  // ── Chevron ───────────────────────────────────────────────────────
+  &__chevron {
+    color: #9ca3af;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+
+    &--open { transform: rotate(180deg); }
+  }
+
+  // ── Backdrop ──────────────────────────────────────────────────────
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+  }
+
+  // ── Dropdown ──────────────────────────────────────────────────────
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 260px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    z-index: 20;
+    overflow: hidden;
+    animation: dropIn 0.15s ease forwards;
+  }
+
+  &__dropdown-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    background: #fafafa;
+  }
+
+  &__dropdown-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__dropdown-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__dropdown-email {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // ── Rôle badge dans le dropdown ───────────────────────────────────
+  &__dropdown-role {
+    display: inline-flex;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 99px;
+    text-transform: capitalize;
+
+    &--admin       { background: #ede9fe; color: #6d28d9; }
+    &--conseiller  { background: #dcfce7; color: #15803d; }
+    &--responsable { background: #fff7ed; color: #c2410c; }
+    &--etudiant    { background: #dbeafe; color: #1d4ed8; }
+  }
+
+  &__dropdown-actions { padding: 0.375rem 0; }
+
+  &__dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    padding: 0.5625rem 1rem;
+    border: none;
+    background: transparent;
+    font-size: 0.875rem;
+    color: #374151;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s;
+
+    &:hover { background: #f9fafb; }
+
+    &--danger {
+      color: #dc2626;
+      &:hover { background: #fef2f2; }
+    }
+
+    svg { flex-shrink: 0; }
+  }
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,307 @@
+<div class="students">
+
+  <!-- ══════════════════════════════════════════════════════════
+       PAGE HEADER
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="students__header">
+    <div class="students__title-wrap">
+      <div class="students__title-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="students__title">Étudiants &amp; Responsables</h1>
+        <p class="students__subtitle">
+          <span *ngIf="!loading()">{{ totalCount() }} utilisateur{{ totalCount() > 1 ? 's' : '' }}</span>
+          <span *ngIf="loading()">Chargement…</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Search + filter -->
+    <div class="students__actions">
+      <div class="students__search">
+        <svg class="students__search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" class="students__search-input" placeholder="Rechercher un utilisateur…"
+          [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" aria-label="Rechercher un utilisateur" />
+      </div>
+      <button class="students__filter-btn" [class.students__filter-btn--active]="showFilters"
+        (click)="toggleFilter()" [attr.aria-pressed]="showFilters">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+        </svg>
+        Filtres
+      </button>
+      <button class="students__refresh-btn" (click)="loadUsers()" [disabled]="loading()" title="Actualiser">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+          [class.spin]="loading()">
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       BARRE DE FILTRES (dépliable)
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="filters-bar" *ngIf="showFilters">
+    <div class="filters-bar__group">
+      <label class="filters-bar__label">Rôle</label>
+      <select class="filters-bar__select" [(ngModel)]="filterRole" (change)="onFilterChange()">
+        <option *ngFor="let opt of roleOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+    </div>
+    <div class="filters-bar__group">
+      <label class="filters-bar__label">Statut</label>
+      <select class="filters-bar__select" [(ngModel)]="filterStatut" (change)="onFilterChange()">
+        <option *ngFor="let opt of statutOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+    </div>
+    <button class="filters-bar__reset" (click)="resetFilters()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+      Réinitialiser
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       LOADING
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="state-block" *ngIf="loading()">
+    <div class="state-block__spinner"></div>
+    <p>Chargement des utilisateurs…</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ERROR
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="state-block state-block--error" *ngIf="error() && !loading()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+    <p>{{ error() }}</p>
+    <button class="btn btn--outline btn--sm" (click)="loadUsers()">Réessayer</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TABLE
+  ═══════════════════════════════════════════════════════════════ -->
+  <div class="students__table-wrap" *ngIf="!loading() && !error()">
+    <table class="students-table" aria-label="Liste des étudiants et responsables">
+      <thead class="students-table__head">
+        <tr>
+          <th class="students-table__th">Utilisateur</th>
+          <th class="students-table__th">Email</th>
+          <th class="students-table__th">Téléphone</th>
+          <th class="students-table__th">Rôle</th>
+          <th class="students-table__th">Statut</th>
+          <th class="students-table__th">Inscription</th>
+          <th class="students-table__th" *ngIf="isConseiller">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Lignes utilisateurs -->
+        <tr *ngFor="let user of users()" class="students-table__row">
+
+          <!-- Nom + username -->
+          <td class="students-table__td students-table__td--name">
+            <div class="student-cell">
+              <div class="student-cell__avatar"
+                [class.student-cell__avatar--responsable]="user.role === 'responsable'"
+                [class.student-cell__avatar--etudiant]="user.role === 'etudiant'">
+                {{ getInitials(user) }}
+              </div>
+              <div>
+                <span class="student-cell__name">{{ getFullName(user) }}</span>
+                <span class="student-cell__username">@{{ user.username }}</span>
+              </div>
+            </div>
+          </td>
+
+          <td class="students-table__td students-table__td--muted">{{ user.email }}</td>
+          <td class="students-table__td students-table__td--muted">{{ user.telephone || '—' }}</td>
+
+          <!-- Rôle -->
+          <td class="students-table__td">
+            <span class="role-badge"
+              [class.role-badge--responsable]="user.role === 'responsable'"
+              [class.role-badge--etudiant]="user.role === 'etudiant'">
+              <span class="role-badge__dot"></span>
+              {{ getRoleLabel(user.role) }}
+            </span>
+          </td>
+
+          <!-- Statut -->
+          <td class="students-table__td">
+            <span class="status-badge"
+              [class.status-badge--active]="user.is_active"
+              [class.status-badge--inactive]="!user.is_active">
+              <span class="status-badge__dot"></span>
+              {{ user.is_active ? 'Actif' : 'Inactif' }}
+            </span>
+          </td>
+
+          <!-- Date -->
+          <td class="students-table__td students-table__td--muted">
+            {{ user.date_creation | date:'dd/MM/yyyy' }}
+          </td>
+
+          <!-- Actions -->
+          <td class="students-table__td" *ngIf="isConseiller">
+            <div class="action-group">
+
+              <!-- Toggle activer / désactiver -->
+              <button class="icon-btn"
+                [class.icon-btn--activate]="!user.is_active"
+                [class.icon-btn--deactivate]="user.is_active"
+                [title]="user.is_active ? 'Désactiver' : 'Activer'"
+                (click)="toggleActive(user)"
+                [disabled]="togglingId === user.id || !canToggle(user)">
+                <span class="btn-spinner" *ngIf="togglingId === user.id"></span>
+                <ng-container *ngIf="togglingId !== user.id">
+                  <svg *ngIf="user.is_active" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                    viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                  </svg>
+                  <svg *ngIf="!user.is_active" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                    viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </ng-container>
+              </button>
+
+              <!-- Supprimer (admin only) -->
+              <button *ngIf="canDelete(user)" class="icon-btn icon-btn--delete"
+                title="Supprimer le compte" (click)="confirmDelete(user)"
+                [disabled]="deletingId === user.id">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                  fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
+              </button>
+
+            </div>
+          </td>
+
+        </tr>
+
+        <!-- Empty state -->
+        <tr *ngIf="users().length === 0">
+          <td [attr.colspan]="isConseiller ? 7 : 6" class="students-table__empty">
+            <div class="empty-state">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <p>Aucun utilisateur trouvé</p>
+              <button class="btn btn--outline btn--sm" (click)="resetFilters()">
+                Réinitialiser les filtres
+              </button>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL : Confirmer suppression
+═══════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()"
+  role="dialog" aria-modal="true">
+  <div class="modal modal--sm" (click)="$event.stopPropagation()">
+    <div class="delete-confirm">
+
+      <div class="delete-confirm__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+          fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          <path d="M10 11v6" />
+          <path d="M14 11v6" />
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+        </svg>
+      </div>
+
+      <h3 class="delete-confirm__title">Supprimer le compte ?</h3>
+      <p class="delete-confirm__text">
+        Vous êtes sur le point de supprimer le compte de
+        <strong>{{ getFullName(deleteTarget!) }}</strong>
+        (<span class="delete-confirm__username">@{{ deleteTarget?.username }}</span>).
+        Cette action est <strong>irréversible</strong>.
+      </p>
+
+      <div class="delete-confirm__actions">
+        <button class="btn btn--outline" (click)="cancelDelete()" [disabled]="deleteLoading">
+          Annuler
+        </button>
+        <button class="btn btn--danger" (click)="doDelete()" [disabled]="deleteLoading">
+          <span class="btn-spinner btn-spinner--white" *ngIf="deleteLoading"></span>
+          <ng-container *ngIf="!deleteLoading">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+            </svg>
+            Oui, supprimer
+          </ng-container>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TOAST
+═══════════════════════════════════════════════════════════════════ -->
+<div class="toast" *ngIf="toast"
+  [class.toast--success]="toast.type === 'success'"
+  [class.toast--error]="toast.type === 'error'"
+  role="alert" aria-live="polite">
+  <svg *ngIf="toast.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+    viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"
+    stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+  <svg *ngIf="toast.type === 'error'" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
+    viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5"
+    stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+  <span>{{ toast.message }}</span>
+</div>

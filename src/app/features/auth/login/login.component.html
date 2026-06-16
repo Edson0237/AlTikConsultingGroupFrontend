@@ -1,0 +1,171 @@
+<div class="login-page">
+
+    <!-- ==============================
+       LEFT PANEL — Branding
+  ================================ -->
+    <div class="left-panel">
+
+        <!-- Top logo -->
+        <div class="left-logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+            </div>
+            <span class="logo-text">ScholarTik</span>
+        </div>
+
+        <!-- Hero text -->
+        <div class="left-hero">
+            <h1 class="hero-title">
+                Gérez votre activité<br>
+                <span class="hero-accent">avec précision</span><br>
+                et efficacité.
+            </h1>
+            <p class="hero-desc">
+                La plateforme d'administration tout-en-un d'AlTik Consulting Group
+                pour piloter vos bourses, visas et opérations import-export.
+            </p>
+        </div>
+
+        <!-- Services chips -->
+        <div class="services-grid">
+            @for (service of services; track service.label) {
+            <div class="service-chip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path [attr.d]="service.icon" />
+                </svg>
+                <span>{{ service.label }}</span>
+            </div>
+            }
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-row">
+            @for (stat of stats; track stat.label) {
+            <div class="stat-item">
+                <span class="stat-value">{{ stat.value }}</span>
+                <span class="stat-label">{{ stat.label }}</span>
+            </div>
+            }
+        </div>
+
+        <!-- Decorative circles -->
+        <div class="deco-circle deco-1"></div>
+        <div class="deco-circle deco-2"></div>
+        <div class="deco-circle deco-3"></div>
+
+    </div>
+
+    <!-- ==============================
+       RIGHT PANEL — Form
+  ================================ -->
+    <div class="right-panel">
+
+        <div class="form-card">
+
+            <!-- Card header -->
+            <div class="form-header">
+                <h2 class="form-title">Bienvenue</h2>
+                <p class="form-subtitle">Connectez-vous à votre espace administrateur</p>
+            </div>
+
+            <!-- Error -->
+            @if (errorMessage()) {
+            <div class="alert-error">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <span>{{ errorMessage() }}</span>
+            </div>
+            }
+
+            <!-- Form -->
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+                <!-- Email -->
+                <div class="field-group" [class.field-error]="emailControl?.invalid && emailControl?.touched">
+                    <label class="field-label">Adresse Email</label>
+                    <div class="field-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="4" width="20" height="16" rx="2" />
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                        </svg>
+                        <input type="email" formControlName="email" class="field-input"
+                            placeholder="admin&#64;altikconsulting.com" autocomplete="email" />
+                    </div>
+                    @if (emailControl?.errors?.['required'] && emailControl?.touched) {
+                    <p class="field-msg">L'adresse email est requise</p>
+                    }
+                    @if (emailControl?.errors?.['email'] && emailControl?.touched) {
+                    <p class="field-msg">Format d'email invalide</p>
+                    }
+                </div>
+
+                <!-- Password -->
+                <div class="field-group" [class.field-error]="passwordControl?.invalid && passwordControl?.touched">
+                    <div class="field-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        <input [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+                            class="field-input" placeholder="••••••••••" autocomplete="current-password" />
+                        <button type="button" class="eye-btn" (click)="togglePassword()">
+                            @if (!showPassword()) {
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            } @else {
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" />
+                                <line x1="1" y1="1" x2="23" y2="23" />
+                            </svg>
+                            }
+                        </button>
+                    </div>
+                    @if (passwordControl?.errors?.['required'] && passwordControl?.touched) {
+                    <p class="field-msg">Le mot de passe est requis</p>
+                    }
+                    <div class="field-label-row">
+                        <label class="field-label">Mot de passe</label>
+                        <button type="button" class="forgot-btn">Mot de passe oublié ?</button>
+                    </div>
+                </div>
+
+                <!-- Remember me -->
+                <label class="remember-label">
+                    <input type="checkbox" formControlName="rememberMe" class="remember-input" />
+                    <span class="remember-custom"></span>
+                    <span class="remember-text">Se souvenir de moi</span>
+                </label>
+
+                <!-- Submit -->
+                <button type="submit" class="btn-login" [disabled]="isLoading()">
+                    @if (isLoading()) {
+                    <svg class="spin-icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="3" />
+                        <path fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Connexion en cours...
+                    } @else {
+                    Se connecter
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                    }
+                </button>
+
+            </form>
+            <!-- Footer -->
+            <p class="card-footer">© 2026 ScholarTik — AlTik Consulting Group</p>
+
+        </div>
+    </div>
+
+</div>
