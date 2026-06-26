@@ -1,0 +1,271 @@
+<div class="rapport-wrapper">
+  <div class="rapport-page">
+
+    <!-- ── Header ─────────────────────────────────────────── -->
+    <div class="page-header">
+      <button class="back-btn" (click)="goBack()">
+        <span class="material-icons">arrow_back</span>
+        Retour
+      </button>
+    </div>
+
+    <!-- ── Loading ────────────────────────────────────────── -->
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement du rapport...</p>
+      </div>
+    }
+
+    <!-- ── Error ──────────────────────────────────────────── -->
+    @if (error()) {
+      <div class="error-state">
+        <span class="material-icons">error_outline</span>
+        <p>{{ error() }}</p>
+      </div>
+    }
+
+    <!-- ── Rapport ────────────────────────────────────────── -->
+    @if (rapport(); as r) {
+      
+      <!-- En-tête du rapport -->
+      <div class="report-header">
+        <div class="report-header-content">
+          <div class="report-icon">
+            <span class="material-icons">assessment</span>
+          </div>
+          <div>
+            <h1 class="report-title">Rapport d'analyse IA</h1>
+            <p class="report-subtitle">
+              {{ r.type_document_display }} · Généré le {{ r.date_generation | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+          </div>
+        </div>
+        <div class="confidence-badge">
+          <span class="material-icons">verified</span>
+          <span>Confiance : {{ (r.score_confiance_extraction * 100) | number:'1.0-0' }}%</span>
+        </div>
+      </div>
+
+      <!-- ── Informations étudiant ─────────────────────────── -->
+      <section class="report-section">
+        <h2 class="section-title">
+          <span class="material-icons">person</span>
+          Informations du candidat
+        </h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Nom complet</span>
+            <span class="info-value">{{ r.nom_complet || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Matricule</span>
+            <span class="info-value">{{ r.matricule || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Établissement</span>
+            <span class="info-value">{{ r.etablissement || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Filière</span>
+            <span class="info-value">{{ r.filiere || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Niveau</span>
+            <span class="info-value">{{ r.niveau_etudes || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Session</span>
+            <span class="info-value">{{ r.session || '—' }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── KPI Scores ────────────────────────────────────── -->
+      <section class="report-section">
+        <h2 class="section-title">
+          <span class="material-icons">emoji_events</span>
+          Résultats académiques
+        </h2>
+        <div class="scores-grid">
+          <div class="score-card">
+            <div class="score-main" [style.color]="getNiveauColor(r.niveau_performance)">
+              {{ r.moyenne_generale !== null ? (r.moyenne_generale | number:'1.2-2') : '—' }}
+              <span class="score-unit">/20</span>
+            </div>
+            <div class="score-label">Moyenne générale</div>
+            <div class="score-badge" [style.background]="getNiveauColor(r.niveau_performance) + '20'"
+                 [style.color]="getNiveauColor(r.niveau_performance)">
+              {{ getNiveauLabel(r.niveau_performance) }}
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div class="score-main">
+              {{ r.score_combine !== null ? (r.score_combine | number:'1.2-2') : '—' }}
+              <span class="score-unit">/20</span>
+            </div>
+            <div class="score-label">Score combiné</div>
+            <div class="score-sub">Probatoire + Bac</div>
+          </div>
+
+          <div class="score-card">
+            <div class="score-main">{{ r.moyenne_probatoire !== null ? (r.moyenne_probatoire | number:'1.2-2') : '—' }}</div>
+            <div class="score-label">Moyenne Probatoire</div>
+          </div>
+
+          <div class="score-card">
+            <div class="score-main">{{ r.moyenne_bac !== null ? (r.moyenne_bac | number:'1.2-2') : '—' }}</div>
+            <div class="score-label">Moyenne Baccalauréat</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-value">{{ r.total_matieres }}</span>
+            <span class="stat-label">Matières</span>
+          </div>
+          <div class="stat-item stat-success">
+            <span class="stat-value">{{ r.matieres_validees }}</span>
+            <span class="stat-label">Validées (≥10)</span>
+          </div>
+          <div class="stat-item stat-danger">
+            <span class="stat-value">{{ r.matieres_echouees }}</span>
+            <span class="stat-label">Échouées (&lt;10)</span>
+          </div>
+          @if (r.rang) {
+            <div class="stat-item">
+              <span class="stat-value">#{{ r.rang }}</span>
+              <span class="stat-label">Rang</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Distribution des notes ────────────────────────── -->
+      <section class="report-section">
+        <h2 class="section-title">
+          <span class="material-icons">bar_chart</span>
+          Distribution des notes
+        </h2>
+        <div class="distribution-chart">
+          @for (item of getDistributionItems(r.distribution_notes); track item.label) {
+            <div class="dist-bar-wrapper">
+              <div class="dist-bar-label">{{ item.label }}</div>
+              <div class="dist-bar-container">
+                <div class="dist-bar" 
+                     [style.width.%]="item.percent"
+                     [style.background]="item.color">
+                </div>
+              </div>
+              <div class="dist-bar-value">{{ item.count }}</div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Détail des matières ───────────────────────────── -->
+      <section class="report-section">
+        <h2 class="section-title">
+          <span class="material-icons">list_alt</span>
+          Détail des matières ({{ r.matieres.length }})
+        </h2>
+        <div class="matieres-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Matière</th>
+                <th>Note</th>
+                <th>Sur</th>
+                <th>/20</th>
+                <th>Coef.</th>
+                <th>Semestre</th>
+                <th>Mention</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of r.matieres; track m.id) {
+                <tr>
+                  <td class="matiere-name">{{ m.nom_matiere }}</td>
+                  <td class="matiere-note" [style.color]="getNoteColor(m.note_sur_20)">
+                    {{ m.note !== null ? (m.note | number:'1.2-2') : '—' }}
+                  </td>
+                  <td>{{ m.note_sur }}</td>
+                  <td class="matiere-note" [style.color]="getNoteColor(m.note_sur_20)">
+                    {{ m.note_sur_20 !== null ? (m.note_sur_20 | number:'1.2-2') : '—' }}
+                  </td>
+                  <td>{{ m.coefficient }}</td>
+                  <td>{{ m.semestre || '—' }}</td>
+                  <td>
+                    @if (m.mention) {
+                      <span class="mention-badge">{{ m.mention }}</span>
+                    } @else {
+                      —
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── Analyse qualitative ───────────────────────────── -->
+      <section class="report-section">
+        <h2 class="section-title">
+          <span class="material-icons">psychology</span>
+          Analyse qualitative
+        </h2>
+        <div class="qualitative-grid">
+          <div class="qualitative-card strengths">
+            <h3>
+              <span class="material-icons">check_circle</span>
+              Points forts
+            </h3>
+            <ul>
+              @for (point of r.points_forts; track point) {
+                <li>{{ point }}</li>
+              }
+              @if (r.points_forts.length === 0) {
+                <li class="empty">Aucun point fort identifié</li>
+              }
+            </ul>
+          </div>
+
+          <div class="qualitative-card weaknesses">
+            <h3>
+              <span class="material-icons">warning</span>
+              Points à améliorer
+            </h3>
+            <ul>
+              @for (point of r.points_faibles; track point) {
+                <li>{{ point }}</li>
+              }
+              @if (r.points_faibles.length === 0) {
+                <li class="empty">Aucun point faible identifié</li>
+              }
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Recommandations ───────────────────────────────── -->
+      <section class="report-section">
+        <h2 class="section-title">
+          <span class="material-icons">lightbulb</span>
+          Recommandations
+        </h2>
+        <div class="recommendations-list">
+          @for (rec of r.recommandations; track rec; let i = $index) {
+            <div class="recommendation-item">
+              <div class="rec-number">{{ i + 1 }}</div>
+              <div class="rec-text">{{ rec }}</div>
+            </div>
+          }
+        </div>
+      </section>
+
+    }
+
+  </div>
+</div>

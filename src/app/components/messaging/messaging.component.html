@@ -1,0 +1,295 @@
+<div class="messaging-container">
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- PANNEAU GAUCHE : Liste des conversations                      -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <aside class="conversations-panel" [class.hidden-mobile]="selectedConversation()">
+
+    <!-- Header -->
+    <div class="panel-header">
+      <h2>Messagerie</h2>
+      <button class="new-conv-btn" (click)="openNewConvModal()" title="Nouvelle conversation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="search-zone">
+      <div class="search-input-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          placeholder="Rechercher..."
+          [value]="searchQuery()"
+          (input)="onSearchChange($event)"
+          class="search-input"
+        />
+      </div>
+    </div>
+
+    <!-- Loader -->
+    @if (loadingConversations()) {
+      <div class="loader">
+        <div class="spinner"></div>
+      </div>
+    }
+
+    <!-- Liste -->
+    @if (!loadingConversations()) {
+      <div class="conv-list">
+        @for (conv of filteredConversations(); track conv.id) {
+          <div
+            class="conv-item"
+            [class.selected]="selectedConversation()?.id === conv.id"
+            [class.archived]="conv.is_archived"
+            (click)="selectConversation(conv)"
+          >
+            <div class="conv-avatar">
+              {{ getInitial(conv.other_user_name) }}
+            </div>
+            <div class="conv-info">
+              <div class="conv-top-row">
+                <span class="conv-name">{{ conv.other_user_name }}</span>
+                <span class="conv-time">{{ formatTime(conv.last_message_time) }}</span>
+              </div>
+              <div class="conv-bottom-row">
+                <span class="conv-last">{{ conv.last_message || 'Aucun message' }}</span>
+                @if (conv.unread_count > 0) {
+                  <span class="unread-badge">{{ conv.unread_count }}</span>
+                }
+              </div>
+              @if (conv.subject) {
+                <div class="conv-subject">{{ conv.subject }}</div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (filteredConversations().length === 0) {
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <p>Aucune conversation</p>
+            <button class="empty-btn" (click)="openNewConvModal()">Démarrer une conversation</button>
+          </div>
+        }
+      </div>
+    }
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- PANNEAU DROIT : Zone de chat                                  -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <main class="chat-panel" [class.hidden-mobile]="!selectedConversation()">
+
+    @if (selectedConversation(); as conv) {
+
+      <!-- Header chat -->
+      <div class="chat-header">
+        <button class="back-btn" (click)="selectedConversation.set(null)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <div class="chat-header-avatar">{{ getInitial(conv.user_name) }}</div>
+        <div class="chat-header-info">
+          <h3>{{ conv.user_name }}</h3>
+          <p>{{ conv.user_email }}</p>
+        </div>
+        <div class="chat-header-actions">
+          @if (conv.subject) {
+            <span class="subject-tag">{{ conv.subject }}</span>
+          }
+          <button class="icon-btn" (click)="archiveConversation()" [title]="conv.is_archived ? 'Désarchiver' : 'Archiver'">
+            @if (conv.is_archived) {
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+              </svg>
+            } @else {
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="21 8 21 2 15 2"/>
+                <path d="M22.5 9a9 9 0 1 1-2.13 9.36L23 14"/>
+              </svg>
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-zone">
+        @if (loadingMessages()) {
+          <div class="loader">
+            <div class="spinner"></div>
+          </div>
+        }
+
+        @if (!loadingMessages()) {
+          @for (msg of messages(); track msg.id) {
+            <div class="msg-row" [class.own]="isOwnMessage(msg)">
+              @if (!isOwnMessage(msg)) {
+                <div class="msg-avatar">{{ getInitial(msg.sender_name) }}</div>
+              }
+              <div class="msg-bubble" [class.own]="isOwnMessage(msg)">
+                <p class="msg-text">{{ msg.content }}</p>
+                <p class="msg-time">{{ formatMessageTime(msg.created_at) }}</p>
+              </div>
+            </div>
+          }
+          <div #messagesEnd></div>
+        }
+      </div>
+
+      <!-- Input -->
+      <div class="input-zone">
+        <textarea
+          #messageInput
+          class="msg-input"
+          placeholder="Écrire un message..."
+          [(ngModel)]="messageText"
+          (keyup)="onKeyUp($event)"
+          rows="1"
+          [disabled]="sending()"
+        ></textarea>
+        <button
+          class="send-btn"
+          [disabled]="!messageText().trim() || sending()"
+          (click)="sendMessage()"
+        >
+          @if (sending()) {
+            <div class="spinner-small"></div>
+          } @else {
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          }
+        </button>
+      </div>
+
+    } @else {
+      <!-- État vide -->
+      <div class="no-conv">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <h3>Sélectionnez une conversation</h3>
+        <p>Ou démarrez une nouvelle discussion avec un utilisateur</p>
+        <button class="primary-btn" (click)="openNewConvModal()">
+          Nouvelle conversation
+        </button>
+      </div>
+    }
+  </main>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- MODAL : Nouvelle conversation                                 -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  @if (showNewConvModal()) {
+    <div class="modal-overlay" (click)="closeNewConvModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Nouvelle conversation</h3>
+          <button class="close-btn" (click)="closeNewConvModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Sélection utilisateur -->
+          <div class="form-group">
+            <label>Destinataire *</label>
+            @if (selectedUser(); as user) {
+              <div class="selected-user">
+                <div class="selected-user-avatar">{{ getInitial(user.full_name) }}</div>
+                <div class="selected-user-info">
+                  <strong>{{ user.full_name }}</strong>
+                  <span>{{ user.email }}</span>
+                </div>
+                <button class="remove-user-btn" (click)="selectedUser.set(null)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6 6 18M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            } @else {
+              <input
+                type="text"
+                placeholder="Rechercher un utilisateur..."
+                class="modal-search"
+                (input)="onUserSearchChange($event)"
+              />
+              <div class="users-list">
+                @if (loadingUsers()) {
+                  <div class="loader-small">
+                    <div class="spinner-small"></div>
+                  </div>
+                } @else {
+                  @for (user of usersList(); track user.id) {
+                    <div class="user-item" (click)="selectUser(user)">
+                      <div class="user-avatar">{{ getInitial(user.full_name) }}</div>
+                      <div class="user-info">
+                        <strong>{{ user.full_name }}</strong>
+                        <span>{{ user.email }}</span>
+                      </div>
+                    </div>
+                  }
+                  @if (usersList().length === 0) {
+                    <p class="no-users">Aucun utilisateur trouvé</p>
+                  }
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Sujet -->
+          <div class="form-group">
+            <label>Sujet (optionnel)</label>
+            <input
+              type="text"
+              placeholder="Ex: Suivi de votre dossier de bourse"
+              [(ngModel)]="newConvSubject"
+              class="modal-input"
+              [disabled]="!selectedUser()"
+            />
+          </div>
+
+          <!-- Message initial -->
+          <div class="form-group">
+            <label>Message initial (optionnel)</label>
+            <textarea
+              placeholder="Bonjour, je vous contacte concernant..."
+              [(ngModel)]="newConvMessage"
+              class="modal-textarea"
+              rows="4"
+              [disabled]="!selectedUser()"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="secondary-btn" (click)="closeNewConvModal()">Annuler</button>
+          <button
+            class="primary-btn"
+            (click)="startConversation()"
+            [disabled]="!selectedUser() || startingConv()"
+          >
+            @if (startingConv()) {
+              <div class="spinner-small"></div>
+            }
+            Démarrer la conversation
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

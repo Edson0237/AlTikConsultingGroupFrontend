@@ -1,0 +1,313 @@
+<div class="analytics-wrapper">
+  <div class="analytics-page">
+
+    <!-- ── En-tête ─────────────────────────────────── -->
+    <div class="page-header">
+      <div class="page-header-text">
+        <h1 class="page-title">
+          <span class="title-icon">
+            <span class="material-icons">trending_up</span>
+          </span>
+          Analytiques
+        </h1>
+        <p class="page-subtitle">Vue d'ensemble de vos performances et statistiques</p>
+      </div>
+      <button class="refresh-btn" (click)="loadRapports()" [disabled]="loading()">
+        <span class="material-icons" [class.spinning]="loading()">refresh</span>
+        Actualiser
+      </button>
+    </div>
+
+    <!-- ── KPI Cards ──────────────────────────────── -->
+    <div class="kpi-grid">
+      @for (card of kpiCards(); track card.label) {
+        <div class="kpi-card">
+          <div class="kpi-icon" [style.background]="card.bgColor">
+            <span class="material-icons" [style.color]="card.color">{{ card.icon }}</span>
+          </div>
+          <div class="kpi-content">
+            <p class="kpi-value">{{ card.value }}</p>
+            <p class="kpi-label">{{ card.label }}</p>
+            @if (card.trend) {
+              <p class="kpi-trend">
+                <span class="material-icons">arrow_upward</span>
+                {{ card.trend }}
+              </p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- ── Graphiques ─────────────────────────────── -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h3 class="chart-title">Candidatures mensuelles</h3>
+          <span class="chart-badge chart-badge--blue">5 derniers mois</span>
+        </div>
+        <div class="chart-container">
+          <canvas #lineChartRef></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <h3 class="chart-title">Top destinations</h3>
+          <span class="chart-badge chart-badge--purple">Répartition</span>
+        </div>
+        <div class="chart-container">
+          <canvas #pieChartRef></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════
+         SECTION : Analyses IA
+    ════════════════════════════════════════════════════ -->
+    <section class="ia-section">
+
+      <!-- En-tête section IA -->
+      <div class="section-header">
+        <div class="section-header-left">
+          <div class="section-eyebrow">
+            <span class="material-icons">auto_awesome</span>
+            Alimenté par Gemini
+          </div>
+          <h2 class="section-title">Analyses IA des relevés de notes</h2>
+          <p class="section-subtitle">
+            Rapports détaillés générés automatiquement à partir des documents uploadés
+          </p>
+        </div>
+
+        @if (stats(); as s) {
+          <div class="section-stats">
+            <div class="mini-stat">
+              <span class="mini-stat-value">{{ s.total_analyses }}</span>
+              <span class="mini-stat-label">Total</span>
+            </div>
+            <div class="mini-stat mini-stat--success">
+              <span class="mini-stat-value">{{ s.analyses_reussies }}</span>
+              <span class="mini-stat-label">Réussies</span>
+            </div>
+            <div class="mini-stat mini-stat--accent">
+              <span class="mini-stat-value">{{ s.score_moyen_ia }}</span>
+              <span class="mini-stat-label">Moy./20</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Graphiques IA -->
+      <div class="charts-grid">
+
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h3 class="chart-title">Distribution des niveaux</h3>
+            <span class="chart-badge chart-badge--green">IA</span>
+          </div>
+          <div class="chart-container">
+            <canvas #niveauChartRef></canvas>
+          </div>
+        </div>
+
+        <!-- Résumé rapide -->
+        <div class="chart-card summary-card">
+          <div class="chart-card-header">
+            <h3 class="chart-title">Répartition des étudiants</h3>
+          </div>
+          @if (stats(); as s) {
+            <div class="summary-list">
+
+              <div class="summary-item">
+                <div class="summary-bar-wrap">
+                  <div class="summary-row">
+                    <span class="summary-dot" style="background:#22C55E"></span>
+                    <span class="summary-label">Excellents <span class="summary-range">(≥16)</span></span>
+                    <span class="summary-value">{{ s.repartition_niveaux['excellent'] || 0 }}</span>
+                  </div>
+                  <div class="summary-bar">
+                    <div class="summary-bar-fill" style="background:#22C55E"
+                         [style.width.%]="(s.repartition_niveaux['excellent'] || 0) / (s.total_analyses || 1) * 100">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <div class="summary-bar-wrap">
+                  <div class="summary-row">
+                    <span class="summary-dot" style="background:#3B82F6"></span>
+                    <span class="summary-label">Très bons <span class="summary-range">(14-16)</span></span>
+                    <span class="summary-value">{{ s.repartition_niveaux['tres_bon'] || 0 }}</span>
+                  </div>
+                  <div class="summary-bar">
+                    <div class="summary-bar-fill" style="background:#3B82F6"
+                         [style.width.%]="(s.repartition_niveaux['tres_bon'] || 0) / (s.total_analyses || 1) * 100">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <div class="summary-bar-wrap">
+                  <div class="summary-row">
+                    <span class="summary-dot" style="background:#06B6D4"></span>
+                    <span class="summary-label">Bons <span class="summary-range">(12-14)</span></span>
+                    <span class="summary-value">{{ s.repartition_niveaux['bon'] || 0 }}</span>
+                  </div>
+                  <div class="summary-bar">
+                    <div class="summary-bar-fill" style="background:#06B6D4"
+                         [style.width.%]="(s.repartition_niveaux['bon'] || 0) / (s.total_analyses || 1) * 100">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <div class="summary-bar-wrap">
+                  <div class="summary-row">
+                    <span class="summary-dot" style="background:#F59E0B"></span>
+                    <span class="summary-label">Moyens <span class="summary-range">(10-12)</span></span>
+                    <span class="summary-value">{{ s.repartition_niveaux['moyen'] || 0 }}</span>
+                  </div>
+                  <div class="summary-bar">
+                    <div class="summary-bar-fill" style="background:#F59E0B"
+                         [style.width.%]="(s.repartition_niveaux['moyen'] || 0) / (s.total_analyses || 1) * 100">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <div class="summary-bar-wrap">
+                  <div class="summary-row">
+                    <span class="summary-dot" style="background:#EF4444"></span>
+                    <span class="summary-label">Faibles <span class="summary-range">(&lt;10)</span></span>
+                    <span class="summary-value">{{ s.repartition_niveaux['faible'] || 0 }}</span>
+                  </div>
+                  <div class="summary-bar">
+                    <div class="summary-bar-fill" style="background:#EF4444"
+                         [style.width.%]="(s.repartition_niveaux['faible'] || 0) / (s.total_analyses || 1) * 100">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Liste des rapports récents -->
+      <div class="rapports-card">
+
+        <div class="rapports-header">
+          <div class="rapports-header-left">
+            <span class="material-icons rapports-header-icon">description</span>
+            <h3 class="chart-title">Rapports récents</h3>
+          </div>
+          @if (rapports().length > 0) {
+            <span class="rapports-count">{{ rapports().length }} rapport{{ rapports().length > 1 ? 's' : '' }}</span>
+          }
+        </div>
+
+        <!-- Loading -->
+        @if (loading()) {
+          <div class="feedback-state">
+            <div class="spinner"></div>
+            <p class="feedback-title">Chargement des rapports…</p>
+            <p class="feedback-sub">Veuillez patienter</p>
+          </div>
+        }
+
+        <!-- Erreur -->
+        @else if (error()) {
+          <div class="feedback-state feedback-state--error">
+            <span class="material-icons feedback-icon">error_outline</span>
+            <p class="feedback-title">Une erreur est survenue</p>
+            <p class="feedback-sub">{{ error() }}</p>
+            <button class="retry-btn" (click)="loadRapports()">
+              <span class="material-icons">refresh</span>
+              Réessayer
+            </button>
+          </div>
+        }
+
+        <!-- Vide -->
+        @else if (rapports().length === 0) {
+          <div class="feedback-state feedback-state--empty">
+            <div class="empty-illus">
+              <span class="material-icons">auto_awesome</span>
+            </div>
+            <p class="feedback-title">Aucun rapport pour l'instant</p>
+            <p class="feedback-sub">
+              Les analyses IA seront générées automatiquement dès qu'un étudiant uploade ses relevés de notes.
+            </p>
+          </div>
+        }
+
+        <!-- Liste -->
+        @else {
+          <div class="rapports-list">
+            @for (rapport of rapports().slice(0, 10); track rapport.id) {
+              <div class="rapport-item" (click)="viewRapport(rapport)">
+
+                <!-- Icône type document -->
+                <div class="rapport-icon" [style.background]="getNiveauColor(rapport.niveau_performance) + '18'">
+                  <span class="material-icons" [style.color]="getNiveauColor(rapport.niveau_performance)">
+                    {{ getTypeDocumentIcon(rapport.type_document) }}
+                  </span>
+                </div>
+
+                <!-- Infos -->
+                <div class="rapport-info">
+                  <div class="rapport-top">
+                    <h4 class="rapport-name">{{ rapport.nom_complet || 'Étudiant' }}</h4>
+                    <span class="rapport-niveau"
+                          [style.background]="getNiveauColor(rapport.niveau_performance) + '18'"
+                          [style.color]="getNiveauColor(rapport.niveau_performance)">
+                      {{ getNiveauLabel(rapport.niveau_performance) }}
+                    </span>
+                  </div>
+                  <div class="rapport-meta">
+                    <span class="rapport-meta-item">
+                      <span class="material-icons">school</span>
+                      {{ rapport.etablissement || '—' }}
+                    </span>
+                    <span class="rapport-meta-sep">·</span>
+                    <span class="rapport-meta-item">
+                      <span class="material-icons">schedule</span>
+                      {{ formatRelativeTime(rapport.date_generation) }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Score -->
+                <div class="rapport-score">
+                  <span class="score-value" [style.color]="getNiveauColor(rapport.niveau_performance)">
+                    {{ rapport.score_combine !== null
+                        ? (rapport.score_combine | number:'1.1-1')
+                        : (rapport.moyenne_generale !== null
+                            ? (rapport.moyenne_generale | number:'1.1-1')
+                            : '—') }}
+                  </span>
+                  <span class="score-denom">/20</span>
+                </div>
+
+                <!-- Action -->
+                <button class="rapport-action" (click)="viewRapport(rapport); $event.stopPropagation()"
+                        aria-label="Voir le rapport">
+                  <span class="material-icons">chevron_right</span>
+                </button>
+
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    </section>
+
+  </div>
+</div>

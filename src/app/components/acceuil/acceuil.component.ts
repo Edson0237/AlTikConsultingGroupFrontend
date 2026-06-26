@@ -1,14 +1,10 @@
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-} from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
+import { DashboardService, DashboardStats } from '../../services/dashboard/dashboard.service';
 Chart.register(...registerables);
 
-// ── Interfaces ────────────────────────────────────────────────────────────────
 export interface ServiceSlice {
   name: string;
   value: number;
@@ -23,59 +19,59 @@ export interface Activity {
   color: string;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
 @Component({
   selector: 'app-acceuil',
   standalone: true,
   imports: [CommonModule, TranslateModule],
   templateUrl: './acceuil.component.html',
-  styleUrl:'./acceuil.component.scss',
+  styleUrl: './acceuil.component.scss',
 })
-export class AcceuilComponent implements AfterViewInit, OnDestroy {
+export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
 
-  // ── Chart instances (kept for cleanup) ────────────────────────
+  private dashboardService = inject(DashboardService);
+
   private lineChart?: Chart;
   private pieChart?: Chart;
   private barChart?: Chart;
 
-  // ── Data ───────────────────────────────────────────────────────
-  readonly monthlyLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai'];
+  // ✅ Données dynamiques
+  stats = signal<DashboardStats['data'] | null>(null);
+  loading = signal(true);
+  error = signal(false);
 
-  readonly monthlyData = {
-    bourses: [28, 32, 35, 42, 38],
-    visas: [15, 18, 22, 19, 24],
-    commandes: [12, 15, 18, 21, 24],
+  // Labels des mois
+  monthLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+
+  // ✅ Couleurs pour les graphiques (public pour accès depuis le template)
+  readonly COLORS = {
+    bourses: '#2563EB',
+    visas: '#6366F1',
+    documents: '#10B981',
+    users: '#F59E0B',
   };
 
-  readonly serviceData: ServiceSlice[] = [
-    { name: 'Bourses Chine', value: 48, color: '#2563EB' },
-    { name: 'Visas Affaires', value: 28, color: '#6366F1' },
-    { name: 'Import-Export', value: 24, color: '#10B981' },
-  ];
+  // ✅ PUBLIC - accessible depuis le template
+  readonly TYPE_COLORS: { [key: string]: string } = {
+    'bourse_chine': '#2563EB',
+    'bourse_allemagne': '#F59E0B',
+    'bourse_canada': '#EF4444',
+    'visa_affaires': '#6366F1',
+  };
 
-  readonly topUniversities = [
-    { name: 'Beijing', value: 45 },
-    { name: 'Shanghai', value: 38 },
-    { name: 'Guangzhou', value: 28 },
-    { name: 'Shenzhen', value: 22 },
-    { name: 'Hangzhou', value: 18 },
-  ];
+  // ✅ PUBLIC - accessible depuis le template
+  readonly TYPE_LABELS: { [key: string]: string } = {
+    'bourse_chine': 'Bourses Chine',
+    'bourse_allemagne': 'Bourses Allemagne',
+    'bourse_canada': 'Bourses Canada',
+    'visa_affaires': 'Visas Affaires',
+  };
 
-  readonly universityColors = ['#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#DBEAFE'];
+  ngOnInit(): void {
+    this.loadStats();
+  }
 
-  readonly recentActivities: Activity[] = [
-    { id: 1, text: 'Nouvelle demande de bourse', user: 'Konan Anderson', time: 'Il y a 5 min', color: '#2563EB' },
-    { id: 2, text: 'Visa approuvé', user: 'Jean Kouadio', time: 'Il y a 15 min', color: '#6366F1' },
-    { id: 3, text: 'Commande passée', user: 'Marie Kouassi', time: 'Il y a 32 min', color: '#10B981' },
-    { id: 4, text: 'Document validé', user: 'Ibrahim Traoré', time: 'Il y a 1h', color: '#0EA5E9' },
-    { id: 5, text: "Lettre d'admission reçue", user: 'Fatou Sow', time: 'Il y a 2h', color: '#22C55E' },
-  ];
-
-  // ── Lifecycle ──────────────────────────────────────────────────
   ngAfterViewInit(): void {
-    this.buildLineChart();
-    this.buildPieChart();
-    this.buildBarChart();
+    // Les charts seront construits après chargement des données
   }
 
   ngOnDestroy(): void {
@@ -84,20 +80,72 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy {
     this.barChart?.destroy();
   }
 
-  // ── Chart builders ─────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════
+  // CHARGEMENT DES DONNÉES
+  // ═══════════════════════════════════════════════════════════════
+
+  loadStats(): void {
+    this.loading.set(true);
+    this.error.set(false);
+
+    this.dashboardService.getDashboardStats().subscribe({
+      next: (res) => {
+        this.loading.set(false);
+
+        if (res.success && res.data) {
+          this.stats.set(res.data);
+          this.error.set(false);
+          setTimeout(() => {
+            this.buildAllCharts();
+          }, 100);
+        } else {
+          // L'API n'a pas renvoyé de données exploitables
+          this.stats.set(null);
+          this.error.set(true);
+        }
+      },
+      error: (err) => {
+        console.error('Erreur chargement stats:', err);
+        this.loading.set(false);
+        this.stats.set(null);
+        this.error.set(true);
+      }
+    });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // CONSTRUCTION DES CHARTS
+  // ═══════════════════════════════════════════════════════════════
+
+  private buildAllCharts(): void {
+    if (!this.stats()) return;
+    this.buildLineChart();
+    this.buildPieChart();
+    this.buildBarChart();
+  }
+
   private buildLineChart(): void {
     const ctx = document.getElementById('lineChart') as HTMLCanvasElement;
     if (!ctx) return;
 
+    const data = this.stats()!;
+    const charts = data.charts;
+
+    const months = charts.evolution_dossiers.map((e: { month: string; count: number }) => {
+      const date = new Date(e.month);
+      return this.monthLabels[date.getMonth()];
+    });
+
+    this.lineChart?.destroy();
     this.lineChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: this.monthlyLabels,
+        labels: months,
         datasets: [
           {
-            label: 'Bourses',
-            data: this.monthlyData.bourses,
-            borderColor: '#2563EB',
+            label: 'Dossiers',
+            data: charts.evolution_dossiers.map((e: { month: string; count: number }) => e.count),
+            borderColor: this.COLORS.bourses,
             backgroundColor: 'rgba(37,99,235,.08)',
             borderWidth: 2,
             tension: 0.4,
@@ -106,10 +154,10 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy {
             fill: true,
           },
           {
-            label: 'Visas',
-            data: this.monthlyData.visas,
-            borderColor: '#6366F1',
-            backgroundColor: 'rgba(99,102,241,.08)',
+            label: 'Utilisateurs',
+            data: charts.evolution_users.map((e: { month: string; count: number }) => e.count),
+            borderColor: this.COLORS.users,
+            backgroundColor: 'rgba(245,158,11,.08)',
             borderWidth: 2,
             tension: 0.4,
             pointRadius: 4,
@@ -117,9 +165,9 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy {
             fill: true,
           },
           {
-            label: 'Commandes',
-            data: this.monthlyData.commandes,
-            borderColor: '#10B981',
+            label: 'Documents',
+            data: charts.evolution_documents.map((e: { month: string; count: number }) => e.count),
+            borderColor: this.COLORS.documents,
             backgroundColor: 'rgba(16,185,129,.08)',
             borderWidth: 2,
             tension: 0.4,
@@ -155,13 +203,17 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy {
     const ctx = document.getElementById('pieChart') as HTMLCanvasElement;
     if (!ctx) return;
 
+    const data = this.stats()!;
+    const repartition = data.charts.repartition_dossiers;
+
+    this.pieChart?.destroy();
     this.pieChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: this.serviceData.map(s => s.name),
+        labels: repartition.map((r: { type_dossier: string; count: number }) => this.TYPE_LABELS[r.type_dossier] || r.type_dossier),
         datasets: [{
-          data: this.serviceData.map(s => s.value),
-          backgroundColor: this.serviceData.map(s => s.color),
+          data: repartition.map((r: { type_dossier: string; count: number }) => r.count),
+          backgroundColor: repartition.map((r: { type_dossier: string; count: number }) => this.TYPE_COLORS[r.type_dossier] || '#94A3B8'),
           borderWidth: 2,
           borderColor: '#fff',
           hoverOffset: 6,
@@ -180,27 +232,31 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy {
             borderColor: '#e5e7eb',
             borderWidth: 1,
             padding: 10,
-            callbacks: {
-              label: ctx => ` ${ctx.label}: ${ctx.parsed}%`,
-            },
           },
         },
       },
     });
   }
 
+  // ✅ UNE SEULE MÉTHODE buildBarChart
   private buildBarChart(): void {
     const ctx = document.getElementById('barChart') as HTMLCanvasElement;
     if (!ctx) return;
 
+    const data = this.stats()!;
+    const top = data.charts.top_filieres;  // ✅ Utilise top_filieres
+
+    const colors = ['#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#DBEAFE'];
+
+    this.barChart?.destroy();
     this.barChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: this.topUniversities.map(u => u.name),
+        labels: top.map((f: { nom_filiere: string; count: number }) => f.nom_filiere || 'Inconnu'),
         datasets: [{
-          label: 'Étudiants',
-          data: this.topUniversities.map(u => u.value),
-          backgroundColor: this.universityColors,
+          label: 'Candidatures',
+          data: top.map((f: { nom_filiere: string; count: number }) => f.count),
+          backgroundColor: colors,
           borderRadius: 8,
           borderSkipped: false,
         }],
@@ -225,5 +281,56 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy {
         },
       },
     });
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // HELPERS
+  // ═══════════════════════════════════════════════════════════════
+
+  formatRelativeTime(isoDate: string): string {
+    const date = new Date(isoDate);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMin < 1) return "À l'instant";
+    if (diffMin < 60) return `Il y a ${diffMin} min`;
+    if (diffHours < 24) return `Il y a ${diffHours}h`;
+    if (diffDays < 7) return `Il y a ${diffDays}j`;
+    return date.toLocaleDateString('fr-FR');
+  }
+
+  getStatutPercent(statut: string): number {
+    const data = this.stats();
+    if (!data) return 0;
+    const total = data.kpis.total_dossiers;
+    if (total === 0) return 0;
+    const count = data.kpis.dossiers_par_statut[statut] || 0;
+    return (count / total) * 100;
+  }
+
+  getDocumentPercent(count: number): number {
+    const data = this.stats();
+    if (!data) return 0;
+    const max = Math.max(...data.charts.documents_par_type.map((d: { type_document: string; count: number }) => d.count));
+    return max > 0 ? (count / max) * 100 : 0;
+  }
+
+  getDocumentLabel(type: string): string {
+    const labels: { [key: string]: string } = {
+      'releve_notes': 'Relevés de notes',
+      'releve_probatoire': 'Relevé probatoire',
+      'releve_bac': 'Relevé bac',
+      'diplome': 'Diplômes',
+      'passeport': 'Passeports',
+      'photo_identite': 'Photos identité',
+      'casier_judiciaire': 'Casiers judiciaires',
+      'certificat_medical': 'Certificats médicaux',
+      'cv': 'CV',
+      'lettre_motivation': 'Lettres motivation',
+    };
+    return labels[type] || type;
   }
 }

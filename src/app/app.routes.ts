@@ -14,7 +14,7 @@ export const routes: Routes = [
   // ── Admin Dashboard (Protégé) ───────────────────────────────────────────────
   {
     path: 'dashboard-admin',
-    canActivate: [authGuard], // Protège cette route et tous ses enfants
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/dashboard-acceuil/dashboard-acceuil.component')
         .then(m => m.DashboardAcceuilComponent),
@@ -35,39 +35,18 @@ export const routes: Routes = [
           import('./components/scholarship/scholarship.component')
             .then(m => m.ScholarshipComponent)
       },
-      // {
-      //   path: 'visa-business',
-      //   loadComponent: () =>
-      //     import('./pages/business-visa/business-visa.component')
-      //       .then(m => m.BusinessVisaComponent)
-      // },
-      // {
-      //   path: 'documents-ia',
-      //   loadComponent: () =>
-      //     import('./pages/ai-documents/ai-documents.component')
-      //       .then(m => m.AiDocumentsComponent)
-      // },
-
-      // Import-Export
-      // {
-      //   path: 'import-export',
-      //   loadComponent: () =>
-      //     import('./pages/import-export/import-export.component')
-      //       .then(m => m.ImportExportComponent)
-      // },
-      // {
-      //   path: 'catalogue',
-      //   loadComponent: () =>
-      //     import('./pages/product-catalog/product-catalog.component')
-      //       .then(m => m.ProductCatalogComponent)
-      // },
-      // {
-      //   path: 'commandes',
-      //   loadComponent: () =>
-      //     import('./pages/orders/orders.component')
-      //       .then(m => m.OrdersComponent)
-      // },
-
+      {
+        path: 'visa-business',
+        loadComponent: () =>
+          import('./components/bussiness-visa/bussiness-visa.component')
+            .then(m => m.BussinessVisaComponent)
+      },
+      {
+        path: 'analytics',
+        loadComponent: () =>
+          import('./components/analytics/analytics.component')
+            .then(m => m.AnalyticsComponent)
+      },
       // Gestion
       {
         path: 'utilisateurs',
@@ -91,20 +70,14 @@ export const routes: Routes = [
         path: 'admin/dossiers/:id',
         loadComponent: () => import('./components/dossier-detail/dossier-detail.component')
           .then(m => m.DossierDetailComponent),
-        canActivate: [authGuard],
       },
-      // {
-      //   path: 'messagerie',
-      //   loadComponent: () =>
-      //     import('./pages/messaging/messaging.component')
-      //       .then(m => m.MessagingComponent)
-      // },
-      // {
-      //   path: 'notifications',
-      //   loadComponent: () =>
-      //     import('./pages/notifications/notifications.component')
-      //       .then(m => m.NotificationsComponent)
-      // },
+
+      {
+        path: 'messagerie',
+        loadComponent: () =>
+          import('./components/messaging/messaging.component')
+            .then(m => m.MessagingComponent),
+      },
       {
         path: 'rapports',
         loadComponent: () =>
@@ -112,11 +85,36 @@ export const routes: Routes = [
             .then(m => m.RapportAnalyticComponent)
       },
       {
+        path: 'rapports/:id',
+        loadComponent: () => 
+          import('./components/rapport-detail/rapport-detail.component')
+            .then(m => m.RapportDetailComponent),
+      },
+      {
         path: 'parametres',
         loadComponent: () =>
           import('./components/parametres/parametres.component')
             .then(m => m.ParametresComponent)
       },
+      // Import-Export
+      // {
+      //   path: 'import-export',
+      //   loadComponent: () =>
+      //     import('./pages/import-export/import-export.component')
+      //       .then(m => m.ImportExportComponent)
+      // },
+      // {
+      //   path: 'catalogue',
+      //   loadComponent: () =>
+      //     import('./pages/product-catalog/product-catalog.component')
+      //       .then(m => m.ProductCatalogComponent)
+      // },
+      // {
+      //   path: 'commandes',
+      //   loadComponent: () =>
+      //     import('./pages/orders/orders.component')
+      //       .then(m => m.OrdersComponent)
+      // },
 
       // Wildcard enfant → page d'accueil du dashboard
       {

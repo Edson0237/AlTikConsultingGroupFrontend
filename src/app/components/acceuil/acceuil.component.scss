@@ -4,6 +4,8 @@ $radius-md: 10px;
 $radius-lg: 14px;
 $shadow-sm: 0 1px 4px rgba(0, 0, 0, .06);
 $shadow-md: 0 4px 16px rgba(0, 0, 0, .08);
+$blue: #2563eb;
+$blue-dark: #1d4ed8;
 
 // ── Root ─────────────────────────────────────────────────────────────────────
 .dashboard {
@@ -16,7 +18,15 @@ $shadow-md: 0 4px 16px rgba(0, 0, 0, .08);
 
     // ── Header ─────────────────────────────────────────────────────
     &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
         margin-bottom: .25rem;
+    }
+
+    &__header-text {
+        min-width: 0;
     }
 
     &__title {
@@ -30,6 +40,109 @@ $shadow-md: 0 4px 16px rgba(0, 0, 0, .08);
         font-size: .875rem;
         color: #6b7280;
         margin: .25rem 0 0;
+    }
+}
+
+// ── Bouton Actualiser ─────────────────────────────────────────────────────────
+.refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    flex-shrink: 0;
+    background: $blue;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: .625rem 1.125rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    letter-spacing: .01em;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(37, 99, 235, .15), 0 4px 10px rgba(37, 99, 235, .18);
+    transition: background .15s ease, box-shadow .15s ease, transform .1s ease;
+
+    svg {
+        flex-shrink: 0;
+    }
+
+    &:hover:not(:disabled) {
+        background: $blue-dark;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, .2), 0 6px 14px rgba(37, 99, 235, .24);
+        transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    &:disabled {
+        opacity: .65;
+        cursor: default;
+        box-shadow: none;
+    }
+
+    &__icon--spinning {
+        animation: refresh-spin .8s linear infinite;
+    }
+}
+
+@keyframes refresh-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// ── Loading / Error states ────────────────────────────────────────────────────
+.loading-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    padding: 3rem 0;
+    color: #6b7280;
+    font-size: .875rem;
+}
+
+.loading-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #e5e7eb;
+    border-top-color: $blue;
+    border-radius: 50%;
+    animation: refresh-spin .8s linear infinite;
+}
+
+.error-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: $radius-md;
+    padding: 1rem 1.25rem;
+    color: #b91c1c;
+    font-size: .875rem;
+
+    button {
+        flex-shrink: 0;
+        background: #fff;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        border-radius: 8px;
+        padding: .5rem 1rem;
+        font-weight: 600;
+        font-size: .8125rem;
+        cursor: pointer;
+
+        &:hover {
+            background: #fee2e2;
+        }
     }
 }
 
@@ -204,6 +317,175 @@ $shadow-md: 0 4px 16px rgba(0, 0, 0, .08);
     display: flex;
     flex-direction: column;
     gap: .5rem;
+    max-height: 244px; // ≈ 4 items (52px + gap) avant scroll
+    overflow-y: auto;
+    padding-right: .25rem;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 99px;
+
+        &:hover {
+            background: #9ca3af;
+        }
+    }
+}
+
+.activities-empty {
+    padding: 1.5rem 0;
+    text-align: center;
+    color: #9ca3af;
+    font-size: .8125rem;
+}
+
+// ── Status lists (Statuts des dossiers / Top documents uploadés) ─────────────
+.status-list {
+    display: flex;
+    flex-direction: column;
+    gap: .65rem;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .5rem .25rem;
+    border-radius: 8px;
+    transition: background .15s;
+
+    &:hover {
+        background: #f9fafb;
+    }
+}
+
+.status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &--brouillon {
+        background: #9ca3af;
+    }
+
+    &--en_cours {
+        background: #6366f1;
+    }
+
+    &--complete {
+        background: #f59e0b;
+    }
+
+    &--valide {
+        background: #10b981;
+    }
+
+    &--rejete {
+        background: #ef4444;
+    }
+}
+
+.status-item__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: #dbeafe;
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.status-label {
+    font-size: .8125rem;
+    font-weight: 500;
+    color: #374151;
+    width: 128px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status-bar {
+    flex: 1;
+    height: 8px;
+    border-radius: 99px;
+    background: #f3f4f6;
+    overflow: hidden;
+
+    &__fill {
+        height: 100%;
+        border-radius: 99px;
+        transition: width .4s ease;
+        background: $blue;
+
+        &--brouillon {
+            background: #9ca3af;
+        }
+
+        &--en_cours {
+            background: #6366f1;
+        }
+
+        &--complete {
+            background: #f59e0b;
+        }
+
+        &--valide {
+            background: #10b981;
+        }
+
+        &--rejete {
+            background: #ef4444;
+        }
+
+        &--blue {
+            background: $blue;
+        }
+    }
+}
+
+.status-count {
+    width: 32px;
+    flex-shrink: 0;
+    text-align: right;
+    font-size: .8125rem;
+    font-weight: 700;
+    color: #111827;
+
+    &--brouillon {
+        color: #6b7280;
+    }
+
+    &--en_cours {
+        color: #4f46e5;
+    }
+
+    &--complete {
+        color: #d97706;
+    }
+
+    &--valide {
+        color: #059669;
+    }
+
+    &--rejete {
+        color: #dc2626;
+    }
+
+    &--blue {
+        color: $blue-dark;
+    }
 }
 
 .activity {
@@ -271,5 +553,13 @@ $shadow-md: 0 4px 16px rgba(0, 0, 0, .08);
 @media (max-width: 640px) {
     .kpi-grid {
         grid-template-columns: 1fr;
+    }
+
+    .dashboard__header {
+        flex-wrap: wrap;
+    }
+
+    .status-label {
+        width: 96px;
     }
 }

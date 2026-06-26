@@ -66,9 +66,18 @@
     scrollbar-width: thin;
     scrollbar-color: #e5e7eb transparent;
 
-    &::-webkit-scrollbar       { width: 4px; }
-    &::-webkit-scrollbar-track { background: transparent; }
-    &::-webkit-scrollbar-thumb { background-color: #e5e7eb; border-radius: 4px; }
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #e5e7eb;
+      border-radius: 4px;
+    }
   }
 
   &__section {
@@ -107,7 +116,10 @@
     &:hover {
       background-color: #f9fafb;
       color: #111827;
-      svg { opacity: 1; }
+
+      svg {
+        opacity: 1;
+      }
     }
 
     // Dashboard top-level link
@@ -119,7 +131,10 @@
         background-color: #2563eb;
         color: #ffffff;
         box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
-        svg { opacity: 1; }
+
+        svg {
+          opacity: 1;
+        }
       }
     }
 
@@ -128,7 +143,10 @@
       background-color: #eff6ff;
       color: #2563eb;
       font-weight: 500;
-      svg { opacity: 1; }
+
+      svg {
+        opacity: 1;
+      }
     }
   }
 
@@ -154,8 +172,71 @@
     cursor: pointer;
     transition: background-color 0.15s ease;
 
-    &:hover { background-color: #fef2f2; }
+    &:hover {
+      background-color: #fef2f2;
+    }
 
-    svg { flex-shrink: 0; }
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  // ── Nav Link avec badge ──────────────────────────────────────────
+  .sidebar__nav-link--with-badge {
+    position: relative;
+  }
+
+  .nav-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: auto;
+    background: #FF0019;
+    color: #ffffff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    border-radius: 10px;
+    line-height: 1;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(255, 0, 25, 0.3);
+
+    // Animation pulse subtile pour attirer l'attention
+    &--pulse {
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+  }
+
+  @keyframes badgePulse {
+
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 2px 4px rgba(255, 0, 25, 0.3);
+    }
+
+    50% {
+      transform: scale(1.08);
+      box-shadow: 0 2px 8px rgba(255, 0, 25, 0.5);
+    }
+  }
+
+  // Adapter le style quand le lien est actif
+  .sidebar__nav-link--active.sidebar__nav-link--with-badge {
+    .nav-badge {
+      background: #ffffff;
+      color: #2563eb;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // Sur le dashboard (fond bleu), le badge est blanc
+  .sidebar__nav-link--dashboard.sidebar__nav-link--active {
+    .nav-badge {
+      background: #ffffff;
+      color: #2563eb;
+    }
   }
 }

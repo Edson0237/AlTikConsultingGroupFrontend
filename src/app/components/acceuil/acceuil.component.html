@@ -2,21 +2,49 @@
 
     <!-- Header -->
     <div class="dashboard__header">
-        <div>
+        <div class="dashboard__header-text">
             <h1 class="dashboard__title">{{ 'dashboard.welcome' | translate }}</h1>
             <p class="dashboard__subtitle">{{ 'dashboard.subtitle' | translate }}</p>
         </div>
+        <button class="refresh-btn" (click)="loadStats()" [disabled]="loading()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" [class.refresh-btn__icon--spinning]="loading()">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+            </svg>
+            Actualiser
+        </button>
     </div>
+
+    <!-- Loading state -->
+    @if (loading()) {
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Chargement des statistiques...</p>
+    </div>
+    }
+
+    <!-- Error state -->
+    @if (error() && !loading()) {
+    <div class="error-card">
+        <p>Impossible de charger les statistiques du tableau de bord.</p>
+        <button (click)="loadStats()">Réessayer</button>
+    </div>
+    }
+
+    @if (stats(); as data) {
 
     <!-- KPI Cards -->
     <div class="kpi-grid">
 
+        <!-- Total utilisateurs -->
         <div class="kpi-card kpi-card--blue">
             <div class="kpi-card__top">
-                <span class="kpi-card__label">{{ 'dashboard.totalStudents' | translate }}</span>
+                <span class="kpi-card__label">Total étudiants</span>
                 <div class="kpi-card__icon kpi-card__icon--blue">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        stroke="currentColor" stroke-width="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
                         <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -24,104 +52,167 @@
                     </svg>
                 </div>
             </div>
-            <h3 class="kpi-card__value">248</h3>
-            <span class="kpi-card__badge kpi-card__badge--green">+12% ce mois</span>
+            <h3 class="kpi-card__value">{{ data.kpis.total_users }}</h3>
+            <span class="kpi-card__badge kpi-card__badge--green">
+                +{{ data.kpis.new_users_this_month }} ce mois
+            </span>
         </div>
 
-        <div class="kpi-card kpi-card--blue">
+        <!-- Dossiers -->
+        <div class="kpi-card kpi-card--indigo">
             <div class="kpi-card__top">
-                <span class="kpi-card__label">{{ 'dashboard.scholarshipApplications' | translate }}</span>
-                <div class="kpi-card__icon kpi-card__icon--blue">
+                <span class="kpi-card__label">Total dossiers</span>
+                <div class="kpi-card__icon kpi-card__icon--indigo">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        stroke="currentColor" stroke-width="2">
                         <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
                         <path d="M6 12v5c3 3 9 3 12 0v-5" />
                     </svg>
                 </div>
             </div>
-            <h3 class="kpi-card__value">156</h3>
-            <span class="kpi-card__badge kpi-card__badge--blue">48 en cours</span>
+            <h3 class="kpi-card__value">{{ data.kpis.total_dossiers }}</h3>
+            <span class="kpi-card__badge kpi-card__badge--indigo">
+                {{ data.kpis.dossiers_par_statut['en_cours'] || 0 }} en cours
+            </span>
         </div>
 
-        <div class="kpi-card kpi-card--indigo">
-            <div class="kpi-card__top">
-                <span class="kpi-card__label">{{ 'dashboard.businessVisas' | translate }}</span>
-                <div class="kpi-card__icon kpi-card__icon--indigo">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                    </svg>
-                </div>
-            </div>
-            <h3 class="kpi-card__value">68</h3>
-            <span class="kpi-card__badge kpi-card__badge--indigo">24 approuvés</span>
-        </div>
-
+        <!-- Documents analysés IA -->
         <div class="kpi-card kpi-card--emerald">
             <div class="kpi-card__top">
-                <span class="kpi-card__label">{{ 'dashboard.importOrders' | translate }}</span>
+                <span class="kpi-card__label">Analyses IA</span>
                 <div class="kpi-card__icon kpi-card__icon--emerald">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path
-                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
                     </svg>
                 </div>
             </div>
-            <h3 class="kpi-card__value">24</h3>
-            <span class="kpi-card__badge kpi-card__badge--emerald">$125,400</span>
+            <h3 class="kpi-card__value">{{ data.kpis.total_analyses }}</h3>
+            <span class="kpi-card__badge kpi-card__badge--emerald">
+                {{ data.kpis.score_moyen_ia }}% précision
+            </span>
+        </div>
+
+        <!-- Messagerie -->
+        <div class="kpi-card kpi-card--amber">
+            <div class="kpi-card__top">
+                <span class="kpi-card__label">Messagerie</span>
+                <div class="kpi-card__icon kpi-card__icon--amber">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                </div>
+            </div>
+            <h3 class="kpi-card__value">{{ data.kpis.total_conversations }}</h3>
+            <span class="kpi-card__badge kpi-card__badge--amber">
+                {{ data.kpis.total_messages }} messages
+            </span>
         </div>
 
     </div>
 
     <!-- Charts row 1 -->
     <div class="charts-row">
-
-        <!-- Line chart: monthly stats (col-span-2) -->
         <div class="chart-card chart-card--wide">
-            <h2 class="chart-card__title">{{ 'dashboard.monthlyStats' | translate }}</h2>
+            <h2 class="chart-card__title">Évolution mensuelle (6 derniers mois)</h2>
             <canvas id="lineChart" class="chart-canvas"></canvas>
         </div>
 
-        <!-- Pie chart: service distribution -->
         <div class="chart-card">
-            <h2 class="chart-card__title">{{ 'dashboard.serviceDistribution' | translate }}</h2>
+            <h2 class="chart-card__title">Répartition des dossiers</h2>
             <canvas id="pieChart" class="chart-canvas chart-canvas--pie"></canvas>
             <div class="pie-legend">
-                <div *ngFor="let s of serviceData" class="pie-legend__item">
-                    <span class="pie-legend__dot" [style.background]="s.color"></span>
-                    <span class="pie-legend__label">{{ s.name }}</span>
+                @for (item of data.charts.repartition_dossiers; track item.type_dossier) {
+                <div class="pie-legend__item">
+                    <span class="pie-legend__dot" [style.background]="this.TYPE_COLORS[item.type_dossier] || '#94A3B8'">
+                    </span>
+                    <span class="pie-legend__label">
+                        {{ this.TYPE_LABELS[item.type_dossier] || item.type_dossier }}
+                        ({{ item.count }})
+                    </span>
                 </div>
+                }
             </div>
         </div>
-
     </div>
 
     <!-- Charts row 2 -->
     <div class="charts-row">
-
-        <!-- Bar chart: top universities -->
         <div class="chart-card">
-            <h2 class="chart-card__title">{{ 'dashboard.topUniversities' | translate }}</h2>
+            <h2 class="chart-card__title">Top Filiéres</h2>
             <canvas id="barChart" class="chart-canvas"></canvas>
         </div>
 
-        <!-- Recent activities -->
         <div class="chart-card">
-            <h2 class="chart-card__title">{{ 'dashboard.recentActivities' | translate }}</h2>
+            <h2 class="chart-card__title">Activités récentes</h2>
             <div class="activities">
-                <div *ngFor="let a of recentActivities" class="activity">
+                @for (a of data.recent_activities; track $index) {
+                <div class="activity">
                     <span class="activity__dot" [style.background]="a.color"></span>
                     <div class="activity__body">
                         <p class="activity__text">{{ a.text }}</p>
                         <p class="activity__user">{{ a.user }}</p>
                     </div>
-                    <span class="activity__time">{{ a.time }}</span>
+                    <span class="activity__time">{{ formatRelativeTime(a.time) }}</span>
                 </div>
+                }
+                @if (data.recent_activities.length === 0) {
+                <div class="activities-empty">
+                    <p>Aucune activité récente</p>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Ligne supplémentaire : Stats IA et statuts -->
+    <div class="charts-row">
+        <div class="chart-card">
+            <h2 class="chart-card__title">Statuts des dossiers</h2>
+            <div class="status-list">
+                @for (status of ['brouillon', 'en_cours', 'complete', 'valide', 'rejete']; track status) {
+                <div class="status-item">
+                    <span class="status-dot" [class]="'status-dot--' + status"></span>
+                    <span class="status-label">{{ status | titlecase }}</span>
+                    <div class="status-bar">
+                        <div class="status-bar__fill" [style.width.%]="getStatutPercent(status)"
+                            [class]="'status-bar__fill--' + status">
+                        </div>
+                    </div>
+                    <span class="status-count" [class]="'status-count--' + status">{{
+                        data.kpis.dossiers_par_statut[status] || 0 }}</span>
+                </div>
+                }
             </div>
         </div>
 
+        <div class="chart-card">
+            <h2 class="chart-card__title">Top documents uploadés</h2>
+            <div class="status-list">
+                @for (doc of data.charts.documents_par_type.slice(0, 5); track doc.type_document) {
+                <div class="status-item">
+                    <span class="status-item__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                    </span>
+                    <span class="status-label">{{ getDocumentLabel(doc.type_document) }}</span>
+                    <div class="status-bar">
+                        <div class="status-bar__fill status-bar__fill--blue"
+                            [style.width.%]="getDocumentPercent(doc.count)">
+                        </div>
+                    </div>
+                    <span class="status-count status-count--blue">{{ doc.count }}</span>
+                </div>
+                }
+            </div>
+        </div>
     </div>
+
+    }
 
 </div>
