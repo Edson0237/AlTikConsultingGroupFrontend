@@ -58,7 +58,7 @@
           <!-- Infos utilisateur (nom + rôle) -->
           <div class="header__user-info">
             <span class="header__user-name">{{ userFullName }}</span>
-            <span class="header__user-role" [ngClass]="'header__user-role--' + (userRole ?? 'admin')">
+            <span class="header__user-role" [ngClass]="roleClass">
               {{ userRole | titlecase }}
             </span>
           </div>

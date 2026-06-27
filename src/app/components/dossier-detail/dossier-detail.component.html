@@ -241,16 +241,15 @@
                     </div>
 
                     <div class="documents-list" *ngIf="dossier()!.documents.length > 0">
-                        <div *ngFor="let doc of dossier()!.documents" class="document-item"
-                            (click)="openDocumentModal(doc)">
-                            <div class="document-icon">
+                        <div *ngFor="let doc of dossier()!.documents" class="document-item">
+                            <div class="document-icon" (click)="openDocument(doc)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                     <polyline points="14 2 14 8 20 8"></polyline>
                                 </svg>
                             </div>
-                            <div class="document-info">
+                            <div class="document-info" (click)="openDocument(doc)">
                                 <h4 class="document-name">{{ doc.type_document_display }}</h4>
                                 <p class="document-meta">
                                     {{ doc.nom_fichier }} • {{ formatFileSize(doc.taille_fichier) }}
@@ -263,6 +262,16 @@
                                 <span class="status-dot"
                                     [style.background]="getDocumentStatutColor(doc.statut_verification)"></span>
                                 <span class="status-text">{{ doc.statut_verification_display }}</span>
+                            </div>
+                            <div class="document-actions">
+                                <button class="btn btn--small btn--outline" (click)="openVerificationModal(doc)"
+                                    title="Vérifier le document">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -390,24 +399,24 @@
     </div>
 
     <!-- Modal: Vérifier un document -->
-    <div class="modal-overlay" *ngIf="showDocumentModal()" (click)="closeDocumentModal()">
-        <div class="modal modal--sm" (click)="$event.stopPropagation()">
+    <div class="modal-overlay" *ngIf="showVerificationModal()" (click)="closeVerificationModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
 
             <div class="modal__header">
                 <div class="modal__header-left">
                     <div class="modal__icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
                     </div>
                     <div>
                         <h2 class="modal__title">Vérifier le document</h2>
-                        <p class="modal__subtitle">{{ selectedDocument()?.type_document_display }}</p>
+                        <p class="modal__subtitle">{{ selectedDocument()?.type_document_display }} - {{ selectedDocument()?.nom_fichier }}</p>
                     </div>
                 </div>
-                <button class="modal__close" (click)="closeDocumentModal()">
+                <button class="modal__close" (click)="closeVerificationModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -417,43 +426,49 @@
             </div>
 
             <div class="modal__body">
-
-                <!-- Document preview -->
-                <div class="document-preview">
-                    <a [href]="selectedDocument()?.url_fichier" target="_blank" class="preview-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
+                <div class="document-links">
+                    <button class="btn btn--primary" (click)="openDocument(selectedDocument()!)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                             <polyline points="15 3 21 3 21 9"></polyline>
                             <line x1="10" y1="14" x2="21" y2="3"></line>
                         </svg>
                         Ouvrir le document
-                    </a>
-                    <p class="preview-meta">
-                        {{ selectedDocument()?.nom_fichier }} • {{ formatFileSize(selectedDocument()?.taille_fichier ||
-                        0) }}
-                    </p>
+                    </button>
+                    <button class="btn btn--outline" (click)="downloadDocument()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Télécharger
+                    </button>
                 </div>
 
-                <div class="form__group">
-                    <label class="form__label">Statut de vérification</label>
-                    <div class="form__select-wrap">
-                        <select class="form__input form__select" [(ngModel)]="documentStatut">
-                            <option *ngFor="let s of documentStatutOptions" [value]="s.value">{{ s.label }}</option>
-                        </select>
+                <div class="verification-form">
+                    <h3 class="form-section-title">Statut de vérification</h3>
+
+                    <div class="form__group">
+                        <label class="form__label">Statut</label>
+                        <div class="form__select-wrap">
+                            <select class="form__input form__select" [(ngModel)]="documentStatut">
+                                <option *ngFor="let s of documentStatutOptions" [value]="s.value">{{ s.label }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form__group">
+                        <label class="form__label">Commentaire (optionnel)</label>
+                        <textarea class="form__input form__textarea" [(ngModel)]="documentCommentaire"
+                            placeholder="Ajoutez un commentaire sur la vérification..." rows="3"></textarea>
                     </div>
                 </div>
-
-                <div class="form__group">
-                    <label class="form__label">Commentaire (optionnel)</label>
-                    <textarea class="form__input form__textarea" [(ngModel)]="documentCommentaire"
-                        placeholder="Ajoutez un commentaire sur la vérification..." rows="3"></textarea>
-                </div>
-
             </div>
 
             <div class="modal__actions">
-                <button class="btn btn--outline" (click)="closeDocumentModal()">Annuler</button>
+                <button class="btn btn--outline" (click)="closeVerificationModal()">Annuler</button>
                 <button class="btn btn--primary" (click)="verifyDocument()">
                     Valider la vérification
                 </button>

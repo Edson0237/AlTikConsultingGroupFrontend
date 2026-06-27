@@ -13,14 +13,14 @@ import { AuthService } from '../../services/auth/auth.service';
 })
 export class HeaderComponent {
 
-  private readonly router      = inject(Router);
+  private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
   // ── UI state ─────────────────────────────────────────────────────
   showUserMenu = false;
-  currentLang  = 'FR';
-  searchQuery  = '';
-  unreadCount  = 3;
+  currentLang = 'FR';
+  searchQuery = '';
+  unreadCount = 3;
 
   // ── User info (réactif via signals) ──────────────────────────────
   get userFullName(): string {
@@ -35,11 +35,15 @@ export class HeaderComponent {
     return this.authService.currentUser()?.role ?? 'admin';
   }
 
+  get roleClass(): string {
+    return `header__dropdown-role--${this.userRole || 'admin'}`;
+  }
+
   get userInitials(): string {
     const u = this.authService.currentUser();
     if (!u) return 'AU';
     const first = u.firstName?.charAt(0) ?? '';
-    const last  = u.lastName?.charAt(0)  ?? '';
+    const last = u.lastName?.charAt(0) ?? '';
     return (first + last).toUpperCase() || u.email.charAt(0).toUpperCase();
   }
 
@@ -53,8 +57,8 @@ export class HeaderComponent {
     this.router.navigate(['/dashboard-admin/notifications']);
   }
 
-  toggleUserMenu(): void  { this.showUserMenu = !this.showUserMenu; }
-  closeUserMenu(): void   { this.showUserMenu = false; }
+  toggleUserMenu(): void { this.showUserMenu = !this.showUserMenu; }
+  closeUserMenu(): void { this.showUserMenu = false; }
 
   goToProfile(): void {
     this.closeUserMenu();

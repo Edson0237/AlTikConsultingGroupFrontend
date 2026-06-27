@@ -21,6 +21,11 @@ export interface DocumentDossier {
   commentaire_verification: string | null;
   date_upload: string;
   date_modification: string;
+
+  is_pdf: boolean;
+  is_image: boolean;
+  preview_url: string;
+  download_url: string;
 }
 
 export interface DossierAdmin {

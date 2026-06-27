@@ -28,7 +28,7 @@ export class DossierDetailComponent implements OnInit {
 
   // ── Modals ────────────────────────────────────────────────────
   showStatusModal = signal<boolean>(false);
-  showDocumentModal = signal<boolean>(false);
+  showVerificationModal = signal<boolean>(false);
   selectedDocument = signal<DocumentDossier | null>(null);
 
   // ── Forms ─────────────────────────────────────────────────────
@@ -77,6 +77,19 @@ export class DossierDetailComponent implements OnInit {
 
     this.dossierDetailService.getDossierDetail(id).subscribe({
       next: (dossier) => {
+        console.log('Dossier chargé:', dossier);
+        console.log('Documents:', dossier.documents);
+        dossier.documents.forEach((doc, index) => {
+          console.log(`Document ${index}:`, {
+            id: doc.id,
+            nom_fichier: doc.nom_fichier,
+            url_fichier: doc.url_fichier,
+            preview_url: doc.preview_url,
+            download_url: doc.download_url,
+            is_image: doc.is_image,
+            is_pdf: doc.is_pdf
+          });
+        });
         this.dossier.set(dossier);
         this.newStatus = dossier.status;
         this.notesInternes = dossier.notes_internes || '';
@@ -152,17 +165,30 @@ export class DossierDetailComponent implements OnInit {
     });
   }
 
+  // ── Document handling ───────────────────────────────────────
+
+  openDocument(doc: DocumentDossier): void {
+    window.open(doc.preview_url, '_blank');
+  }
+
+  downloadDocument(): void {
+    const doc = this.selectedDocument();
+    if (!doc || !doc.download_url) return;
+
+    window.open(doc.download_url, '_blank');
+  }
+
   // ── Document verification ─────────────────────────────────────
 
-  openDocumentModal(doc: DocumentDossier): void {
+  openVerificationModal(doc: DocumentDossier): void {
     this.selectedDocument.set(doc);
     this.documentStatut = doc.statut_verification;
     this.documentCommentaire = doc.commentaire_verification || '';
-    this.showDocumentModal.set(true);
+    this.showVerificationModal.set(true);
   }
 
-  closeDocumentModal(): void {
-    this.showDocumentModal.set(false);
+  closeVerificationModal(): void {
+    this.showVerificationModal.set(false);
     this.selectedDocument.set(null);
   }
 
@@ -180,14 +206,13 @@ export class DossierDetailComponent implements OnInit {
       payload
     ).subscribe({
       next: (updatedDoc) => {
-        // Mettre à jour le document dans la liste
         const dossier = this.dossier()!;
         const docs = dossier.documents.map(d =>
           d.id === updatedDoc.id ? updatedDoc : d
         );
         this.dossier.set({ ...dossier, documents: docs });
 
-        this.closeDocumentModal();
+        this.closeVerificationModal();
         this.showNotification('Document vérifié avec succès', 'success');
       },
       error: (err) => {

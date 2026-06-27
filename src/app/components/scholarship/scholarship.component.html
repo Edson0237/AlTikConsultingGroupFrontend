@@ -30,7 +30,8 @@
                 <div>
                     <h1 class="scholarship__title">Gestion des Dossiers</h1>
                     <p class="scholarship__subtitle">
-                        {{ filteredDossiers().length }} dossier{{ filteredDossiers().length > 1 ? 's' : '' }} trouvé{{ filteredDossiers().length > 1 ? 's' : '' }}
+                        {{ filteredDossiers().length }} dossier{{ filteredDossiers().length > 1 ? 's' : '' }} trouvé{{
+                        filteredDossiers().length > 1 ? 's' : '' }}
                     </p>
                 </div>
             </div>
@@ -86,14 +87,10 @@
             <!-- Cards -->
             <div class="kanban__cards">
                 @for (dossier of getColumnDossiers(col.id); track dossier.id) {
-                <div class="kanban-card" 
-                     draggable="true" 
-                     (dragstart)="onDragStart($event, dossier)"
-                     (click)="openDossierDetail(dossier)"
-                     [attr.aria-label]="'Voir le dossier de ' + dossier.prenom + ' ' + dossier.nom"
-                     role="button"
-                     tabindex="0"
-                     (keydown.enter)="openDossierDetail(dossier)">
+                <div class="kanban-card" draggable="true" (dragstart)="onDragStart($event, dossier)"
+                    (click)="openDossierDetail(dossier)"
+                    [attr.aria-label]="'Voir le dossier de ' + dossier.prenom + ' ' + dossier.nom" role="button"
+                    tabindex="0" (keydown.enter)="openDossierDetail(dossier)">
 
                     <!-- Overlay "Voir détails" au survol -->
                     <div class="kanban-card__overlay">
