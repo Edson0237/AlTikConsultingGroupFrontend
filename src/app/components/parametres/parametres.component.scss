@@ -21,11 +21,11 @@ $text-subtle: #9CA3AF;
 $bg-page:     #F8F9FB;
 $bg-card:     #FFFFFF;
 
-$radius-sm:   8px;
-$radius-md:   12px;
-$radius-lg:   16px;
-$shadow-sm:   0 1px 4px rgba(0,0,0,.06);
-$shadow-modal:0 20px 60px rgba(0,0,0,.18);
+$radius-sm:    8px;
+$radius-md:    12px;
+$radius-lg:    16px;
+$shadow-sm:    0 1px 4px rgba(0,0,0,.06);
+$shadow-modal: 0 20px 60px rgba(0,0,0,.18);
 
 // ── Host ─────────────────────────────────────────────────────────────────────
 :host { display: block; min-height: 100%; }
@@ -139,7 +139,6 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     border-bottom: 1px solid #f3f4f6;
   }
 
-  // Variante pour header avec bouton
   &__title--inline {
     font-size: .9375rem;
     font-weight: 700;
@@ -178,6 +177,12 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     font-size: .75rem;
     font-weight: 600;
     color: $text-mid;
+  }
+
+  &__help {
+    font-size: .6875rem;
+    color: $text-subtle;
+    margin: .125rem 0 0;
   }
 
   &__input {
@@ -270,6 +275,28 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   &__role-note { font-size: .75rem; color: $text-muted; }
 }
 
+// ── Aperçu du format de date ──────────────────────────────────────────────────
+.date-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  margin-top: .375rem;
+  padding: .375rem .75rem;
+  background: $blue-light;
+  border: 1px solid $blue-mid;
+  border-radius: $radius-sm;
+  font-size: .78rem;
+  color: $blue;
+
+  svg { flex-shrink: 0; color: $blue; opacity: .75; }
+
+  strong {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+  }
+}
+
 // ── Buttons ───────────────────────────────────────────────────────────────────
 .btn {
   display: inline-flex;
@@ -311,10 +338,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   }
 
   &--sm { padding: .3125rem .625rem; font-size: .75rem; }
-
-  &--icon-text {
-    gap: .375rem;
-  }
+  &--icon-text { gap: .375rem; }
 
   &__spinner {
     display: inline-block;
@@ -325,7 +349,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     border-radius: 50%;
     animation: spin .6s linear infinite;
 
-    &--sm { width: 12px; height: 12px; }
+    &--sm    { width: 12px; height: 12px; }
     &--white { border-color: rgba(255,255,255,.4); border-top-color: #fff; }
   }
 }
@@ -395,12 +419,11 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    // Couleurs selon le rôle
     background: linear-gradient(135deg, $blue, $cyan);
 
-    &--admin      { background: linear-gradient(135deg, $purple, #a78bfa); }
-    &--conseiller { background: linear-gradient(135deg, $blue, $cyan);     }
-    &--responsable{ background: linear-gradient(135deg, $orange, #fbbf24); }
+    &--admin       { background: linear-gradient(135deg, $purple, #a78bfa); }
+    &--conseiller  { background: linear-gradient(135deg, $blue, $cyan);     }
+    &--responsable { background: linear-gradient(135deg, $orange, #fbbf24); }
   }
 
   &__name {
@@ -427,11 +450,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   font-size: .7rem;
   font-weight: 700;
 
-  &__dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-  }
+  &__dot { width: 6px; height: 6px; border-radius: 50%; }
 
   &--admin {
     background: $purple-light;
@@ -462,11 +481,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   font-size: .7rem;
   font-weight: 700;
 
-  &__dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-  }
+  &__dot { width: 6px; height: 6px; border-radius: 50%; }
 
   &--active {
     background: $green-light;
@@ -481,7 +496,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   }
 }
 
-// ── Action group (boutons icône dans la table) ────────────────────────────────
+// ── Action group ──────────────────────────────────────────────────────────────
 .action-group {
   display: flex;
   align-items: center;
@@ -502,28 +517,12 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   flex-shrink: 0;
 
   &:disabled { opacity: .5; cursor: not-allowed; }
-
   &:hover:not(:disabled) { transform: scale(1.08); }
 
-  // Modifier — bleu charte
-  &--edit {
-    &:hover:not(:disabled) { background: $blue-light; border-color: $blue-mid; }
-  }
-
-  // Activer — vert charte
-  &--activate {
-    &:hover:not(:disabled) { background: $green-light; border-color: #a7f3d0; }
-  }
-
-  // Désactiver — rouge charte
-  &--deactivate {
-    &:hover:not(:disabled) { background: $red-light; border-color: #fecaca; }
-  }
-
-  // Supprimer — rouge charte
-  &--delete {
-    &:hover:not(:disabled) { background: $red-light; border-color: #fecaca; }
-  }
+  &--edit       { &:hover:not(:disabled) { background: $blue-light;  border-color: $blue-mid; } }
+  &--activate   { &:hover:not(:disabled) { background: $green-light; border-color: #a7f3d0;  } }
+  &--deactivate { &:hover:not(:disabled) { background: $red-light;   border-color: #fecaca;  } }
+  &--delete     { &:hover:not(:disabled) { background: $red-light;   border-color: #fecaca;  } }
 }
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
@@ -578,7 +577,6 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     justify-content: center;
     flex-shrink: 0;
 
-    // Couleurs icônes selon charte
     &--blue { background: $blue-light; }
     &--cyan { background: $cyan-light; }
     &--red  { background: $red-light;  }
@@ -682,7 +680,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   }
 }
 
-// ── User banner (profil) ──────────────────────────────────────────────────────
+// ── User banner ───────────────────────────────────────────────────────────────
 .user-banner {
   display: flex;
   align-items: center;
@@ -770,69 +768,6 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   }
 }
 
-// ── Notifications ─────────────────────────────────────────────────────────────
-.notif-list { display: flex; flex-direction: column; }
-
-.notif-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: .875rem 0;
-  border-bottom: 1px solid #f3f4f6;
-  &:last-child { border-bottom: none; }
-
-  &__info { flex: 1; }
-
-  &__label {
-    font-size: .875rem;
-    font-weight: 600;
-    color: $text-dark;
-    margin: 0 0 2px;
-  }
-
-  &__desc {
-    font-size: .75rem;
-    color: $text-muted;
-    margin: 0;
-  }
-}
-
-// ── Toggle switch ─────────────────────────────────────────────────────────────
-.toggle {
-  position: relative;
-  display: inline-flex;
-  flex-shrink: 0;
-  cursor: pointer;
-
-  input { position: absolute; opacity: 0; width: 0; height: 0; }
-
-  &__track {
-    display: block;
-    width: 42px;
-    height: 24px;
-    border-radius: 99px;
-    background: #d1d5db;
-    transition: background .2s;
-    position: relative;
-  }
-
-  &__thumb {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,.2);
-    transition: transform .2s;
-  }
-
-  input:checked ~ .toggle__track { background: $blue; }
-  input:checked ~ .toggle__track .toggle__thumb { transform: translateX(18px); }
-}
-
 // ── Toast ─────────────────────────────────────────────────────────────────────
 .toast {
   position: fixed;
@@ -850,17 +785,8 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   max-width: 380px;
   animation: slideToast .2s ease;
 
-  &--success {
-    background: #ecfdf5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
-  }
-
-  &--error {
-    background: $red-light;
-    color: darken($red, 8%);
-    border: 1px solid #fecaca;
-  }
+  &--success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+  &--error   { background: $red-light; color: darken($red, 8%); border: 1px solid #fecaca; }
 }
 
 // ── Loading ───────────────────────────────────────────────────────────────────
@@ -907,7 +833,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
 // ── Animations ────────────────────────────────────────────────────────────────
 .spinning { animation: spin .7s linear infinite; }
 
-@keyframes spin        { to { transform: rotate(360deg); } }
-@keyframes fadeIn      { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp     { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideToast  { from { opacity: 0; transform: translateY(8px);  } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin       { to { transform: rotate(360deg); } }
+@keyframes fadeIn     { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp    { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideToast { from { opacity: 0; transform: translateY(8px); }  to { opacity: 1; transform: translateY(0); } }

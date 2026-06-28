@@ -11,6 +11,8 @@ export interface DashboardStats {
       total_users: number;
       active_users: number;
       new_users_this_month: number;
+      etudiants_count: number;
+      responsables_count: number;
       total_dossiers: number;
       new_dossiers_this_month: number;
       dossiers_par_statut: { [key: string]: number };

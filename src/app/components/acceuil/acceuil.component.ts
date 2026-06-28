@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 import { DashboardService, DashboardStats } from '../../services/dashboard/dashboard.service';
 Chart.register(...registerables);
@@ -22,7 +22,7 @@ export interface Activity {
 @Component({
   selector: 'app-acceuil',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './acceuil.component.html',
   styleUrl: './acceuil.component.scss',
 })

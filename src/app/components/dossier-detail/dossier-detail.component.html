@@ -7,7 +7,7 @@
             [class.info]="notification.type === 'info'" [class.hiding]="!notification.show"
             (click)="dismissNotification(notification.id)">
             <span class="notification-message">{{ notification.message }}</span>
-            <button class="notification-close" aria-label="Fermer">
+            <button class="notification-close" aria-label="{{ 'DOSSIER_DETAIL.CLOSE' | translate }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -20,7 +20,7 @@
     <!-- Loading -->
     <div class="loading-state" *ngIf="isLoading()">
         <div class="spinner"></div>
-        <p>Chargement du dossier...</p>
+        <p>{{ 'DOSSIER_DETAIL.LOADING' | translate }}</p>
     </div>
 
     <!-- Error -->
@@ -32,7 +32,7 @@
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
         <p>{{ error() }}</p>
-        <button class="btn btn--outline" (click)="goBack()">Retour</button>
+        <button class="btn btn--outline" (click)="goBack()">{{ 'DOSSIER_DETAIL.BACK' | translate }}</button>
     </div>
 
     <!-- Content -->
@@ -45,7 +45,7 @@
                     stroke="currentColor" stroke-width="2">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
-                Retour
+                {{ 'DOSSIER_DETAIL.BACK' | translate }}
             </button>
 
             <div class="header-info">
@@ -66,7 +66,7 @@
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                     </svg>
-                    Modifier le statut
+                    {{ 'DOSSIER_DETAIL.MODIFY_STATUS' | translate }}
                 </button>
             </div>
         </div>
@@ -85,28 +85,28 @@
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        Informations personnelles
+                        {{ 'DOSSIER_DETAIL.PERSONAL_INFO' | translate }}
                     </h3>
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">Email</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.EMAIL' | translate }}</span>
                             <span class="info-value">{{ dossier()!.email }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Téléphone</span>
-                            <span class="info-value">{{ dossier()!.telephone || 'Non renseigné' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.PHONE' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.telephone || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Date de naissance</span>
-                            <span class="info-value">{{ dossier()!.date_naissance || 'Non renseignée' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.BIRTH_DATE' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.date_naissance || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Nationalité</span>
-                            <span class="info-value">{{ dossier()!.nationalite || 'Non renseignée' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.NATIONALITY' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.nationalite || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                         <div class="info-item full-width">
-                            <span class="info-label">Adresse</span>
-                            <span class="info-value">{{ dossier()!.adresse || 'Non renseignée' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.ADDRESS' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.adresse || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                     </div>
                 </div>
@@ -119,25 +119,25 @@
                             <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
                             <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
                         </svg>
-                        Informations académiques
+                        {{ 'DOSSIER_DETAIL.ACADEMIC_INFO' | translate }}
                     </h3>
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">Niveau d'études</span>
-                            <span class="info-value">{{ dossier()!.niveau_etudes || 'Non renseigné' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.EDUCATION_LEVEL' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.niveau_etudes || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Domaine</span>
-                            <span class="info-value">{{ dossier()!.domaine_etudes || 'Non renseigné' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.FIELD' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.domaine_etudes || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Moyenne générale</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.GENERAL_AVERAGE' | translate }}</span>
                             <span class="info-value">{{ dossier()!.moyenne_generale ? dossier()!.moyenne_generale +
-                                '/20' : 'Non renseignée' }}</span>
+                                '/20' : ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                         <div class="info-item full-width">
-                            <span class="info-label">Établissement actuel</span>
-                            <span class="info-value">{{ dossier()!.etablissement_actuel || 'Non renseigné' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.CURRENT_INSTITUTION' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.etablissement_actuel || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                     </div>
                 </div>
@@ -150,20 +150,20 @@
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                         </svg>
-                        Informations professionnelles
+                        {{ 'DOSSIER_DETAIL.PROFESSIONAL_INFO' | translate }}
                     </h3>
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">Entreprise</span>
-                            <span class="info-value">{{ dossier()!.entreprise || 'Non renseignée' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.COMPANY' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.entreprise || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Poste</span>
-                            <span class="info-value">{{ dossier()!.poste || 'Non renseigné' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.POSITION' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.poste || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                         <div class="info-item full-width">
-                            <span class="info-label">Secteur d'activité</span>
-                            <span class="info-value">{{ dossier()!.secteur_activite || 'Non renseigné' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.BUSINESS_SECTOR' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.secteur_activite || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                     </div>
                 </div>
@@ -179,17 +179,16 @@
                             <path d="M15 12h2"></path>
                             <path d="M7 16h10"></path>
                         </svg>
-                        Passeport
+                        {{ 'DOSSIER_DETAIL.PASSPORT' | translate }}
                     </h3>
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">Numéro</span>
-                            <span class="info-value">{{ dossier()!.numero_passeport || 'Non renseigné' }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.PASSPORT_NUMBER' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.numero_passeport || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Expiration</span>
-                            <span class="info-value">{{ dossier()!.date_expiration_passeport || 'Non renseignée'
-                                }}</span>
+                            <span class="info-label">{{ 'DOSSIER_DETAIL.PASSPORT_EXPIRATION' | translate }}</span>
+                            <span class="info-value">{{ dossier()!.date_expiration_passeport || ('DOSSIER_DETAIL.NOT_SPECIFIED' | translate) }}</span>
                         </div>
                     </div>
                 </div>
@@ -205,7 +204,7 @@
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        Conseiller assigné
+                        {{ 'DOSSIER_DETAIL.ASSIGNED_ADVISOR' | translate }}
                     </h3>
 
                     @if (dossier()!.conseiller_nom) {
@@ -215,11 +214,11 @@
                         </div>
                         <div>
                             <p class="conseiller-name">{{ dossier()!.conseiller_nom }}</p>
-                            <p class="conseiller-role">Conseiller</p>
+                            <p class="conseiller-role">{{ 'DOSSIER_DETAIL.ADVISOR' | translate }}</p>
                         </div>
                     </div>
                     } @else {
-                    <p class="no-conseiller">Aucun conseiller assigné</p>
+                    <p class="no-conseiller">{{ 'DOSSIER_DETAIL.NO_ADVISOR' | translate }}</p>
                     }
                 </div>
 
@@ -236,7 +235,7 @@
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                 <polyline points="14 2 14 8 20 8"></polyline>
                             </svg>
-                            Documents ({{ dossier()!.nombre_documents }})
+                            {{ 'DOSSIER_DETAIL.DOCUMENTS' | translate }} ({{ dossier()!.nombre_documents }})
                         </h3>
                     </div>
 
@@ -255,7 +254,7 @@
                                     {{ doc.nom_fichier }} • {{ formatFileSize(doc.taille_fichier) }}
                                 </p>
                                 <p class="document-date">
-                                    Uploadé le {{ formatDate(doc.date_upload) }}
+                                    {{ 'DOSSIER_DETAIL.UPLOADED_ON' | translate }} {{ formatDate(doc.date_upload) }}
                                 </p>
                             </div>
                             <div class="document-status">
@@ -282,7 +281,7 @@
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>
                         </svg>
-                        <p>Aucun document uploadé</p>
+                        <p>{{ 'DOSSIER_DETAIL.NO_DOCUMENTS' | translate }}</p>
                     </div>
                 </div>
 
@@ -296,7 +295,7 @@
                             <line x1="16" y1="13" x2="8" y2="13"></line>
                             <line x1="16" y1="17" x2="8" y2="17"></line>
                         </svg>
-                        Notes internes
+                        {{ 'DOSSIER_DETAIL.INTERNAL_NOTES' | translate }}
                     </h3>
                     <p class="notes-content">{{ dossier()!.notes_internes }}</p>
                 </div>
@@ -309,15 +308,15 @@
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        Métadonnées
+                        {{ 'DOSSIER_DETAIL.METADATA' | translate }}
                     </h3>
                     <div class="metadata-grid">
                         <div class="metadata-item">
-                            <span class="metadata-label">Créé le</span>
+                            <span class="metadata-label">{{ 'DOSSIER_DETAIL.CREATED_ON' | translate }}</span>
                             <span class="metadata-value">{{ formatDate(dossier()!.date_creation) }}</span>
                         </div>
                         <div class="metadata-item">
-                            <span class="metadata-label">Modifié le</span>
+                            <span class="metadata-label">{{ 'DOSSIER_DETAIL.MODIFIED_ON' | translate }}</span>
                             <span class="metadata-value">{{ formatDate(dossier()!.date_modification) }}</span>
                         </div>
                     </div>
@@ -343,8 +342,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="modal__title">Modifier le dossier</h2>
-                        <p class="modal__subtitle">Changez le statut, assignez un conseiller, ajoutez des notes</p>
+                        <h2 class="modal__title">{{ 'DOSSIER_DETAIL.MODAL_TITLE' | translate }}</h2>
+                        <p class="modal__subtitle">{{ 'DOSSIER_DETAIL.MODAL_SUBTITLE' | translate }}</p>
                     </div>
                 </div>
                 <button class="modal__close" (click)="closeStatusModal()">
@@ -359,7 +358,7 @@
             <div class="modal__body">
 
                 <div class="form__group">
-                    <label class="form__label">Statut</label>
+                    <label class="form__label">{{ 'DOSSIER_DETAIL.STATUS_LABEL' | translate }}</label>
                     <div class="form__select-wrap">
                         <select class="form__input form__select" [(ngModel)]="newStatus">
                             <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
@@ -368,10 +367,10 @@
                 </div>
 
                 <div class="form__group">
-                    <label class="form__label">Conseiller assigné</label>
+                    <label class="form__label">{{ 'DOSSIER_DETAIL.ASSIGNED_ADVISOR_LABEL' | translate }}</label>
                     <div class="form__select-wrap">
                         <select class="form__input form__select" [(ngModel)]="conseillerAssigne">
-                            <option [ngValue]="null">Aucun conseiller</option>
+                            <option [ngValue]="null">{{ 'DOSSIER_DETAIL.NO_ADVISOR_OPTION' | translate }}</option>
                             <option *ngFor="let c of conseillers()" [ngValue]="c.id">
                                 {{ c.first_name }} {{ c.last_name }} ({{ c.email }})
                             </option>
@@ -380,18 +379,18 @@
                 </div>
 
                 <div class="form__group">
-                    <label class="form__label">Notes internes</label>
+                    <label class="form__label">{{ 'DOSSIER_DETAIL.INTERNAL_NOTES_LABEL' | translate }}</label>
                     <textarea class="form__input form__textarea" [(ngModel)]="notesInternes"
-                        placeholder="Ajoutez des notes internes visibles uniquement par les conseillers et admins..."
+                        placeholder="{{ 'DOSSIER_DETAIL.INTERNAL_NOTES_PLACEHOLDER' | translate }}"
                         rows="4"></textarea>
                 </div>
 
             </div>
 
             <div class="modal__actions">
-                <button class="btn btn--outline" (click)="closeStatusModal()">Annuler</button>
+                <button class="btn btn--outline" (click)="closeStatusModal()">{{ 'DOSSIER_DETAIL.CANCEL' | translate }}</button>
                 <button class="btn btn--primary" (click)="updateStatus()">
-                    Enregistrer les modifications
+                    {{ 'DOSSIER_DETAIL.SAVE_CHANGES' | translate }}
                 </button>
             </div>
 
@@ -412,7 +411,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="modal__title">Vérifier le document</h2>
+                        <h2 class="modal__title">{{ 'DOSSIER_DETAIL.VERIFICATION_MODAL_TITLE' | translate }}</h2>
                         <p class="modal__subtitle">{{ selectedDocument()?.type_document_display }} - {{ selectedDocument()?.nom_fichier }}</p>
                     </div>
                 </div>
@@ -434,7 +433,7 @@
                             <polyline points="15 3 21 3 21 9"></polyline>
                             <line x1="10" y1="14" x2="21" y2="3"></line>
                         </svg>
-                        Ouvrir le document
+                        {{ 'DOSSIER_DETAIL.OPEN_DOCUMENT' | translate }}
                     </button>
                     <button class="btn btn--outline" (click)="downloadDocument()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -443,15 +442,15 @@
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
                         </svg>
-                        Télécharger
+                        {{ 'DOSSIER_DETAIL.DOWNLOAD' | translate }}
                     </button>
                 </div>
 
                 <div class="verification-form">
-                    <h3 class="form-section-title">Statut de vérification</h3>
+                    <h3 class="form-section-title">{{ 'DOSSIER_DETAIL.VERIFICATION_FORM_TITLE' | translate }}</h3>
 
                     <div class="form__group">
-                        <label class="form__label">Statut</label>
+                        <label class="form__label">{{ 'DOSSIER_DETAIL.STATUS' | translate }}</label>
                         <div class="form__select-wrap">
                             <select class="form__input form__select" [(ngModel)]="documentStatut">
                                 <option *ngFor="let s of documentStatutOptions" [value]="s.value">{{ s.label }}</option>
@@ -460,17 +459,17 @@
                     </div>
 
                     <div class="form__group">
-                        <label class="form__label">Commentaire (optionnel)</label>
+                        <label class="form__label">{{ 'DOSSIER_DETAIL.COMMENT' | translate }}</label>
                         <textarea class="form__input form__textarea" [(ngModel)]="documentCommentaire"
-                            placeholder="Ajoutez un commentaire sur la vérification..." rows="3"></textarea>
+                            placeholder="{{ 'DOSSIER_DETAIL.COMMENT_PLACEHOLDER' | translate }}" rows="3"></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="modal__actions">
-                <button class="btn btn--outline" (click)="closeVerificationModal()">Annuler</button>
+                <button class="btn btn--outline" (click)="closeVerificationModal()">{{ 'DOSSIER_DETAIL.CANCEL' | translate }}</button>
                 <button class="btn btn--primary" (click)="verifyDocument()">
-                    Valider la vérification
+                    {{ 'DOSSIER_DETAIL.VALIDATE_VERIFICATION' | translate }}
                 </button>
             </div>
 

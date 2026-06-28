@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { DossierDetailService, Conseiller } from '../../services/dossier/dossier-detail.service';
 import { DossierAdmin, DocumentDossier } from '../../services/dossier/dossier.service';
@@ -10,7 +11,7 @@ import { DossierAdmin, DocumentDossier } from '../../services/dossier/dossier.se
 @Component({
   selector: 'app-dossier-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule],
   templateUrl: './dossier-detail.component.html',
   styleUrls: ['./dossier-detail.component.scss'],
 })
@@ -20,6 +21,7 @@ export class DossierDetailComponent implements OnInit {
   private router = inject(Router);
   private location = inject(Location);
   private dossierDetailService = inject(DossierDetailService);
+  private translate = inject(TranslateService);
 
   // ── State ─────────────────────────────────────────────────────
   dossier = signal<DossierAdmin | null>(null);
@@ -147,7 +149,7 @@ export class DossierDetailComponent implements OnInit {
     }
 
     if (Object.keys(payload).length === 0) {
-      this.showNotification('Aucune modification détectée', 'info');
+      this.showNotification(this.translate.instant('DOSSIER_DETAIL.NO_CHANGES'), 'info');
       this.closeStatusModal();
       return;
     }
@@ -156,11 +158,11 @@ export class DossierDetailComponent implements OnInit {
       next: (updated) => {
         this.dossier.set(updated);
         this.closeStatusModal();
-        this.showNotification('Dossier mis à jour avec succès', 'success');
+        this.showNotification(this.translate.instant('DOSSIER_DETAIL.DOSSIER_UPDATED'), 'success');
       },
       error: (err) => {
         console.error(err);
-        this.showNotification('Erreur lors de la mise à jour', 'error');
+        this.showNotification(this.translate.instant('DOSSIER_DETAIL.UPDATE_ERROR'), 'error');
       }
     });
   }
@@ -213,11 +215,11 @@ export class DossierDetailComponent implements OnInit {
         this.dossier.set({ ...dossier, documents: docs });
 
         this.closeVerificationModal();
-        this.showNotification('Document vérifié avec succès', 'success');
+        this.showNotification(this.translate.instant('DOSSIER_DETAIL.DOCUMENT_VERIFIED'), 'success');
       },
       error: (err) => {
         console.error(err);
-        this.showNotification('Erreur lors de la vérification', 'error');
+        this.showNotification(this.translate.instant('DOSSIER_DETAIL.VERIFICATION_ERROR'), 'error');
       }
     });
   }

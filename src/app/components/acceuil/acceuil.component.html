@@ -39,6 +39,7 @@
     <div class="kpi-grid">
 
         <!-- Total utilisateurs -->
+        <!-- Total étudiants -->
         <div class="kpi-card kpi-card--blue">
             <div class="kpi-card__top">
                 <span class="kpi-card__label">Total étudiants</span>
@@ -56,6 +57,16 @@
             <span class="kpi-card__badge kpi-card__badge--green">
                 +{{ data.kpis.new_users_this_month }} ce mois
             </span>
+            <div class="kpi-card__detail">
+                <span class="kpi-detail-item">
+                    <span class="kpi-detail-label">Étudiants</span>
+                    <span class="kpi-detail-value">{{ data.kpis.etudiants_count }}</span>
+                </span>
+                <span class="kpi-detail-item">
+                    <span class="kpi-detail-label">Responsables</span>
+                    <span class="kpi-detail-value">{{ data.kpis.responsables_count }}</span>
+                </span>
+            </div>
         </div>
 
         <!-- Dossiers -->

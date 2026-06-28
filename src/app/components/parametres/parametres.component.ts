@@ -1,28 +1,64 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, effect } from '@angular/core';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import {
   FormsModule, ReactiveFormsModule,
   FormBuilder, FormGroup, Validators, AbstractControl,
 } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService, UserInfo, UpdateProfilePayload } from '../../services/auth/auth.service';
 import { ConseillerService, Conseiller, ConseillerUpdatePayload } from '../../services/conseiller/conseiller.service';
+import { LanguageService, AppLanguage, LanguageOption } from '../../services/language/language.service';
+import { DateFormatExamplePipe } from '../../pipes/date-format-example.pipe';
 
 // ── SVG icons ─────────────────────────────────────────────────────────────────
 const ICON = {
   user: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
   shield: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-  bell: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
   globe: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
   palette: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`,
 };
 
 export interface Tab { id: string; label: string; icon: string; }
-export interface NotifPref { key: string; label: string; desc: string; enabled: boolean; }
+
+// ── Format de date par langue ──────────────────────────────────────────────────
+//   Chaque langue dispose de plusieurs variantes proposées dans le select.
+//   La première entrée de chaque tableau est le format par défaut appliqué
+//   automatiquement lors du changement de langue.
+export interface DateFormatOption {
+  value: string;   // valeur stockée / utilisée par les pipes
+  label: string;   // affiché dans le <select>
+  example: string; // exemple concret affiché à l'utilisateur
+}
+
+const DATE_FORMATS_BY_LANG: Record<AppLanguage, DateFormatOption[]> = {
+  // ── Système francophone ──────────────────────────────────────
+  fr: [
+    { value: 'DD/MM/YYYY',         label: 'Jour/Mois/Année (JJ/MM/AAAA)',   example: '25/06/2025' },
+    { value: 'DD MMMM YYYY',       label: 'Littéral complet',               example: '25 juin 2025' },
+    { value: 'DD/MM/YYYY HH:mm',   label: 'Date + heure',                   example: '25/06/2025 14:30' },
+    { value: 'DD-MM-YYYY',         label: 'Tirets (JJ-MM-AAAA)',            example: '25-06-2025' },
+  ],
+  // ── Système anglophone ───────────────────────────────────────
+  en: [
+    { value: 'MM/DD/YYYY',         label: 'Month/Day/Year (MM/DD/YYYY)',    example: '06/25/2025' },
+    { value: 'MMMM D, YYYY',       label: 'Long form',                      example: 'June 25, 2025' },
+    { value: 'MMM D, YYYY',        label: 'Short month',                    example: 'Jun 25, 2025' },
+    { value: 'YYYY-MM-DD',         label: 'ISO 8601',                       example: '2025-06-25' },
+    { value: 'MM/DD/YYYY h:mm A',  label: 'Date + time (12 h)',             example: '06/25/2025 2:30 PM' },
+  ],
+  // ── Système asiatique / chinois ──────────────────────────────
+  zh: [
+    { value: 'YYYY年MM月DD日',      label: '年月日 (標準中文)',               example: '2025年06月25日' },
+    { value: 'YYYY/MM/DD',         label: '年/月/日 (ISO 式)',               example: '2025/06/25' },
+    { value: 'YYYY-MM-DD',         label: 'YYYY-MM-DD (ISO 8601)',          example: '2025-06-25' },
+    { value: 'YYYY年MM月DD日 HH:mm', label: '年月日 + 時間',                example: '2025年06月25日 14:30' },
+  ],
+};
 
 @Component({
   selector: 'app-parametres',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TitleCasePipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TitleCasePipe, TranslatePipe, DateFormatExamplePipe],
   templateUrl: './parametres.component.html',
   styleUrls: ['./parametres.component.scss'],
 })
@@ -31,6 +67,14 @@ export class ParametresComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private conseillerService = inject(ConseillerService);
+  private languageService = inject(LanguageService);
+
+  // ── Langue ────────────────────────────────────────────────────
+  readonly languageOptions: LanguageOption[] = this.languageService.options;
+
+  // ── Formats de date disponibles (réactif à la langue) ────────
+  //   Initialisé pour la langue courante ; mis à jour par onLanguageChange().
+  dateFormatOptions: DateFormatOption[] = DATE_FORMATS_BY_LANG[this.languageService.currentLang()];
 
   // ── Auth shortcuts ────────────────────────────────────────────
   get currentUser(): UserInfo | null { return this.authService.currentUser(); }
@@ -45,22 +89,19 @@ export class ParametresComponent implements OnInit {
     return (f + l).toUpperCase() || u.email.charAt(0).toUpperCase();
   }
 
-  // ── Tabs ──────────────────────────────────────────────────────
+  // ── Tabs (onglet "notifications" retiré) ──────────────────────
   activeTab = 'profile';
 
   readonly tabs: Tab[] = [
-    { id: 'profile', label: 'Profil', icon: ICON.user },
-    { id: 'security', label: 'Sécurité', icon: ICON.shield },
-    { id: 'notifications', label: 'Notifications', icon: ICON.bell },
-    { id: 'system', label: 'Système', icon: ICON.globe },
-    { id: 'appearance', label: 'Apparence', icon: ICON.palette },
+    { id: 'profile',    label: 'Profil',     icon: ICON.user    },
+    { id: 'security',   label: 'Sécurité',   icon: ICON.shield  },
+    { id: 'system',     label: 'Système',    icon: ICON.globe   },
   ];
 
   // ── Forms ─────────────────────────────────────────────────────
   profileForm!: FormGroup;
   passwordForm!: FormGroup;
   systemForm!: FormGroup;
-  appearanceForm!: FormGroup;
   advisorForm!: FormGroup;
   editForm!: FormGroup;
 
@@ -72,62 +113,57 @@ export class ParametresComponent implements OnInit {
   constructor() {
     this.profileForm = this.fb.group({
       firstName: [''],
-      lastName: [''],
-      email: ['', [Validators.required, Validators.email]],
-      phone: [''],
-      adresse: [''],
+      lastName:  [''],
+      email:     ['', [Validators.required, Validators.email]],
+      phone:     [''],
+      adresse:   [''],
     });
 
     this.passwordForm = this.fb.group({
       currentPassword: ['', Validators.required],
-      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      newPassword:     ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
     });
 
-    this.systemForm = this.fb.group({
-      language: ['fr'],
-      timezone: ['utc1'],
-      dateFormat: ['DD/MM/YYYY'],
-    });
+    // systemForm : la valeur initiale de dateFormat correspond au 1er format
+    // de la langue courante (fr par défaut → 'DD/MM/YYYY').
+    const currentLang = this.languageService.currentLang();
+    const defaultFormat = DATE_FORMATS_BY_LANG[currentLang][0].value;
 
-    this.appearanceForm = this.fb.group({
-      theme: ['light'],
-      sidebarPosition: ['left'],
+    this.systemForm = this.fb.group({
+      language:   [currentLang],
+      timezone:   ['utc1'],
+      dateFormat: [defaultFormat],
     });
 
     this.advisorForm = this.fb.group({
-      username: ['', Validators.required],
+      username:  ['', Validators.required],
       firstName: [''],
-      lastName: [''],
-      email: ['', [Validators.required, Validators.email]],
-      phone: [''],
-      adresse: [''],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      lastName:  [''],
+      email:     ['', [Validators.required, Validators.email]],
+      phone:     [''],
+      adresse:   [''],
+      password:  ['', [Validators.required, Validators.minLength(8)]],
       password2: ['', Validators.required],
     }, { validators: this._passwordsMatch });
 
     this.editForm = this.fb.group({
       firstName: [''],
-      lastName: [''],
-      email: ['', [Validators.required, Validators.email]],
+      lastName:  [''],
+      email:     ['', [Validators.required, Validators.email]],
       telephone: [''],
-      adresse: [''],
-      role: ['conseiller'],
+      adresse:   [''],
+      role:      ['conseiller'],
     });
   }
 
   // ── Lifecycle ─────────────────────────────────────────────────
   ngOnInit(): void {
-    // 1. Pré-remplir depuis le signal (données JWT)
     this._patchProfileForm(this.currentUser);
 
-    // 2. Récupérer les données complètes depuis l'API (telephone, adresse non stockés dans JWT)
     this.authService.fetchProfile().subscribe({
-      next: (apiUser) => {
-        // fetchProfile met à jour le signal → on re-patche le form avec les données complètes
-        this._patchProfileFormFromApi(apiUser);
-      },
-      error: () => { /* non bloquant : le form reste pré-rempli depuis le JWT */ },
+      next:  (apiUser) => this._patchProfileFormFromApi(apiUser),
+      error: () => { /* non bloquant */ },
     });
 
     if (this.isAdmin) this.loadConseillers();
@@ -135,37 +171,32 @@ export class ParametresComponent implements OnInit {
 
   // ── Profile ───────────────────────────────────────────────────
 
-  /** Pré-remplit le formulaire depuis le signal UserInfo */
   private _patchProfileForm(u: UserInfo | null): void {
     if (!u) return;
     this.profileForm.patchValue({
-      firstName: u.firstName ?? '',
-      lastName: u.lastName ?? '',
-      email: u.email ?? '',
-      phone: u.telephone ?? '',
-      adresse: u.adresse ?? '',
+      firstName: u.firstName  ?? '',
+      lastName:  u.lastName   ?? '',
+      email:     u.email      ?? '',
+      phone:     u.telephone  ?? '',
+      adresse:   u.adresse    ?? '',
     });
   }
 
-  /** Pré-remplit le formulaire depuis l'objet ApiUser complet */
   private _patchProfileFormFromApi(apiUser: {
     first_name: string; last_name: string; email: string;
     telephone: string | null; adresse: string | null;
   }): void {
     this.profileForm.patchValue({
-      firstName: apiUser.first_name ?? '',
-      lastName: apiUser.last_name ?? '',
-      email: apiUser.email ?? '',
-      phone: apiUser.telephone ?? '',
-      adresse: apiUser.adresse ?? '',
+      firstName: apiUser.first_name  ?? '',
+      lastName:  apiUser.last_name   ?? '',
+      email:     apiUser.email       ?? '',
+      phone:     apiUser.telephone   ?? '',
+      adresse:   apiUser.adresse     ?? '',
     });
   }
 
   saveProfile(): void {
-    if (this.profileForm.invalid) {
-      this.profileForm.markAllAsTouched();
-      return;
-    }
+    if (this.profileForm.invalid) { this.profileForm.markAllAsTouched(); return; }
 
     this.profileLoading = true;
     this.profileSuccess = false;
@@ -173,21 +204,17 @@ export class ParametresComponent implements OnInit {
 
     const v = this.profileForm.value;
     const payload: UpdateProfilePayload = {};
-
-    // N'envoyer que les champs modifiés (évite les 400 inutiles)
     if (v.firstName !== undefined) payload.first_name = v.firstName;
-    if (v.lastName !== undefined) payload.last_name = v.lastName;
-    if (v.email !== undefined) payload.email = v.email;
-    if (v.phone !== undefined) payload.telephone = v.phone;
-    if (v.adresse !== undefined) payload.adresse = v.adresse;
+    if (v.lastName  !== undefined) payload.last_name  = v.lastName;
+    if (v.email     !== undefined) payload.email      = v.email;
+    if (v.phone     !== undefined) payload.telephone  = v.phone;
+    if (v.adresse   !== undefined) payload.adresse    = v.adresse;
 
     this.authService.updateProfile(payload).subscribe({
-      next: (res) => {
+      next: () => {
         this.profileLoading = false;
         this.profileSuccess = true;
-        // Le signal currentUser est mis à jour automatiquement dans updateProfile()
         this._showProfileToast('Profil mis à jour avec succès.', 'success');
-        // Réinitialiser le statut succès après 3 sec
         setTimeout(() => { this.profileSuccess = false; }, 3000);
       },
       error: (err) => {
@@ -218,7 +245,6 @@ export class ParametresComponent implements OnInit {
     return !!c && c.invalid && c.touched;
   }
 
-  // ── Profile toast (séparé du toast conseillers) ───────────────
   profileToast: { message: string; type: 'success' | 'error' } | null = null;
   private profileToastTimer: any;
 
@@ -247,7 +273,6 @@ export class ParametresComponent implements OnInit {
     this.conseillersError = '';
     this.conseillerService.getConseillers().subscribe({
       next: (data) => {
-        // ✅ Filtrer uniquement admin et conseiller (exclure responsable)
         this.conseillers = (Array.isArray(data) ? data : [])
           .filter(u => u.role === 'conseiller' || u.role === 'admin');
         this.conseillersLoading = false;
@@ -258,8 +283,7 @@ export class ParametresComponent implements OnInit {
       },
     });
   }
-  
-  // ── Toggle activer / désactiver conseiller ────────────────────
+
   toggleActive(conseiller: Conseiller): void {
     if (!this.isAdmin || this.togglingId === conseiller.id) return;
     const newState = !conseiller.is_active;
@@ -295,15 +319,8 @@ export class ParametresComponent implements OnInit {
   deleteTarget: Conseiller | null = null;
   deleteLoading = false;
 
-  confirmDelete(c: Conseiller): void {
-    this.deleteTarget = c;
-    this.showDeleteConfirm = true;
-  }
-
-  cancelDelete(): void {
-    this.showDeleteConfirm = false;
-    this.deleteTarget = null;
-  }
+  confirmDelete(c: Conseiller): void { this.deleteTarget = c; this.showDeleteConfirm = true; }
+  cancelDelete():  void { this.showDeleteConfirm = false; this.deleteTarget = null; }
 
   doDelete(): void {
     if (!this.deleteTarget || this.deleteLoading) return;
@@ -333,22 +350,22 @@ export class ParametresComponent implements OnInit {
   editError = '';
 
   readonly roleOptions = [
-    { value: 'conseiller', label: 'Conseiller' },
-    { value: 'responsable', label: 'Responsable' },
-    { value: 'admin', label: 'Administrateur' },
+    { value: 'conseiller',  label: 'Conseiller'    },
+    { value: 'responsable', label: 'Responsable'   },
+    { value: 'admin',       label: 'Administrateur'},
   ];
 
   openEditModal(c: Conseiller): void {
-    this.editTarget = c;
+    this.editTarget  = c;
     this.editSuccess = false;
-    this.editError = '';
+    this.editError   = '';
     this.editForm.patchValue({
       firstName: c.first_name,
-      lastName: c.last_name,
-      email: c.email,
+      lastName:  c.last_name,
+      email:     c.email,
       telephone: c.telephone ?? '',
-      adresse: c.adresse ?? '',
-      role: c.role,
+      adresse:   c.adresse   ?? '',
+      role:      c.role,
     });
     this.showEditModal = true;
   }
@@ -369,17 +386,17 @@ export class ParametresComponent implements OnInit {
     if (!this.editTarget) return;
 
     this.editLoading = true;
-    this.editError = '';
+    this.editError   = '';
     this.editSuccess = false;
 
     const v = this.editForm.value;
     const payload: ConseillerUpdatePayload = {
       first_name: v.firstName || undefined,
-      last_name: v.lastName || undefined,
-      email: v.email,
-      telephone: v.telephone || undefined,
-      adresse: v.adresse || undefined,
-      role: v.role,
+      last_name:  v.lastName  || undefined,
+      email:      v.email,
+      telephone:  v.telephone || undefined,
+      adresse:    v.adresse   || undefined,
+      role:       v.role,
     };
 
     this.conseillerService.updateConseiller(this.editTarget.id, payload).subscribe({
@@ -409,7 +426,7 @@ export class ParametresComponent implements OnInit {
   private _showToast(message: string, type: 'success' | 'error'): void {
     clearTimeout(this.toastTimer);
     this.toggleToast = { message, type };
-    this.toastTimer = setTimeout(() => { this.toggleToast = null; }, 3500);
+    this.toastTimer  = setTimeout(() => { this.toggleToast = null; }, 3500);
   }
 
   getFullName(c: Conseiller): string {
@@ -417,34 +434,46 @@ export class ParametresComponent implements OnInit {
     return name || c.username;
   }
 
-  // ── Notifications ─────────────────────────────────────────────
-  notifPrefs: NotifPref[] = [
-    { key: 'email', label: 'Notifications Email', desc: 'Recevoir les alertes par email', enabled: true },
-    { key: 'sms', label: 'Notifications SMS', desc: 'Recevoir les alertes par SMS', enabled: true },
-    { key: 'cases', label: 'Mises à jour dossiers', desc: 'Notifications sur les changements de statut', enabled: true },
-    { key: 'docs', label: 'Approbations documents', desc: 'Alertes lors de la validation de documents', enabled: true },
-    { key: 'tasks', label: 'Affectation de tâches', desc: 'Notifications lors de nouvelles tâches', enabled: false },
-  ];
+  // ── Système : langue + format de date ────────────────────────
 
-  // ── System ────────────────────────────────────────────────────
+  /**
+   * Appelé dès qu'on change la langue dans le <select>.
+   *
+   * Effet cascade automatique :
+   *  1. Applique la nouvelle langue à l'interface (TranslateService).
+   *  2. Met à jour la liste dateFormatOptions avec les formats de la nouvelle langue.
+   *  3. Pré-sélectionne automatiquement le 1er format (celui recommandé pour
+   *     cette langue) dans le champ "Format de date".
+   */
+  onLanguageChange(lang: AppLanguage): void {
+    // 1 — appliquer la langue à l'interface
+    this.languageService.setLanguage(lang, this.currentUser?.id ?? null);
+
+    // 2 — mettre à jour la liste des formats disponibles
+    this.dateFormatOptions = DATE_FORMATS_BY_LANG[lang];
+
+    // 3 — pré-sélectionner le format par défaut de cette langue
+    const defaultFormat = this.dateFormatOptions[0].value;
+    this.systemForm.patchValue({ dateFormat: defaultFormat });
+  }
+
   saveSystem(): void { console.log('Système', this.systemForm.value); }
 
-  // ── Appearance ────────────────────────────────────────────────
+  // ── Apparence ─────────────────────────────────────────────────
   readonly accentColors = ['#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
   selectedAccent = '#2563EB';
-  saveAppearance(): void { console.log('Apparence', { ...this.appearanceForm.value, accent: this.selectedAccent }); }
 
   // ── Advisor modal (créer conseiller) ──────────────────────────
-  showAdvisorModal = false;
-  advisorLoading = false;
-  advisorSuccess = false;
-  advisorError = '';
+  showAdvisorModal  = false;
+  advisorLoading    = false;
+  advisorSuccess    = false;
+  advisorError      = '';
   showAdvisorPassword = false;
 
   openAdvisorModal(): void {
     this.advisorForm.reset();
     this.advisorSuccess = false;
-    this.advisorError = '';
+    this.advisorError   = '';
     this.showAdvisorModal = true;
   }
 
@@ -459,7 +488,7 @@ export class ParametresComponent implements OnInit {
   }
 
   private _passwordsMatch(group: FormGroup) {
-    const pwd = group.get('password')?.value;
+    const pwd  = group.get('password')?.value;
     const pwd2 = group.get('password2')?.value;
     return pwd && pwd2 && pwd !== pwd2 ? { passwordsMismatch: true } : null;
   }
@@ -471,20 +500,20 @@ export class ParametresComponent implements OnInit {
   submitAdvisor(): void {
     if (this.advisorForm.invalid) { this.advisorForm.markAllAsTouched(); return; }
     this.advisorLoading = true;
-    this.advisorError = '';
+    this.advisorError   = '';
     this.advisorSuccess = false;
 
     const v = this.advisorForm.value;
     this.authService.createConseiller({
-      username: v.username,
-      email: v.email,
-      password: v.password,
-      password2: v.password2,
-      role: 'conseiller',
+      username:   v.username,
+      email:      v.email,
+      password:   v.password,
+      password2:  v.password2,
+      role:       'conseiller',
       first_name: v.firstName || undefined,
-      last_name: v.lastName || undefined,
-      telephone: v.phone || undefined,
-      adresse: v.adresse || undefined,
+      last_name:  v.lastName  || undefined,
+      telephone:  v.phone     || undefined,
+      adresse:    v.adresse   || undefined,
     }).subscribe({
       next: () => {
         this.advisorLoading = false;
