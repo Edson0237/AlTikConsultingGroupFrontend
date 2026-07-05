@@ -80,7 +80,7 @@
           (click)="toggleUserMenu()"
           [attr.aria-expanded]="showUserMenu"
           aria-haspopup="true"
-          aria-label="Menu utilisateur"
+          aria-label="{{ 'HEADER.USER_MENU' | translate }}"
         >
           <!-- Avatar initiales -->
           <div class="header__avatar">{{ userInitials }}</div>
@@ -119,7 +119,7 @@
             <div>
               <p class="header__dropdown-name">{{ userFullName }}</p>
               <p class="header__dropdown-email">{{ userEmail }}</p>
-              <span class="header__dropdown-role" [ngClass]="'header__dropdown-role--' + (userRole ?? 'admin')">
+              <span class="header__dropdown-role" [ngClass]="'header__dropdown-role--' + (userRole)">
                 {{ userRole | titlecase }}
               </span>
             </div>

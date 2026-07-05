@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { DossierService, DossierAdmin, DossierStatus, DossierFilters, TypeDossier } from '../../services/dossier/dossier.service';
 import { Router } from '@angular/router';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 // ── Interfaces ──────────────────────────────────────────────────────────────
 
@@ -22,28 +23,29 @@ export interface Notification {
 // ── Options pour les filtres ────────────────────────────────────────────────
 
 export const STATUS_OPTIONS: { value: DossierStatus | ''; label: string }[] = [
-  { value: '', label: 'Tous les statuts' },
-  { value: 'brouillon', label: 'Brouillon' },
-  { value: 'en_cours', label: 'En cours' },
-  { value: 'complete', label: 'Complet' },
-  { value: 'valide', label: 'Validé' },
-  { value: 'rejete', label: 'Rejeté' },
+  { value: '', label: 'SCHOLARSHIP.ALL_STATUSES' },
+  { value: 'brouillon', label: 'SCHOLARSHIP.COLUMN_BROUILLON' },
+  { value: 'en_cours', label: 'SCHOLARSHIP.COLUMN_EN_COURS' },
+  { value: 'complete', label: 'SCHOLARSHIP.COLUMN_COMPLETE' },
+  { value: 'valide', label: 'SCHOLARSHIP.COLUMN_VALIDE' },
+  { value: 'rejete', label: 'SCHOLARSHIP.COLUMN_REJETE' },
 ];
 
 export const TYPE_DOSSIER_OPTIONS: { value: TypeDossier | ''; label: string }[] = [
-  { value: '', label: 'Tous les types' },
-  { value: 'bourse_chine', label: 'Bourse Chine' },
-  { value: 'bourse_allemagne', label: 'Bourse Allemagne' },
-  { value: 'bourse_canada', label: 'Bourse Canada' },
-  { value: 'visa_affaires', label: 'Visa Affaires' },
+  { value: '', label: 'SCHOLARSHIP.ALL_TYPES' },
+  { value: 'bourse_chine', label: 'SCHOLARSHIP.TYPE_BOURSE_CHINE' },
+  { value: 'bourse_allemagne', label: 'SCHOLARSHIP.TYPE_BOURSE_ALLEMAGNE' },
+  { value: 'bourse_canada', label: 'SCHOLARSHIP.TYPE_BOURSE_CANADA' },
 ];
+
+const BOURSE_TYPES: TypeDossier[] = ['bourse_chine', 'bourse_allemagne', 'bourse_canada'];
 
 // ── Composant ───────────────────────────────────────────────────────────────
 
 @Component({
   selector: 'app-scholarship-china',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './scholarship.component.html',
   styleUrl: './scholarship.component.scss',
 })
@@ -52,6 +54,7 @@ export class ScholarshipComponent implements OnInit {
   private dossierService = inject(DossierService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private translate = inject(TranslateService);
   // ── State ────────────────────────────────────────────────────
   searchQuery = signal<string>('');
   isLoading = signal<boolean>(true);
@@ -117,13 +120,17 @@ export class ScholarshipComponent implements OnInit {
 
     this.dossierService.getAllDossiers(this.currentFilters).subscribe({
       next: (dossiers) => {
-        this.dossiers.set(dossiers);
+        const typeFilter = this.currentFilters.type_dossier as TypeDossier | '';
+        const bourses = typeFilter
+          ? dossiers.filter(d => d.type_dossier === typeFilter)
+          : dossiers.filter(d => BOURSE_TYPES.includes(d.type_dossier as TypeDossier));
+        this.dossiers.set(bourses);
         this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Erreur chargement dossiers:', err);
         this.isLoading.set(false);
-        this.showNotification('Erreur lors du chargement des dossiers', 'error');
+        this.showNotification(this.translate.instant('SCHOLARSHIP.LOAD_ERROR'), 'error');
       }
     });
   }
@@ -176,7 +183,12 @@ export class ScholarshipComponent implements OnInit {
 
     // Confirmation avant changement de statut
     const confirmChange = window.confirm(
-      `Voulez-vous changer le statut de ${dossier.prenom} ${dossier.nom} de "${dossier.status_display}" à "${this.getColumnLabel(targetStatus)}" ?`
+      this.translate.instant('SCHOLARSHIP.CONFIRM_STATUS_CHANGE', {
+        prenom: dossier.prenom,
+        nom: dossier.nom,
+        oldStatus: dossier.status_display,
+        newStatus: this.getColumnLabel(targetStatus)
+      })
     );
 
     if (confirmChange) {
@@ -195,11 +207,11 @@ export class ScholarshipComponent implements OnInit {
         this.dossiers.update(dossiers =>
           dossiers.map(d => d.id === updatedDossier.id ? updatedDossier : d)
         );
-        this.showNotification('Statut mis à jour avec succès', 'success');
+        this.showNotification(this.translate.instant('SCHOLARSHIP.STATUS_UPDATED'), 'success');
       },
       error: (err) => {
         console.error('Erreur mise à jour statut:', err);
-        this.showNotification('Erreur lors de la mise à jour', 'error');
+        this.showNotification(this.translate.instant('SCHOLARSHIP.STATUS_UPDATE_ERROR'), 'error');
       }
     });
   }
@@ -258,7 +270,7 @@ export class ScholarshipComponent implements OnInit {
     this.currentFilters = this.filterForm.value;
     this.loadDossiers();
     this.closeFilterModal();
-    this.showNotification('Filtres appliqués', 'success');
+    this.showNotification(this.translate.instant('SCHOLARSHIP.FILTERS_APPLIED'), 'success');
   }
 
   resetFilters(): void {
@@ -269,7 +281,7 @@ export class ScholarshipComponent implements OnInit {
     });
     this.currentFilters = {};
     this.loadDossiers();
-    this.showNotification('Filtres réinitialisés', 'info');
+    this.showNotification(this.translate.instant('SCHOLARSHIP.FILTERS_RESET'), 'info');
   }
 
   // ── Utilitaires ───────────────────────────────────────────────

@@ -73,6 +73,12 @@ export const routes: Routes = [
       },
 
       {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./components/notification/notification.component')
+            .then(m => m.NotificationComponent)
+      },
+      {
         path: 'messagerie',
         loadComponent: () =>
           import('./components/messaging/messaging.component')
@@ -86,7 +92,7 @@ export const routes: Routes = [
       },
       {
         path: 'rapports/:id',
-        loadComponent: () => 
+        loadComponent: () =>
           import('./components/rapport-detail/rapport-detail.component')
             .then(m => m.RapportDetailComponent),
       },

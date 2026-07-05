@@ -1,0 +1,779 @@
+// ── Tokens charte graphique (mêmes valeurs que parametres.component.scss) ───
+$blue: #2563EB;
+$blue-light: #EFF6FF;
+$green: #10B981;
+$green-light: #D1FAE5;
+$red: #EF4444;
+$red-light: #FEF2F2;
+$orange: #F59E0B;
+$orange-light: #FEF3C7;
+
+$border: #E5E7EB;
+$text-dark: #111827;
+$text-mid: #374151;
+$text-muted: #6B7280;
+$text-subtle: #9CA3AF;
+$bg-page: #F8F9FB;
+$bg-card: #FFFFFF;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+
+.notif {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 20px;
+
+    // ── Header ─────────────────────────────────────────────────────
+    &__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    &__title {
+        font-size: 1.375rem;
+        font-weight: 700;
+        color: $text-dark;
+        margin: 0;
+    }
+
+    &__subtitle {
+        font-size: .8125rem;
+        color: $text-muted;
+        margin: .25rem 0 0;
+    }
+
+    &__btn-outline {
+        padding: .5rem 1rem;
+        font-size: .8125rem;
+        font-weight: 600;
+        color: $text-mid;
+        background: $bg-card;
+        border: 1px solid $border;
+        border-radius: $radius-sm;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background .15s;
+
+        &:hover {
+            background: $bg-page;
+        }
+    }
+
+    // ── Stats ──────────────────────────────────────────────────────
+    &__stats {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: .875rem;
+
+        @media (max-width: 900px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    &__stat-card {
+        background: $bg-card;
+        border: 1px solid $border;
+        border-radius: $radius-md;
+        padding: .875rem 1rem;
+    }
+
+    &__stat-label {
+        font-size: .6875rem;
+        color: $text-muted;
+        margin: 0 0 .25rem;
+    }
+
+    &__stat-value {
+        font-size: 1.375rem;
+        font-weight: 700;
+        color: $text-dark;
+        margin: 0;
+
+        &--blue {
+            color: $blue;
+        }
+
+        &--red {
+            color: $red;
+        }
+
+        &--orange {
+            color: $orange;
+        }
+
+        &--green {
+            color: $green;
+        }
+    }
+
+    // ── Filtres ────────────────────────────────────────────────────
+    &__filters-card {
+        background: $bg-card;
+        border: 1px solid $border;
+        border-radius: $radius-md;
+        padding: .875rem 1rem;
+    }
+
+    &__filters-heading {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: .75rem;
+        color: $text-mid;
+
+        h3 {
+            font-size: .8125rem;
+            font-weight: 700;
+            color: $text-dark;
+            margin: 0;
+        }
+    }
+
+    &__filters-row {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        flex-wrap: wrap;
+    }
+
+    &__checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+
+        input {
+            accent-color: $blue;
+            width: 16px;
+            height: 16px;
+        }
+
+        label {
+            font-size: .8125rem;
+            color: $text-mid;
+            cursor: pointer;
+        }
+    }
+
+    &__select {
+        padding: .375rem .625rem;
+        font-size: .8125rem;
+        border: 1px solid $border;
+        border-radius: $radius-sm;
+        color: $text-mid;
+        background: $bg-card;
+        outline: none;
+
+        &:focus {
+            border-color: $blue;
+            box-shadow: 0 0 0 3px rgba($blue, .1);
+        }
+    }
+
+    // ── Liste ──────────────────────────────────────────────────────
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: .75rem;
+    }
+
+    &__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .75rem;
+        padding: 2.5rem 1rem;
+        background: $bg-card;
+        border: 1px solid $border;
+        border-radius: $radius-md;
+        color: $text-subtle;
+
+        p {
+            font-size: .8125rem;
+            color: $text-muted;
+            margin: 0;
+        }
+    }
+
+    // ── Carte notification ─────────────────────────────────────────
+    &__card {
+        background: $bg-card;
+        border: 1px solid $border;
+        border-left: 4px solid $border;
+        border-radius: $radius-md;
+        padding: .875rem 1rem;
+        transition: box-shadow .15s;
+
+        &:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .06);
+        }
+
+        &--unread {
+            background: $blue-light;
+        }
+
+        &--success {
+            border-left-color: $green;
+        }
+
+        &--error {
+            border-left-color: $red;
+        }
+
+        &--warning {
+            border-left-color: $orange;
+        }
+
+        &--info {
+            border-left-color: $blue;
+        }
+    }
+
+    &__card-body {
+        display: flex;
+        align-items: flex-start;
+        gap: .75rem;
+    }
+
+    &__icon {
+        margin-top: .125rem;
+        flex-shrink: 0;
+
+        .notif__card--success & {
+            color: $green;
+        }
+
+        .notif__card--error & {
+            color: $red;
+        }
+
+        .notif__card--warning & {
+            color: $orange;
+        }
+
+        .notif__card--info & {
+            color: $blue;
+        }
+    }
+
+    &__content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__content-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: .5rem;
+    }
+
+    &__card-title {
+        font-size: .875rem;
+        font-weight: 700;
+        color: $text-dark;
+        margin: 0;
+    }
+
+    &__dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        margin-left: .5rem;
+        border-radius: 50%;
+        background: $blue;
+        vertical-align: middle;
+    }
+
+    &__card-message {
+        font-size: .8125rem;
+        color: $text-muted;
+        margin: .25rem 0 0;
+    }
+
+    &__badge {
+        flex-shrink: 0;
+        padding: .1875rem .5rem;
+        font-size: .6875rem;
+        font-weight: 600;
+        border-radius: 999px;
+        text-transform: capitalize;
+
+        &--success {
+            background: $green-light;
+            color: $green;
+        }
+
+        &--error {
+            background: $red-light;
+            color: $red;
+        }
+
+        &--warning {
+            background: $orange-light;
+            color: $orange;
+        }
+
+        &--info {
+            background: $blue-light;
+            color: $blue;
+        }
+    }
+
+    &__content-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin-top: .625rem;
+        flex-wrap: wrap;
+    }
+
+    &__date {
+        font-size: .6875rem;
+        color: $text-subtle;
+        margin: 0;
+    }
+
+    &__actions {
+        display: flex;
+        gap: .5rem;
+    }
+
+    &__btn-case {
+        padding: .25rem .5rem;
+        font-size: .6875rem;
+        font-weight: 600;
+        color: $text-mid;
+        background: $bg-card;
+        border: 1px solid $border;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background .15s;
+
+        &:hover {
+            background: $bg-page;
+        }
+    }
+
+    &__btn-read {
+        padding: .25rem .375rem;
+        font-size: .6875rem;
+        font-weight: 600;
+        color: $blue;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AJOUTS : Bouton admin + Modal
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Header actions ─────────────────────────────────────────────────────
+.notif__header-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.notif__btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: $blue;
+    border: none;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+
+    &:hover {
+        background: darken($blue, 8%);
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+// ── Loading state ──────────────────────────────────────────────────────
+.notif__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 1rem;
+    color: $text-muted;
+
+    p {
+        font-size: 0.875rem;
+        margin: 0;
+    }
+}
+
+.notif__spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid $border;
+    border-top-color: $blue;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// ── Sender info ────────────────────────────────────────────────────────
+.notif__sender {
+    font-size: 0.6875rem;
+    color: $text-subtle;
+    font-style: italic;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════════════════════
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    background: $bg-card;
+    border-radius: $radius-md;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid $border;
+}
+
+.modal__header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.modal__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &--blue {
+        background: $blue-light;
+    }
+}
+
+.modal__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0 0 0.25rem;
+}
+
+.modal__subtitle {
+    font-size: 0.875rem;
+    color: $text-muted;
+    margin: 0;
+}
+
+.modal__close {
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-sm;
+    background: transparent;
+    border: 1px solid $border;
+    color: $text-muted;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background: $bg-page;
+        color: $text-dark;
+    }
+}
+
+.modal__body {
+    padding: 1.25rem 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid $border;
+}
+
+// ── Form elements ──────────────────────────────────────────────────────
+.modal__form-group {
+    margin-bottom: 1rem;
+}
+
+.modal__label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-mid;
+    margin-bottom: 0.5rem;
+}
+
+.modal__required {
+    color: $red;
+}
+
+.modal__count {
+    font-weight: 400;
+    color: $text-muted;
+    font-size: 0.75rem;
+}
+
+.modal__input,
+.modal__select,
+.modal__textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    font-size: 0.875rem;
+    color: $text-dark;
+    background: $bg-card;
+    font-family: inherit;
+
+    &:focus {
+        outline: none;
+        border-color: $blue;
+        box-shadow: 0 0 0 3px rgba($blue, 0.1);
+    }
+
+    &::placeholder {
+        color: $text-subtle;
+    }
+}
+
+.modal__textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.modal__select {
+    cursor: pointer;
+}
+
+// ── Feedback messages ──────────────────────────────────────────────────
+.modal__feedback {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: $radius-sm;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+
+    &--success {
+        background: $green-light;
+        color: darken($green, 12%);
+        border: 1px solid lighten($green, 35%);
+    }
+
+    &--error {
+        background: $red-light;
+        color: darken($red, 8%);
+        border: 1px solid lighten($red, 25%);
+    }
+}
+
+// ── Conseillers list ───────────────────────────────────────────────────
+.modal__conseillers-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.modal__btn-link {
+    background: none;
+    border: none;
+    color: $blue;
+    font-size: 0.75rem;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.modal__conseillers-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    margin-top: 0.5rem;
+}
+
+.modal__conseiller-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f3f4f6;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background: $bg-page;
+    }
+
+    &.selected {
+        background: $blue-light;
+    }
+}
+
+.modal__conseiller-checkbox {
+    input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        accent-color: $blue;
+    }
+}
+
+.modal__conseiller-info {
+    flex: 1;
+}
+
+.modal__conseiller-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-dark;
+}
+
+.modal__conseiller-email {
+    font-size: 0.75rem;
+    color: $text-muted;
+}
+
+.modal__conseillers-empty {
+    padding: 2rem;
+    text-align: center;
+    color: $text-muted;
+    font-size: 0.875rem;
+}
+
+// ── Buttons ────────────────────────────────────────────────────────────
+.modal__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: $radius-sm;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s ease;
+
+    &--primary {
+        background: $blue;
+        color: #ffffff;
+
+        &:hover:not(:disabled) {
+            background: darken($blue, 8%);
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+
+    &--outline {
+        background: $bg-card;
+        border: 1px solid $border;
+        color: $text-mid;
+
+        &:hover {
+            background: $bg-page;
+        }
+    }
+}
+
+.modal__spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}

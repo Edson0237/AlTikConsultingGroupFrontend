@@ -6,17 +6,19 @@ import { environment } from '../../environments/environment';
 // ── Interfaces ────────────────────────────────────────────────────────────────
 
 export interface AppUser {
-  id:            number;
-  username:      string;
-  email:         string;
-  first_name:    string;
-  last_name:     string;
-  role:          'etudiant' | 'responsable' | 'conseiller' | 'admin';
-  telephone:     string | null;
-  adresse:       string | null;
-  actif:         boolean;
-  is_active:     boolean;
-  date_creation: string;
+  id:              number;
+  username:        string;
+  email:           string;
+  first_name:      string;
+  last_name:       string;
+  role:            'etudiant' | 'responsable' | 'conseiller' | 'admin';
+  telephone:       string | null;
+  adresse:         string | null;
+  actif:           boolean;
+  is_active:       boolean;
+  est_archive:     boolean;
+  date_archivage:  string | null;
+  date_creation:   string;
 }
 
 export interface UserFilters {
@@ -85,5 +87,17 @@ export class UserService {
    */
   deleteUser(id: number): Observable<ActionResponse> {
     return this.http.delete<ActionResponse>(`${this.API}auth/users/${id}/`);
+  }
+
+  /**
+   * POST /api/auth/users/{id}/archiver/
+   * Archiver ou désarchiver un utilisateur.
+   * Payload optionnel : { archiver: boolean } — si absent, bascule.
+   */
+  archiveUser(id: number, archiver?: boolean): Observable<AppUser> {
+    const body = archiver !== undefined ? { archiver } : {};
+    return this.http
+      .post<ActionResponse>(`${this.API}auth/users/${id}/archiver/`, body)
+      .pipe(map(res => res.user!));
   }
 }

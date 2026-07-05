@@ -13,7 +13,7 @@
                 <polyline points="1 20 1 14 7 14" />
                 <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
             </svg>
-            Actualiser
+            {{ 'ACCEUIL.REFRESH' | translate }}
         </button>
     </div>
 
@@ -21,15 +21,15 @@
     @if (loading()) {
     <div class="loading-overlay">
         <div class="loading-spinner"></div>
-        <p>Chargement des statistiques...</p>
+        <p>{{ 'ACCEUIL.LOADING_STATS' | translate }}</p>
     </div>
     }
 
     <!-- Error state -->
     @if (error() && !loading()) {
     <div class="error-card">
-        <p>Impossible de charger les statistiques du tableau de bord.</p>
-        <button (click)="loadStats()">Réessayer</button>
+        <p>{{ 'ACCEUIL.LOAD_ERROR' | translate }}</p>
+        <button (click)="loadStats()">{{ 'ACCEUIL.RETRY' | translate }}</button>
     </div>
     }
 
@@ -39,10 +39,9 @@
     <div class="kpi-grid">
 
         <!-- Total utilisateurs -->
-        <!-- Total étudiants -->
         <div class="kpi-card kpi-card--blue">
             <div class="kpi-card__top">
-                <span class="kpi-card__label">Total étudiants</span>
+                <span class="kpi-card__label">{{ 'ACCEUIL.KPI_TOTAL_USERS' | translate }}</span>
                 <div class="kpi-card__icon kpi-card__icon--blue">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -55,24 +54,24 @@
             </div>
             <h3 class="kpi-card__value">{{ data.kpis.total_users }}</h3>
             <span class="kpi-card__badge kpi-card__badge--green">
-                +{{ data.kpis.new_users_this_month }} ce mois
+                +{{ data.kpis.new_users_this_month }} {{ 'ACCEUIL.THIS_MONTH' | translate }}
             </span>
-            <div class="kpi-card__detail">
+            <!-- <div class="kpi-card__detail">
                 <span class="kpi-detail-item">
-                    <span class="kpi-detail-label">Étudiants</span>
+                    <span class="kpi-detail-label">Bourse</span>
                     <span class="kpi-detail-value">{{ data.kpis.etudiants_count }}</span>
                 </span>
                 <span class="kpi-detail-item">
-                    <span class="kpi-detail-label">Responsables</span>
+                    <span class="kpi-detail-label">Visa</span>
                     <span class="kpi-detail-value">{{ data.kpis.responsables_count }}</span>
                 </span>
-            </div>
+            </div> -->
         </div>
 
         <!-- Dossiers -->
         <div class="kpi-card kpi-card--indigo">
             <div class="kpi-card__top">
-                <span class="kpi-card__label">Total dossiers</span>
+                <span class="kpi-card__label">{{ 'ACCEUIL.KPI_TOTAL_DOSSIERS' | translate }}</span>
                 <div class="kpi-card__icon kpi-card__icon--indigo">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -83,14 +82,14 @@
             </div>
             <h3 class="kpi-card__value">{{ data.kpis.total_dossiers }}</h3>
             <span class="kpi-card__badge kpi-card__badge--indigo">
-                {{ data.kpis.dossiers_par_statut['en_cours'] || 0 }} en cours
+                {{ data.kpis.dossiers_par_statut['en_cours'] || 0 }} {{ 'ACCEUIL.IN_PROGRESS' | translate }}
             </span>
         </div>
 
         <!-- Documents analysés IA -->
         <div class="kpi-card kpi-card--emerald">
             <div class="kpi-card__top">
-                <span class="kpi-card__label">Analyses IA</span>
+                <span class="kpi-card__label">{{ 'ACCEUIL.KPI_AI_ANALYSES' | translate }}</span>
                 <div class="kpi-card__icon kpi-card__icon--emerald">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -101,14 +100,14 @@
             </div>
             <h3 class="kpi-card__value">{{ data.kpis.total_analyses }}</h3>
             <span class="kpi-card__badge kpi-card__badge--emerald">
-                {{ data.kpis.score_moyen_ia }}% précision
+                {{ data.kpis.score_moyen_ia }}% {{ 'ACCEUIL.ACCURACY' | translate }}
             </span>
         </div>
 
         <!-- Messagerie -->
         <div class="kpi-card kpi-card--amber">
             <div class="kpi-card__top">
-                <span class="kpi-card__label">Messagerie</span>
+                <span class="kpi-card__label">{{ 'ACCEUIL.KPI_MESSAGING' | translate }}</span>
                 <div class="kpi-card__icon kpi-card__icon--amber">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -118,7 +117,7 @@
             </div>
             <h3 class="kpi-card__value">{{ data.kpis.total_conversations }}</h3>
             <span class="kpi-card__badge kpi-card__badge--amber">
-                {{ data.kpis.total_messages }} messages
+                {{ data.kpis.total_messages }} {{ 'ACCEUIL.MESSAGES' | translate }}
             </span>
         </div>
 
@@ -127,12 +126,12 @@
     <!-- Charts row 1 -->
     <div class="charts-row">
         <div class="chart-card chart-card--wide">
-            <h2 class="chart-card__title">Évolution mensuelle (6 derniers mois)</h2>
+            <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_MONTHLY_EVOLUTION' | translate }}</h2>
             <canvas id="lineChart" class="chart-canvas"></canvas>
         </div>
 
         <div class="chart-card">
-            <h2 class="chart-card__title">Répartition des dossiers</h2>
+            <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_DOSSIER_DISTRIBUTION' | translate }}</h2>
             <canvas id="pieChart" class="chart-canvas chart-canvas--pie"></canvas>
             <div class="pie-legend">
                 @for (item of data.charts.repartition_dossiers; track item.type_dossier) {
@@ -140,7 +139,7 @@
                     <span class="pie-legend__dot" [style.background]="this.TYPE_COLORS[item.type_dossier] || '#94A3B8'">
                     </span>
                     <span class="pie-legend__label">
-                        {{ this.TYPE_LABELS[item.type_dossier] || item.type_dossier }}
+                        {{ (this.TYPE_LABELS[item.type_dossier] | translate) || item.type_dossier }}
                         ({{ item.count }})
                     </span>
                 </div>
@@ -152,12 +151,12 @@
     <!-- Charts row 2 -->
     <div class="charts-row">
         <div class="chart-card">
-            <h2 class="chart-card__title">Top Filiéres</h2>
+            <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_TOP_FILIERES' | translate }}</h2>
             <canvas id="barChart" class="chart-canvas"></canvas>
         </div>
 
         <div class="chart-card">
-            <h2 class="chart-card__title">Activités récentes</h2>
+            <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_RECENT_ACTIVITIES' | translate }}</h2>
             <div class="activities">
                 @for (a of data.recent_activities; track $index) {
                 <div class="activity">
@@ -171,7 +170,7 @@
                 }
                 @if (data.recent_activities.length === 0) {
                 <div class="activities-empty">
-                    <p>Aucune activité récente</p>
+                    <p>{{ 'ACCEUIL.NO_RECENT_ACTIVITY' | translate }}</p>
                 </div>
                 }
             </div>
@@ -181,12 +180,12 @@
     <!-- Ligne supplémentaire : Stats IA et statuts -->
     <div class="charts-row">
         <div class="chart-card">
-            <h2 class="chart-card__title">Statuts des dossiers</h2>
+            <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_DOSSIER_STATUSES' | translate }}</h2>
             <div class="status-list">
                 @for (status of ['brouillon', 'en_cours', 'complete', 'valide', 'rejete']; track status) {
                 <div class="status-item">
                     <span class="status-dot" [class]="'status-dot--' + status"></span>
-                    <span class="status-label">{{ status | titlecase }}</span>
+                    <span class="status-label">{{ getStatusLabel(status) }}</span>
                     <div class="status-bar">
                         <div class="status-bar__fill" [style.width.%]="getStatutPercent(status)"
                             [class]="'status-bar__fill--' + status">
@@ -200,7 +199,7 @@
         </div>
 
         <div class="chart-card">
-            <h2 class="chart-card__title">Top documents uploadés</h2>
+            <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_TOP_DOCUMENTS' | translate }}</h2>
             <div class="status-list">
                 @for (doc of data.charts.documents_par_type.slice(0, 5); track doc.type_document) {
                 <div class="status-item">

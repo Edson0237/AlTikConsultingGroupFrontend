@@ -7,11 +7,12 @@ import {
 } from '../../services/etablissement/etablissement.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { FiliereBourseManagerComponent } from '../filiere-bourse-manager/filiere-bourse-manager.component';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-universite-detail',
   standalone: true,
-  imports: [CommonModule, FiliereBourseManagerComponent],
+  imports: [CommonModule, FiliereBourseManagerComponent, TranslatePipe],
   templateUrl: './universite-detail.component.html',
   styleUrl: './universite-detail.component.scss',
 })
@@ -21,6 +22,7 @@ export class UniversiteDetailComponent implements OnInit {
   private readonly router    = inject(Router);
   private readonly svc       = inject(EtablissementService);
   private readonly authService = inject(AuthService);
+  private readonly translate = inject(TranslateService);
 
   isAdmin      = this.authService.isAdmin;
   etablissement = signal<EtablissementDetail | null>(null);
@@ -37,7 +39,7 @@ export class UniversiteDetailComponent implements OnInit {
     this.svc.getById(id).subscribe({
       next: data => { this.etablissement.set(data); this.loading.set(false); },
       error: err  => {
-        this.error.set(err?.error?.detail ?? 'Impossible de charger cet établissement.');
+        this.error.set(err?.error?.detail ?? this.translate.instant('UNIVERSITE_DETAIL.ERROR_LOAD'));
         this.loading.set(false);
       },
     });
@@ -60,8 +62,13 @@ export class UniversiteDetailComponent implements OnInit {
   }
 
   getStatutLabel(statut: string): string {
-    const map: Record<string, string> = { actif: 'Actif', inactif: 'Inactif', suspendu: 'Suspendu' };
-    return map[statut] ?? statut;
+    const map: Record<string, string> = {
+      actif: 'UNIVERSITE_DETAIL.STATUT_ACTIF',
+      inactif: 'UNIVERSITE_DETAIL.STATUT_INACTIF',
+      suspendu: 'UNIVERSITE_DETAIL.STATUT_SUSPENDU'
+    };
+    const key = map[statut];
+    return key ? this.translate.instant(key) : statut;
   }
 
   openSite(url: string): void {

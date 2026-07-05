@@ -1,112 +1,185 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { DossierService, DossierAdmin, DossierStatus, DossierFilters } from '../../services/dossier/dossier.service';
 
-interface VisaColumn {
-  id: string;
+export interface KanbanColumn {
+  id: DossierStatus;
   label: string;
   color: string;
 }
 
-interface VisaApplication {
+export interface VisaNotification {
   id: number;
-  initials: string;
-  name: string;
-  company: string;
-  visaType: string;
-  duration: string;
-  entries: string;
-  status: string;
+  message: string;
+  type: 'success' | 'error' | 'info';
+  show: boolean;
 }
+
+const STATUS_OPTIONS: { value: DossierStatus | ''; label: string }[] = [
+  { value: '',          label: 'Tous les statuts' },
+  { value: 'brouillon', label: 'Brouillon' },
+  { value: 'en_cours',  label: 'En cours' },
+  { value: 'complete',  label: 'Complet' },
+  { value: 'valide',    label: 'Validé' },
+  { value: 'rejete',    label: 'Rejeté' },
+];
 
 @Component({
   selector: 'app-bussiness-visa',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './bussiness-visa.component.html',
   styleUrl: './bussiness-visa.component.scss'
 })
-export class BussinessVisaComponent {
+export class BussinessVisaComponent implements OnInit {
 
-  columns: VisaColumn[] = [
-    { id: 'nouveau',  label: 'Nouveau',   color: '#0057E8' },
-    { id: 'en-cours', label: 'En cours',  color: '#FF9500' },
-    { id: 'approuve', label: 'Approuvé',  color: '#00C853' },
-    { id: 'rejete',   label: 'Rejeté',    color: '#FF0019' },
+  private dossierService = inject(DossierService);
+  private fb             = inject(FormBuilder);
+  private router         = inject(Router);
+  private translate      = inject(TranslateService);
+
+  searchQuery   = signal<string>('');
+  isLoading     = signal<boolean>(true);
+  dossiers      = signal<DossierAdmin[]>([]);
+  notifications = signal<VisaNotification[]>([]);
+
+  filterForm!: FormGroup;
+  showFilterModal  = false;
+  currentFilters: DossierFilters = { type_dossier: 'visa_affaires' };
+  draggedDossier: DossierAdmin | null = null;
+
+  readonly columns: KanbanColumn[] = [
+    { id: 'brouillon', label: 'Brouillon', color: '#94A3B8' },
+    { id: 'en_cours',  label: 'En cours',  color: '#6366F1' },
+    { id: 'complete',  label: 'Complet',   color: '#0EA5E9' },
+    { id: 'valide',    label: 'Validé',    color: '#10B981' },
+    { id: 'rejete',    label: 'Rejeté',    color: '#EF4444' },
   ];
 
-  applications: VisaApplication[] = [
-    { id: 1, initials: 'JM', name: 'Jean Mballa',   company: 'Camtel SA',        visaType: 'B-1',     duration: '6 mois', entries: 'Multiple', status: 'nouveau' },
-    { id: 2, initials: 'AK', name: 'Aïcha Kana',     company: 'Bocom Industries', visaType: 'B-2',     duration: '3 mois', entries: 'Simple',   status: 'en-cours' },
-    { id: 3, initials: 'PT', name: 'Paul Tchoumi',   company: 'Eneo Group',       visaType: 'B-1/B-2', duration: '1 an',   entries: 'Multiple', status: 'approuve' },
-    { id: 4, initials: 'SN', name: 'Sarah Ngono',    company: 'MTN Cameroun',     visaType: 'B-1',     duration: '6 mois', entries: 'Simple',   status: 'rejete' },
-  ];
+  readonly statusOptions = STATUS_OPTIONS;
 
-  searchQuery = '';
-  showFilters = false;
-  selectedApp: VisaApplication | null = null;
+  filteredDossiers = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const all   = this.dossiers();
+    if (!query) return all;
+    return all.filter(d =>
+      d.nom.toLowerCase().includes(query)     ||
+      d.prenom.toLowerCase().includes(query)  ||
+      d.email.toLowerCase().includes(query)   ||
+      (d.entreprise || '').toLowerCase().includes(query)
+    );
+  });
 
-  /** Used in the header subtitle: "{{ totalApplications }} en cours" */
-  get totalApplications(): number {
-    return this.applications.filter(app => app.status === 'en-cours').length;
+  ngOnInit(): void {
+    this._buildFilterForm();
+    this.loadDossiers();
   }
 
-  toggleFilter(): void {
-    this.showFilters = !this.showFilters;
-  }
+  loadDossiers(): void {
+    this.isLoading.set(true);
+    this.currentFilters = { ...this.filterForm.value, type_dossier: 'visa_affaires' };
 
-  onSearch(): void {
-    // filteredApps() reads searchQuery live on every render,
-    // so there's nothing extra to do here — hook left in place
-    // in case debounced/server-side search is added later.
-  }
-
-  filteredApps(columnId: string): VisaApplication[] {
-    const query = this.searchQuery.trim().toLowerCase();
-    return this.applications.filter(app => {
-      if (app.status !== columnId) return false;
-      if (!query) return true;
-      return (
-        app.name.toLowerCase().includes(query) ||
-        app.company.toLowerCase().includes(query) ||
-        app.visaType.toLowerCase().includes(query)
-      );
+    this.dossierService.getAllDossiers(this.currentFilters).subscribe({
+      next: (dossiers) => {
+        this.dossiers.set(dossiers.filter(d => d.type_dossier === 'visa_affaires'));
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Erreur chargement dossiers visa:', err);
+        this.isLoading.set(false);
+        this.showNotification('Erreur lors du chargement des dossiers visa', 'error');
+      }
     });
   }
 
-  openDetail(app: VisaApplication): void {
-    this.selectedApp = app;
+  getColumnDossiers(columnId: DossierStatus): DossierAdmin[] {
+    return this.filteredDossiers().filter(d => d.status === columnId);
   }
 
-  closeDetail(): void {
-    this.selectedApp = null;
+  openDossierDetail(dossier: DossierAdmin): void {
+    this.router.navigate(['/dashboard-admin/admin/dossiers', dossier.id]);
   }
 
-  changeStatus(app: VisaApplication, columnId: string): void {
-    app.status = columnId;
+  onDragStart(event: DragEvent, dossier: DossierAdmin): void {
+    this.draggedDossier = dossier;
+    event.dataTransfer?.setData('text/plain', String(dossier.id));
+    const el = event.target as HTMLElement;
+    event.dataTransfer?.setDragImage(el, el.offsetWidth / 2, el.offsetHeight / 2);
   }
 
-  addToColumn(columnId: string): void {
-    this.newApplication(columnId);
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    (event.currentTarget as HTMLElement).classList.add('drag-over');
   }
 
-  newApplication(status: string = this.columns[0]?.id ?? 'nouveau'): void {
-    const nextId = this.applications.length
-      ? Math.max(...this.applications.map(a => a.id)) + 1
-      : 1;
+  onDragLeave(event: DragEvent): void {
+    (event.currentTarget as HTMLElement).classList.remove('drag-over');
+  }
 
-    const app: VisaApplication = {
-      id: nextId,
-      initials: 'NN',
-      name: 'Nouvelle demande',
-      company: '—',
-      visaType: 'B-1',
-      duration: '—',
-      entries: '—',
-      status,
-    };
+  onDrop(event: DragEvent, targetStatus: DossierStatus): void {
+    event.preventDefault();
+    (event.currentTarget as HTMLElement).classList.remove('drag-over');
+    if (!this.draggedDossier || this.draggedDossier.status === targetStatus) {
+      this.draggedDossier = null;
+      return;
+    }
+    const dossier = this.draggedDossier;
+    this.draggedDossier = null;
+    const col = this.columns.find(c => c.id === targetStatus)?.label || targetStatus;
+    if (window.confirm(`Changer le statut de ${dossier.prenom} ${dossier.nom} vers "${col}" ?`)) {
+      this.dossierService.updateStatus(dossier.id, { status: targetStatus }).subscribe({
+        next: (updated) => {
+          this.dossiers.update(list => list.map(d => d.id === updated.id ? updated : d));
+          this.showNotification('Statut mis à jour avec succès', 'success');
+        },
+        error: () => this.showNotification('Erreur lors de la mise à jour du statut', 'error'),
+      });
+    }
+  }
 
-    this.applications.push(app);
-    this.selectedApp = app; // open it straight into the detail modal for editing
+  openFilterModal(): void {
+    this.filterForm.patchValue(this.currentFilters);
+    this.showFilterModal = true;
+  }
+
+  closeFilterModal(): void { this.showFilterModal = false; }
+
+  applyFilters(): void {
+    this.loadDossiers();
+    this.closeFilterModal();
+    this.showNotification('Filtres appliqués', 'success');
+  }
+
+  resetFilters(): void {
+    this.filterForm.reset({ status: '' });
+    this.currentFilters = { type_dossier: 'visa_affaires' };
+    this.loadDossiers();
+  }
+
+  showNotification(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
+    const id = Date.now();
+    this.notifications.update(n => [...n, { id, message, type, show: true }]);
+    setTimeout(() => this.dismissNotification(id), 5000);
+  }
+
+  dismissNotification(id: number): void {
+    this.notifications.update(n => n.map(x => x.id === id ? { ...x, show: false } : x));
+    setTimeout(() => this.notifications.update(n => n.filter(x => x.id !== id)), 300);
+  }
+
+  getInitials(d: DossierAdmin): string {
+    return `${d.prenom.charAt(0)}${d.nom.charAt(0)}`.toUpperCase();
+  }
+
+  formatDate(ds: string): string {
+    if (!ds) return '';
+    return new Date(ds).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  private _buildFilterForm(): void {
+    this.filterForm = this.fb.group({ status: [''] });
   }
 }

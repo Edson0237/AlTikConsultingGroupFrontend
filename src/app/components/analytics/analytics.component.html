@@ -8,13 +8,13 @@
           <span class="title-icon">
             <span class="material-icons">trending_up</span>
           </span>
-          Analytiques
+          {{ 'ANALYTICS.TITLE' | translate }}
         </h1>
-        <p class="page-subtitle">Vue d'ensemble de vos performances et statistiques</p>
+        <p class="page-subtitle">{{ 'ANALYTICS.SUBTITLE' | translate }}</p>
       </div>
       <button class="refresh-btn" (click)="loadRapports()" [disabled]="loading()">
         <span class="material-icons" [class.spinning]="loading()">refresh</span>
-        Actualiser
+        {{ 'ANALYTICS.REFRESH' | translate }}
       </button>
     </div>
 
@@ -43,8 +43,8 @@
     <div class="charts-grid">
       <div class="chart-card">
         <div class="chart-card-header">
-          <h3 class="chart-title">Candidatures mensuelles</h3>
-          <span class="chart-badge chart-badge--blue">5 derniers mois</span>
+          <h3 class="chart-title">{{ 'ANALYTICS.CHART_MONTHLY_APPLICATIONS' | translate }}</h3>
+          <span class="chart-badge chart-badge--blue">{{ 'ANALYTICS.BADGE_LAST_5_MONTHS' | translate }}</span>
         </div>
         <div class="chart-container">
           <canvas #lineChartRef></canvas>
@@ -53,8 +53,8 @@
 
       <div class="chart-card">
         <div class="chart-card-header">
-          <h3 class="chart-title">Top destinations</h3>
-          <span class="chart-badge chart-badge--purple">Répartition</span>
+          <h3 class="chart-title">{{ 'ANALYTICS.CHART_TOP_DESTINATIONS' | translate }}</h3>
+          <span class="chart-badge chart-badge--purple">{{ 'ANALYTICS.BADGE_DISTRIBUTION' | translate }}</span>
         </div>
         <div class="chart-container">
           <canvas #pieChartRef></canvas>
@@ -72,11 +72,11 @@
         <div class="section-header-left">
           <div class="section-eyebrow">
             <span class="material-icons">auto_awesome</span>
-            Alimenté par Gemini
+            {{ 'ANALYTICS.AI_POWERED_BY' | translate }}
           </div>
-          <h2 class="section-title">Analyses IA des relevés de notes</h2>
+          <h2 class="section-title">{{ 'ANALYTICS.AI_SECTION_TITLE' | translate }}</h2>
           <p class="section-subtitle">
-            Rapports détaillés générés automatiquement à partir des documents uploadés
+            {{ 'ANALYTICS.AI_SECTION_SUBTITLE' | translate }}
           </p>
         </div>
 
@@ -84,15 +84,15 @@
           <div class="section-stats">
             <div class="mini-stat">
               <span class="mini-stat-value">{{ s.total_analyses }}</span>
-              <span class="mini-stat-label">Total</span>
+              <span class="mini-stat-label">{{ 'ANALYTICS.MINI_STAT_TOTAL' | translate }}</span>
             </div>
             <div class="mini-stat mini-stat--success">
               <span class="mini-stat-value">{{ s.analyses_reussies }}</span>
-              <span class="mini-stat-label">Réussies</span>
+              <span class="mini-stat-label">{{ 'ANALYTICS.MINI_STAT_SUCCESS' | translate }}</span>
             </div>
             <div class="mini-stat mini-stat--accent">
               <span class="mini-stat-value">{{ s.score_moyen_ia }}</span>
-              <span class="mini-stat-label">Moy./20</span>
+              <span class="mini-stat-label">{{ 'ANALYTICS.MINI_STAT_AVERAGE' | translate }}</span>
             </div>
           </div>
         }
@@ -103,8 +103,8 @@
 
         <div class="chart-card">
           <div class="chart-card-header">
-            <h3 class="chart-title">Distribution des niveaux</h3>
-            <span class="chart-badge chart-badge--green">IA</span>
+            <h3 class="chart-title">{{ 'ANALYTICS.CHART_LEVEL_DISTRIBUTION' | translate }}</h3>
+            <span class="chart-badge chart-badge--green">{{ 'ANALYTICS.BADGE_AI' | translate }}</span>
           </div>
           <div class="chart-container">
             <canvas #niveauChartRef></canvas>
@@ -114,7 +114,7 @@
         <!-- Résumé rapide -->
         <div class="chart-card summary-card">
           <div class="chart-card-header">
-            <h3 class="chart-title">Répartition des étudiants</h3>
+            <h3 class="chart-title">{{ 'ANALYTICS.CHART_STUDENT_DISTRIBUTION' | translate }}</h3>
           </div>
           @if (stats(); as s) {
             <div class="summary-list">
@@ -123,7 +123,7 @@
                 <div class="summary-bar-wrap">
                   <div class="summary-row">
                     <span class="summary-dot" style="background:#22C55E"></span>
-                    <span class="summary-label">Excellents <span class="summary-range">(≥16)</span></span>
+                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_EXCELLENT' | translate }} <span class="summary-range">(≥16)</span></span>
                     <span class="summary-value">{{ s.repartition_niveaux['excellent'] || 0 }}</span>
                   </div>
                   <div class="summary-bar">
@@ -138,7 +138,7 @@
                 <div class="summary-bar-wrap">
                   <div class="summary-row">
                     <span class="summary-dot" style="background:#3B82F6"></span>
-                    <span class="summary-label">Très bons <span class="summary-range">(14-16)</span></span>
+                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_TRES_BON' | translate }} <span class="summary-range">(14-16)</span></span>
                     <span class="summary-value">{{ s.repartition_niveaux['tres_bon'] || 0 }}</span>
                   </div>
                   <div class="summary-bar">
@@ -153,7 +153,7 @@
                 <div class="summary-bar-wrap">
                   <div class="summary-row">
                     <span class="summary-dot" style="background:#06B6D4"></span>
-                    <span class="summary-label">Bons <span class="summary-range">(12-14)</span></span>
+                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_BON' | translate }} <span class="summary-range">(12-14)</span></span>
                     <span class="summary-value">{{ s.repartition_niveaux['bon'] || 0 }}</span>
                   </div>
                   <div class="summary-bar">
@@ -168,7 +168,7 @@
                 <div class="summary-bar-wrap">
                   <div class="summary-row">
                     <span class="summary-dot" style="background:#F59E0B"></span>
-                    <span class="summary-label">Moyens <span class="summary-range">(10-12)</span></span>
+                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_MOYEN' | translate }} <span class="summary-range">(10-12)</span></span>
                     <span class="summary-value">{{ s.repartition_niveaux['moyen'] || 0 }}</span>
                   </div>
                   <div class="summary-bar">
@@ -183,7 +183,7 @@
                 <div class="summary-bar-wrap">
                   <div class="summary-row">
                     <span class="summary-dot" style="background:#EF4444"></span>
-                    <span class="summary-label">Faibles <span class="summary-range">(&lt;10)</span></span>
+                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_FAIBLE' | translate }} <span class="summary-range">(&lt;10)</span></span>
                     <span class="summary-value">{{ s.repartition_niveaux['faible'] || 0 }}</span>
                   </div>
                   <div class="summary-bar">
@@ -205,10 +205,10 @@
         <div class="rapports-header">
           <div class="rapports-header-left">
             <span class="material-icons rapports-header-icon">description</span>
-            <h3 class="chart-title">Rapports récents</h3>
+            <h3 class="chart-title">{{ 'ANALYTICS.RECENT_REPORTS' | translate }}</h3>
           </div>
           @if (rapports().length > 0) {
-            <span class="rapports-count">{{ rapports().length }} rapport{{ rapports().length > 1 ? 's' : '' }}</span>
+            <span class="rapports-count">{{ rapports().length }} {{ rapports().length > 1 ? ('ANALYTICS.REPORTS_PLURAL' | translate) : ('ANALYTICS.REPORT_SINGULAR' | translate) }}</span>
           }
         </div>
 
@@ -216,8 +216,8 @@
         @if (loading()) {
           <div class="feedback-state">
             <div class="spinner"></div>
-            <p class="feedback-title">Chargement des rapports…</p>
-            <p class="feedback-sub">Veuillez patienter</p>
+            <p class="feedback-title">{{ 'ANALYTICS.LOADING_REPORTS' | translate }}</p>
+            <p class="feedback-sub">{{ 'ANALYTICS.PLEASE_WAIT' | translate }}</p>
           </div>
         }
 
@@ -225,11 +225,11 @@
         @else if (error()) {
           <div class="feedback-state feedback-state--error">
             <span class="material-icons feedback-icon">error_outline</span>
-            <p class="feedback-title">Une erreur est survenue</p>
+            <p class="feedback-title">{{ 'ANALYTICS.ERROR_OCCURRED' | translate }}</p>
             <p class="feedback-sub">{{ error() }}</p>
             <button class="retry-btn" (click)="loadRapports()">
               <span class="material-icons">refresh</span>
-              Réessayer
+              {{ 'ANALYTICS.RETRY' | translate }}
             </button>
           </div>
         }
@@ -240,9 +240,9 @@
             <div class="empty-illus">
               <span class="material-icons">auto_awesome</span>
             </div>
-            <p class="feedback-title">Aucun rapport pour l'instant</p>
+            <p class="feedback-title">{{ 'ANALYTICS.NO_REPORTS' | translate }}</p>
             <p class="feedback-sub">
-              Les analyses IA seront générées automatiquement dès qu'un étudiant uploade ses relevés de notes.
+              {{ 'ANALYTICS.NO_REPORTS_SUBTITLE' | translate }}
             </p>
           </div>
         }
@@ -263,7 +263,7 @@
                 <!-- Infos -->
                 <div class="rapport-info">
                   <div class="rapport-top">
-                    <h4 class="rapport-name">{{ rapport.nom_complet || 'Étudiant' }}</h4>
+                    <h4 class="rapport-name">{{ rapport.nom_complet || ('ANALYTICS.STUDENT_FALLBACK' | translate) }}</h4>
                     <span class="rapport-niveau"
                           [style.background]="getNiveauColor(rapport.niveau_performance) + '18'"
                           [style.color]="getNiveauColor(rapport.niveau_performance)">
@@ -297,7 +297,7 @@
 
                 <!-- Action -->
                 <button class="rapport-action" (click)="viewRapport(rapport); $event.stopPropagation()"
-                        aria-label="Voir le rapport">
+                        aria-label="{{ 'ANALYTICS.VIEW_REPORT' | translate }}">
                   <span class="material-icons">chevron_right</span>
                 </button>
 

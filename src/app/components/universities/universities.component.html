@@ -19,10 +19,9 @@
         </svg>
       </div>
       <div>
-        <h1 class="page-header__title">Universités Partenaires</h1>
+        <h1 class="page-header__title">{{ 'UNIVERSITIES.TITLE' | translate }}</h1>
         <p class="page-header__subtitle">
-          {{ filtered().length }} établissement{{ filtered().length > 1 ? 's' : '' }} trouvé{{ filtered().length > 1 ?
-          's' : '' }}
+          {{ filtered().length }} {{ 'UNIVERSITIES.SUBTITLE' | translate }}
         </p>
       </div>
     </div>
@@ -34,7 +33,7 @@
         <line x1="12" y1="5" x2="12" y2="19" />
         <line x1="5" y1="12" x2="19" y2="12" />
       </svg>
-      Ajouter un établissement
+      {{ 'UNIVERSITIES.ADD_BUTTON' | translate }}
     </button>
   </div>
 
@@ -50,8 +49,8 @@
         <circle cx="11" cy="11" r="8" />
         <line x1="21" y1="21" x2="16.65" y2="16.65" />
       </svg>
-      <input type="text" class="filters-bar__input" placeholder="Rechercher par nom, pays, ville…"
-        [(ngModel)]="searchQuery" aria-label="Rechercher un établissement" />
+      <input type="text" class="filters-bar__input" placeholder="{{ 'UNIVERSITIES.SEARCH_PLACEHOLDER' | translate }}"
+        [(ngModel)]="searchQuery" aria-label="{{ 'UNIVERSITIES.SEARCH_ARIA' | translate }}" />
     </div>
 
     <!-- Filtre statut -->
@@ -63,9 +62,10 @@
         <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
         <path d="M4.93 4.93a10 10 0 0 0 0 14.14" />
       </svg>
-      <select class="filters-bar__select" [(ngModel)]="filterStatut" aria-label="Statut">
-        <option value="">Tous les statuts</option>
-        <option *ngFor="let s of statutOptions" [value]="s.value">{{ s.label }}</option>
+      <select class="filters-bar__select" [(ngModel)]="filterStatut"
+        aria-label="{{ 'UNIVERSITIES.STATUS_LABEL' | translate }}">
+        <option value="">{{ 'UNIVERSITIES.ALL_STATUSES' | translate }}</option>
+        <option *ngFor="let s of statutOptionsWithLabels" [value]="s.value">{{ s.label }}</option>
       </select>
     </div>
 
@@ -78,14 +78,16 @@
         <line x1="2" y1="12" x2="22" y2="12" />
         <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
       </svg>
-      <select class="filters-bar__select" [(ngModel)]="filterPays" aria-label="Pays">
-        <option value="">Tous les pays</option>
+      <select class="filters-bar__select" [(ngModel)]="filterPays"
+        aria-label="{{ 'UNIVERSITIES.COUNTRY_LABEL' | translate }}">
+        <option value="">{{ 'UNIVERSITIES.ALL_COUNTRIES' | translate }}</option>
         <option *ngFor="let p of paysList" [value]="p">{{ p }}</option>
       </select>
     </div>
 
     <!-- Refresh -->
-    <button class="btn btn--outline btn--icon" (click)="load()" [disabled]="loading()" title="Actualiser">
+    <button class="btn btn--outline btn--icon" (click)="load()" [disabled]="loading()"
+      title="{{ 'UNIVERSITIES.REFRESH_TITLE' | translate }}">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [class.spin]="loading()">
         <polyline points="23 4 23 10 17 10" />
@@ -101,7 +103,7 @@
   <!-- Loading -->
   <div class="state-block" *ngIf="loading()">
     <div class="state-block__spinner"></div>
-    <p class="state-block__text">Chargement des établissements…</p>
+    <p class="state-block__text">{{ 'UNIVERSITIES.LOADING' | translate }}</p>
   </div>
 
   <!-- Error -->
@@ -113,7 +115,7 @@
       <line x1="12" y1="16" x2="12.01" y2="16" />
     </svg>
     <p class="state-block__text">{{ error() }}</p>
-    <button class="btn btn--outline" (click)="load()">Réessayer</button>
+    <button class="btn btn--outline" (click)="load()">{{ 'UNIVERSITIES.RETRY' | translate }}</button>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════
@@ -128,15 +130,15 @@
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
         <polyline points="9 22 9 12 15 12 15 22" />
       </svg>
-      <p>Aucun établissement trouvé.</p>
+      <p>{{ 'UNIVERSITIES.EMPTY_STATE' | translate }}</p>
       <button *ngIf="isAdmin()" class="btn btn--primary" (click)="openCreate()">
-        Ajouter le premier établissement
+        {{ 'UNIVERSITIES.ADD_FIRST' | translate }}
       </button>
     </div>
 
     <!-- Cards -->
     <div *ngFor="let uni of filtered()" class="uni-card" role="button" tabindex="0"
-      [attr.aria-label]="'Voir les détails de ' + uni.nom" (click)="openDetails(uni)"
+      [attr.aria-label]="('UNIVERSITIES.VIEW_DETAILS' | translate) + ' ' + uni.nom" (click)="openDetails(uni)"
       (keydown.enter)="openDetails(uni)">
       <!-- Statut badge -->
       <span class="uni-card__statut-badge badge" [ngClass]="getStatutClass(uni.statut)">
@@ -145,14 +147,16 @@
 
       <!-- Admin actions -->
       <div class="uni-card__actions" *ngIf="isAdmin()" (click)="$event.stopPropagation()">
-        <button class="action-btn action-btn--edit" (click)="openEdit(uni, $event)" title="Modifier">
+        <button class="action-btn action-btn--edit" (click)="openEdit(uni, $event)"
+          title="{{ 'UNIVERSITIES.EDIT_TITLE' | translate }}">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
           </svg>
         </button>
-        <button class="action-btn action-btn--delete" (click)="confirmDelete(uni, $event)" title="Supprimer">
+        <button class="action-btn action-btn--delete" (click)="confirmDelete(uni, $event)"
+          title="{{ 'UNIVERSITIES.DELETE_TITLE' | translate }}">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6" />
@@ -205,7 +209,8 @@
             <path d="M6 12v5c3 3 9 3 12 0v-5" />
           </svg>
           <span class="stat-chip__val">{{ uni.nb_filieres }}</span>
-          <span class="stat-chip__label">filière{{ uni.nb_filieres > 1 ? 's' : '' }}</span>
+          <span class="stat-chip__label">{{ uni.nb_filieres > 1 ? ('UNIVERSITIES.FILIERES' | translate) :
+            ('UNIVERSITIES.FILIERE' | translate) }}</span>
         </div>
 
         <div class="stat-chip">
@@ -216,7 +221,8 @@
             <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
           </svg>
           <span class="stat-chip__val">{{ uni.nb_bourses }}</span>
-          <span class="stat-chip__label">bourse{{ uni.nb_bourses > 1 ? 's' : '' }}</span>
+          <span class="stat-chip__label">{{ uni.nb_bourses > 1 ? ('UNIVERSITIES.BOURSES' | translate) :
+            ('UNIVERSITIES.BOURSE' | translate) }}</span>
         </div>
 
         <div class="stat-chip" *ngIf="uni.langue_enseignement">
@@ -236,7 +242,7 @@
 
       <!-- CTA -->
       <button class="uni-card__btn" (click)="openDetails(uni); $event.stopPropagation()">
-        Voir les détails
+        {{ 'UNIVERSITIES.VIEW_DETAILS' | translate }}
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="5" y1="12" x2="19" y2="12" />
@@ -250,7 +256,7 @@
        MODAL CRÉATION / ÉDITION
   ════════════════════════════════════════════════════════════════ -->
   <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()" role="dialog" aria-modal="true"
-    [attr.aria-label]="modalMode === 'create' ? 'Créer un établissement' : 'Modifier un établissement'">
+    [attr.aria-label]="modalMode === 'create' ? ('UNIVERSITIES.MODAL_CREATE_TITLE' | translate) : ('UNIVERSITIES.MODAL_EDIT_TITLE' | translate)">
 
     <div class="modal" (click)="$event.stopPropagation()">
 
@@ -271,15 +277,16 @@
           </div>
           <div>
             <h2 class="modal__title">
-              {{ modalMode === 'create' ? 'Ajouter un établissement' : 'Modifier l\'établissement' }}
+              {{ modalMode === 'create' ? ('UNIVERSITIES.MODAL_CREATE_TITLE' | translate) :
+              ('UNIVERSITIES.MODAL_EDIT_TITLE' | translate) }}
             </h2>
             <p class="modal__subtitle">
-              {{ modalMode === 'create' ? 'Remplissez les informations de l\'établissement partenaire' : 'Mettez à jour
-              les informations' }}
+              {{ modalMode === 'create' ? ('UNIVERSITIES.MODAL_CREATE_SUBTITLE' | translate) :
+              ('UNIVERSITIES.MODAL_EDIT_SUBTITLE' | translate) }}
             </p>
           </div>
         </div>
-        <button class="modal__close" (click)="closeModal()" aria-label="Fermer">
+        <button class="modal__close" (click)="closeModal()" aria-label="{{ 'UNIVERSITIES.CLOSE' | translate }}">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" />
@@ -299,32 +306,32 @@
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
-            Identité
+            {{ 'UNIVERSITIES.SECTION_IDENTITY' | translate }}
           </h3>
 
           <div class="form__row">
             <div class="form__group form__group--full">
-              <label class="form__label">Nom de l'établissement <span class="req">*</span></label>
+              <label class="form__label">{{ 'UNIVERSITIES.NAME_LABEL' | translate }} <span class="req">*</span></label>
               <input type="text" class="form__input" formControlName="nom" [class.form__input--error]="isInvalid('nom')"
-                placeholder="ex : Université de Paris-Saclay" />
-              <span class="form__error" *ngIf="isInvalid('nom')">Nom requis (2 caractères minimum)</span>
+                placeholder="{{ 'UNIVERSITIES.NAME_PLACEHOLDER' | translate }}" />
+              <span class="form__error" *ngIf="isInvalid('nom')">{{ 'UNIVERSITIES.NAME_REQUIRED' | translate }}</span>
             </div>
           </div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Type</label>
+              <label class="form__label">{{ 'UNIVERSITIES.TYPE_LABEL' | translate }}</label>
               <div class="form__select-wrap">
                 <select class="form__input form__select" formControlName="type_etablissement">
-                  <option *ngFor="let t of typeOptions" [value]="t.value">{{ t.label }}</option>
+                  <option *ngFor="let t of typeOptionsWithLabels" [value]="t.value">{{ t.label }}</option>
                 </select>
               </div>
             </div>
             <div class="form__group">
-              <label class="form__label">Statut</label>
+              <label class="form__label">{{ 'UNIVERSITIES.STATUS_FORM_LABEL' | translate }}</label>
               <div class="form__select-wrap">
                 <select class="form__input form__select" formControlName="statut">
-                  <option *ngFor="let s of statutOptions" [value]="s.value">{{ s.label }}</option>
+                  <option *ngFor="let s of statutOptionsWithLabels" [value]="s.value">{{ s.label }}</option>
                 </select>
               </div>
             </div>
@@ -332,9 +339,9 @@
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Description</label>
+              <label class="form__label">{{ 'UNIVERSITIES.DESCRIPTION_LABEL' | translate }}</label>
               <textarea class="form__input form__textarea" formControlName="description"
-                placeholder="Brève description de l'établissement…" rows="3"></textarea>
+                placeholder="{{ 'UNIVERSITIES.DESCRIPTION_PLACEHOLDER' | translate }}" rows="3"></textarea>
             </div>
           </div>
         </div>
@@ -347,33 +354,38 @@
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
-            Localisation
+            {{ 'UNIVERSITIES.SECTION_LOCATION' | translate }}
           </h3>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Pays <span class="req">*</span></label>
+              <label class="form__label">{{ 'UNIVERSITIES.COUNTRY_FORM_LABEL' | translate }} <span
+                  class="req">*</span></label>
               <input type="text" class="form__input" formControlName="pays"
-                [class.form__input--error]="isInvalid('pays')" placeholder="ex : France" />
-              <span class="form__error" *ngIf="isInvalid('pays')">Pays requis</span>
+                [class.form__input--error]="isInvalid('pays')"
+                placeholder="{{ 'UNIVERSITIES.COUNTRY_PLACEHOLDER' | translate }}" />
+              <span class="form__error" *ngIf="isInvalid('pays')">{{ 'UNIVERSITIES.COUNTRY_REQUIRED' | translate
+                }}</span>
             </div>
             <div class="form__group">
-              <label class="form__label">Ville <span class="req">*</span></label>
+              <label class="form__label">{{ 'UNIVERSITIES.CITY_LABEL' | translate }} <span class="req">*</span></label>
               <input type="text" class="form__input" formControlName="ville"
-                [class.form__input--error]="isInvalid('ville')" placeholder="ex : Paris" />
-              <span class="form__error" *ngIf="isInvalid('ville')">Ville requise</span>
+                [class.form__input--error]="isInvalid('ville')"
+                placeholder="{{ 'UNIVERSITIES.CITY_PLACEHOLDER' | translate }}" />
+              <span class="form__error" *ngIf="isInvalid('ville')">{{ 'UNIVERSITIES.CITY_REQUIRED' | translate }}</span>
             </div>
           </div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Adresse</label>
+              <label class="form__label">{{ 'UNIVERSITIES.ADDRESS_LABEL' | translate }}</label>
               <input type="text" class="form__input" formControlName="adresse"
-                placeholder="ex : 15 Rue Georges Clemenceau" />
+                placeholder="{{ 'UNIVERSITIES.ADDRESS_PLACEHOLDER' | translate }}" />
             </div>
             <div class="form__group">
-              <label class="form__label">Code postal</label>
-              <input type="text" class="form__input" formControlName="code_postal" placeholder="ex : 91400" />
+              <label class="form__label">{{ 'UNIVERSITIES.POSTAL_CODE_LABEL' | translate }}</label>
+              <input type="text" class="form__input" formControlName="code_postal"
+                placeholder="{{ 'UNIVERSITIES.POSTAL_CODE_PLACEHOLDER' | translate }}" />
             </div>
           </div>
         </div>
@@ -386,31 +398,35 @@
               <path
                 d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.68 11.1 19.79 19.79 0 0 1 1.58 2.57 2 2 0 0 1 3.55.36h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 15z" />
             </svg>
-            Contact & Web
+            {{ 'UNIVERSITIES.SECTION_CONTACT' | translate }}
           </h3>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Site web</label>
-              <input type="url" class="form__input" formControlName="site_web" placeholder="https://www.exemple.fr" />
+              <label class="form__label">{{ 'UNIVERSITIES.WEBSITE_LABEL' | translate }}</label>
+              <input type="url" class="form__input" formControlName="site_web"
+                placeholder="{{ 'UNIVERSITIES.WEBSITE_PLACEHOLDER' | translate }}" />
             </div>
             <div class="form__group">
-              <label class="form__label">Email de contact</label>
+              <label class="form__label">{{ 'UNIVERSITIES.EMAIL_LABEL' | translate }}</label>
               <input type="email" class="form__input" formControlName="email_contact"
-                [class.form__input--error]="isInvalid('email_contact')" placeholder="contact@exemple.fr" />
-              <span class="form__error" *ngIf="isInvalid('email_contact')">Email invalide</span>
+                [class.form__input--error]="isInvalid('email_contact')"
+                placeholder="{{ 'UNIVERSITIES.EMAIL_PLACEHOLDER' | translate }}" />
+              <span class="form__error" *ngIf="isInvalid('email_contact')">{{ 'UNIVERSITIES.EMAIL_INVALID' | translate
+                }}</span>
             </div>
           </div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Téléphone</label>
-              <input type="tel" class="form__input" formControlName="telephone" placeholder="+33 1 XX XX XX XX" />
+              <label class="form__label">{{ 'UNIVERSITIES.PHONE_LABEL' | translate }}</label>
+              <input type="tel" class="form__input" formControlName="telephone"
+                placeholder="{{ 'UNIVERSITIES.PHONE_PLACEHOLDER' | translate }}" />
             </div>
             <div class="form__group">
-              <label class="form__label">Langue d'enseignement</label>
+              <label class="form__label">{{ 'UNIVERSITIES.LANGUAGE_LABEL' | translate }}</label>
               <input type="text" class="form__input" formControlName="langue_enseignement"
-                placeholder="ex : Français / Anglais" />
+                placeholder="{{ 'UNIVERSITIES.LANGUAGE_PLACEHOLDER' | translate }}" />
             </div>
           </div>
         </div>
@@ -423,29 +439,30 @@
               <polygon
                 points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
-            Classement & Historique
+            {{ 'UNIVERSITIES.SECTION_RANKING' | translate }}
           </h3>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Classement mondial</label>
-              <input type="number" class="form__input" formControlName="classement" placeholder="ex : 13" min="1" />
+              <label class="form__label">{{ 'UNIVERSITIES.RANKING_LABEL' | translate }}</label>
+              <input type="number" class="form__input" formControlName="classement"
+                placeholder="{{ 'UNIVERSITIES.RANKING_PLACEHOLDER' | translate }}" min="1" />
             </div>
             <div class="form__group">
-              <label class="form__label">Source du classement</label>
+              <label class="form__label">{{ 'UNIVERSITIES.RANKING_SOURCE_LABEL' | translate }}</label>
               <input type="text" class="form__input" formControlName="classement_source"
-                placeholder="ex : QS, THE, Shanghai" />
+                placeholder="{{ 'UNIVERSITIES.RANKING_SOURCE_PLACEHOLDER' | translate }}" />
             </div>
           </div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Année de fondation</label>
-              <input type="number" class="form__input" formControlName="annee_fondation" placeholder="ex : 1970"
-                min="1000" max="2100" />
+              <label class="form__label">{{ 'UNIVERSITIES.FOUNDATION_YEAR_LABEL' | translate }}</label>
+              <input type="number" class="form__input" formControlName="annee_fondation"
+                placeholder="{{ 'UNIVERSITIES.FOUNDATION_YEAR_PLACEHOLDER' | translate }}" min="1000" max="2100" />
             </div>
             <div class="form__group">
-              <label class="form__label">Partenaire depuis</label>
+              <label class="form__label">{{ 'UNIVERSITIES.PARTNER_SINCE_LABEL' | translate }}</label>
               <input type="date" class="form__input" formControlName="partenaire_depuis" />
             </div>
           </div>
@@ -457,7 +474,7 @@
             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
-          {{ modalMode === 'create' ? 'Établissement créé avec succès !' : 'Établissement mis à jour !' }}
+          {{ modalMode === 'create' ? ('UNIVERSITIES.SUCCESS_CREATE' | translate) : ('UNIVERSITIES.SUCCESS_UPDATE' | translate) }}
         </div>
         <div class="form__feedback form__feedback--error" *ngIf="modalError">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -472,12 +489,12 @@
         <!-- Actions -->
         <div class="modal__actions">
           <button type="button" class="btn btn--outline" (click)="closeModal()" [disabled]="modalLoading">
-            Annuler
+            {{ 'UNIVERSITIES.CANCEL' | translate }}
           </button>
           <button type="submit" class="btn btn--primary" [disabled]="modalLoading">
             <span class="btn__spinner" *ngIf="modalLoading"></span>
             <ng-container *ngIf="!modalLoading">
-              {{ modalMode === 'create' ? 'Créer l\'établissement' : 'Enregistrer les modifications' }}
+              {{ modalMode === 'create' ? ('UNIVERSITIES.CREATE_BUTTON' | translate) : ('UNIVERSITIES.SAVE_BUTTON' | translate) }}
             </ng-container>
           </button>
         </div>
@@ -490,7 +507,7 @@
        MODAL CONFIRM SUPPRESSION
   ════════════════════════════════════════════════════════════════ -->
   <div class="modal-overlay modal-overlay--danger" *ngIf="showDeleteConfirm" (click)="cancelDelete()" role="dialog"
-    aria-modal="true" aria-label="Confirmer la suppression">
+    aria-modal="true" aria-label="{{ 'UNIVERSITIES.DELETE_CONFIRM_ARIA' | translate }}">
     <div class="modal modal--sm" (click)="$event.stopPropagation()">
       <div class="delete-confirm">
         <div class="delete-confirm__icon">
@@ -503,18 +520,17 @@
             <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
           </svg>
         </div>
-        <h3 class="delete-confirm__title">Supprimer l'établissement ?</h3>
+        <h3 class="delete-confirm__title">{{ 'UNIVERSITIES.DELETE_CONFIRM_TITLE' | translate }}</h3>
         <p class="delete-confirm__text">
-          Vous êtes sur le point de supprimer <strong>{{ deleteTarget?.nom }}</strong>.
-          Cette action est irréversible et supprimera toutes les filières et bourses associées.
+          {{ 'UNIVERSITIES.DELETE_CONFIRM_TEXT' | translate: { name: deleteTarget?.nom } }}
         </p>
         <div class="delete-confirm__actions">
           <button class="btn btn--outline" (click)="cancelDelete()" [disabled]="deleteLoading">
-            Annuler
+            {{ 'UNIVERSITIES.CANCEL' | translate }}
           </button>
           <button class="btn btn--danger" (click)="doDelete()" [disabled]="deleteLoading">
             <span class="btn__spinner btn__spinner--white" *ngIf="deleteLoading"></span>
-            <ng-container *ngIf="!deleteLoading">Oui, supprimer</ng-container>
+            <ng-container *ngIf="!deleteLoading">{{ 'UNIVERSITIES.DELETE_CONFIRM_BUTTON' | translate }}</ng-container>
           </button>
         </div>
       </div>

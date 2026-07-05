@@ -33,25 +33,25 @@ export interface DateFormatOption {
 const DATE_FORMATS_BY_LANG: Record<AppLanguage, DateFormatOption[]> = {
   // ── Système francophone ──────────────────────────────────────
   fr: [
-    { value: 'DD/MM/YYYY',         label: 'Jour/Mois/Année (JJ/MM/AAAA)',   example: '25/06/2025' },
-    { value: 'DD MMMM YYYY',       label: 'Littéral complet',               example: '25 juin 2025' },
-    { value: 'DD/MM/YYYY HH:mm',   label: 'Date + heure',                   example: '25/06/2025 14:30' },
-    { value: 'DD-MM-YYYY',         label: 'Tirets (JJ-MM-AAAA)',            example: '25-06-2025' },
+    { value: 'DD/MM/YYYY', label: 'Jour/Mois/Année (JJ/MM/AAAA)', example: '25/06/2025' },
+    { value: 'DD MMMM YYYY', label: 'Littéral complet', example: '25 juin 2025' },
+    { value: 'DD/MM/YYYY HH:mm', label: 'Date + heure', example: '25/06/2025 14:30' },
+    { value: 'DD-MM-YYYY', label: 'Tirets (JJ-MM-AAAA)', example: '25-06-2025' },
   ],
   // ── Système anglophone ───────────────────────────────────────
   en: [
-    { value: 'MM/DD/YYYY',         label: 'Month/Day/Year (MM/DD/YYYY)',    example: '06/25/2025' },
-    { value: 'MMMM D, YYYY',       label: 'Long form',                      example: 'June 25, 2025' },
-    { value: 'MMM D, YYYY',        label: 'Short month',                    example: 'Jun 25, 2025' },
-    { value: 'YYYY-MM-DD',         label: 'ISO 8601',                       example: '2025-06-25' },
-    { value: 'MM/DD/YYYY h:mm A',  label: 'Date + time (12 h)',             example: '06/25/2025 2:30 PM' },
+    { value: 'MM/DD/YYYY', label: 'Month/Day/Year (MM/DD/YYYY)', example: '06/25/2025' },
+    { value: 'MMMM D, YYYY', label: 'Long form', example: 'June 25, 2025' },
+    { value: 'MMM D, YYYY', label: 'Short month', example: 'Jun 25, 2025' },
+    { value: 'YYYY-MM-DD', label: 'ISO 8601', example: '2025-06-25' },
+    { value: 'MM/DD/YYYY h:mm A', label: 'Date + time (12 h)', example: '06/25/2025 2:30 PM' },
   ],
   // ── Système asiatique / chinois ──────────────────────────────
   zh: [
-    { value: 'YYYY年MM月DD日',      label: '年月日 (標準中文)',               example: '2025年06月25日' },
-    { value: 'YYYY/MM/DD',         label: '年/月/日 (ISO 式)',               example: '2025/06/25' },
-    { value: 'YYYY-MM-DD',         label: 'YYYY-MM-DD (ISO 8601)',          example: '2025-06-25' },
-    { value: 'YYYY年MM月DD日 HH:mm', label: '年月日 + 時間',                example: '2025年06月25日 14:30' },
+    { value: 'YYYY年MM月DD日', label: '年月日 (標準中文)', example: '2025年06月25日' },
+    { value: 'YYYY/MM/DD', label: '年/月/日 (ISO 式)', example: '2025/06/25' },
+    { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD (ISO 8601)', example: '2025-06-25' },
+    { value: 'YYYY年MM月DD日 HH:mm', label: '年月日 + 時間', example: '2025年06月25日 14:30' },
   ],
 };
 
@@ -93,9 +93,9 @@ export class ParametresComponent implements OnInit {
   activeTab = 'profile';
 
   readonly tabs: Tab[] = [
-    { id: 'profile',    label: 'Profil',     icon: ICON.user    },
-    { id: 'security',   label: 'Sécurité',   icon: ICON.shield  },
-    { id: 'system',     label: 'Système',    icon: ICON.globe   },
+    { id: 'profile', label: 'Profil', icon: ICON.user },
+    { id: 'security', label: 'Sécurité', icon: ICON.shield },
+    { id: 'system', label: 'Système', icon: ICON.globe },
   ];
 
   // ── Forms ─────────────────────────────────────────────────────
@@ -113,15 +113,15 @@ export class ParametresComponent implements OnInit {
   constructor() {
     this.profileForm = this.fb.group({
       firstName: [''],
-      lastName:  [''],
-      email:     ['', [Validators.required, Validators.email]],
-      phone:     [''],
-      adresse:   [''],
+      lastName: [''],
+      email: ['', [Validators.required, Validators.email]],
+      phone: [''],
+      adresse: [''],
     });
 
     this.passwordForm = this.fb.group({
       currentPassword: ['', Validators.required],
-      newPassword:     ['', [Validators.required, Validators.minLength(8)]],
+      newPassword: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
     });
 
@@ -131,29 +131,29 @@ export class ParametresComponent implements OnInit {
     const defaultFormat = DATE_FORMATS_BY_LANG[currentLang][0].value;
 
     this.systemForm = this.fb.group({
-      language:   [currentLang],
-      timezone:   ['utc1'],
+      language: [currentLang],
+      timezone: ['utc1'],
       dateFormat: [defaultFormat],
     });
 
     this.advisorForm = this.fb.group({
-      username:  ['', Validators.required],
+      username: ['', Validators.required],
       firstName: [''],
-      lastName:  [''],
-      email:     ['', [Validators.required, Validators.email]],
-      phone:     [''],
-      adresse:   [''],
-      password:  ['', [Validators.required, Validators.minLength(8)]],
+      lastName: [''],
+      email: ['', [Validators.required, Validators.email]],
+      phone: [''],
+      adresse: [''],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       password2: ['', Validators.required],
     }, { validators: this._passwordsMatch });
 
     this.editForm = this.fb.group({
       firstName: [''],
-      lastName:  [''],
-      email:     ['', [Validators.required, Validators.email]],
+      lastName: [''],
+      email: ['', [Validators.required, Validators.email]],
       telephone: [''],
-      adresse:   [''],
-      role:      ['conseiller'],
+      adresse: [''],
+      role: ['conseiller'],
     });
   }
 
@@ -162,7 +162,7 @@ export class ParametresComponent implements OnInit {
     this._patchProfileForm(this.currentUser);
 
     this.authService.fetchProfile().subscribe({
-      next:  (apiUser) => this._patchProfileFormFromApi(apiUser),
+      next: (apiUser) => this._patchProfileFormFromApi(apiUser),
       error: () => { /* non bloquant */ },
     });
 
@@ -174,11 +174,11 @@ export class ParametresComponent implements OnInit {
   private _patchProfileForm(u: UserInfo | null): void {
     if (!u) return;
     this.profileForm.patchValue({
-      firstName: u.firstName  ?? '',
-      lastName:  u.lastName   ?? '',
-      email:     u.email      ?? '',
-      phone:     u.telephone  ?? '',
-      adresse:   u.adresse    ?? '',
+      firstName: u.firstName ?? '',
+      lastName: u.lastName ?? '',
+      email: u.email ?? '',
+      phone: u.telephone ?? '',
+      adresse: u.adresse ?? '',
     });
   }
 
@@ -187,11 +187,11 @@ export class ParametresComponent implements OnInit {
     telephone: string | null; adresse: string | null;
   }): void {
     this.profileForm.patchValue({
-      firstName: apiUser.first_name  ?? '',
-      lastName:  apiUser.last_name   ?? '',
-      email:     apiUser.email       ?? '',
-      phone:     apiUser.telephone   ?? '',
-      adresse:   apiUser.adresse     ?? '',
+      firstName: apiUser.first_name ?? '',
+      lastName: apiUser.last_name ?? '',
+      email: apiUser.email ?? '',
+      phone: apiUser.telephone ?? '',
+      adresse: apiUser.adresse ?? '',
     });
   }
 
@@ -205,10 +205,10 @@ export class ParametresComponent implements OnInit {
     const v = this.profileForm.value;
     const payload: UpdateProfilePayload = {};
     if (v.firstName !== undefined) payload.first_name = v.firstName;
-    if (v.lastName  !== undefined) payload.last_name  = v.lastName;
-    if (v.email     !== undefined) payload.email      = v.email;
-    if (v.phone     !== undefined) payload.telephone  = v.phone;
-    if (v.adresse   !== undefined) payload.adresse    = v.adresse;
+    if (v.lastName !== undefined) payload.last_name = v.lastName;
+    if (v.email !== undefined) payload.email = v.email;
+    if (v.phone !== undefined) payload.telephone = v.phone;
+    if (v.adresse !== undefined) payload.adresse = v.adresse;
 
     this.authService.updateProfile(payload).subscribe({
       next: () => {
@@ -320,7 +320,7 @@ export class ParametresComponent implements OnInit {
   deleteLoading = false;
 
   confirmDelete(c: Conseiller): void { this.deleteTarget = c; this.showDeleteConfirm = true; }
-  cancelDelete():  void { this.showDeleteConfirm = false; this.deleteTarget = null; }
+  cancelDelete(): void { this.showDeleteConfirm = false; this.deleteTarget = null; }
 
   doDelete(): void {
     if (!this.deleteTarget || this.deleteLoading) return;
@@ -350,22 +350,21 @@ export class ParametresComponent implements OnInit {
   editError = '';
 
   readonly roleOptions = [
-    { value: 'conseiller',  label: 'Conseiller'    },
-    { value: 'responsable', label: 'Responsable'   },
-    { value: 'admin',       label: 'Administrateur'},
+    { value: 'conseiller', label: 'Conseiller' },
+    { value: 'admin', label: 'Administrateur' },
   ];
 
   openEditModal(c: Conseiller): void {
-    this.editTarget  = c;
+    this.editTarget = c;
     this.editSuccess = false;
-    this.editError   = '';
+    this.editError = '';
     this.editForm.patchValue({
       firstName: c.first_name,
-      lastName:  c.last_name,
-      email:     c.email,
+      lastName: c.last_name,
+      email: c.email,
       telephone: c.telephone ?? '',
-      adresse:   c.adresse   ?? '',
-      role:      c.role,
+      adresse: c.adresse ?? '',
+      role: c.role,
     });
     this.showEditModal = true;
   }
@@ -386,17 +385,17 @@ export class ParametresComponent implements OnInit {
     if (!this.editTarget) return;
 
     this.editLoading = true;
-    this.editError   = '';
+    this.editError = '';
     this.editSuccess = false;
 
     const v = this.editForm.value;
     const payload: ConseillerUpdatePayload = {
       first_name: v.firstName || undefined,
-      last_name:  v.lastName  || undefined,
-      email:      v.email,
-      telephone:  v.telephone || undefined,
-      adresse:    v.adresse   || undefined,
-      role:       v.role,
+      last_name: v.lastName || undefined,
+      email: v.email,
+      telephone: v.telephone || undefined,
+      adresse: v.adresse || undefined,
+      role: v.role,
     };
 
     this.conseillerService.updateConseiller(this.editTarget.id, payload).subscribe({
@@ -426,7 +425,7 @@ export class ParametresComponent implements OnInit {
   private _showToast(message: string, type: 'success' | 'error'): void {
     clearTimeout(this.toastTimer);
     this.toggleToast = { message, type };
-    this.toastTimer  = setTimeout(() => { this.toggleToast = null; }, 3500);
+    this.toastTimer = setTimeout(() => { this.toggleToast = null; }, 3500);
   }
 
   getFullName(c: Conseiller): string {
@@ -464,16 +463,16 @@ export class ParametresComponent implements OnInit {
   selectedAccent = '#2563EB';
 
   // ── Advisor modal (créer conseiller) ──────────────────────────
-  showAdvisorModal  = false;
-  advisorLoading    = false;
-  advisorSuccess    = false;
-  advisorError      = '';
+  showAdvisorModal = false;
+  advisorLoading = false;
+  advisorSuccess = false;
+  advisorError = '';
   showAdvisorPassword = false;
 
   openAdvisorModal(): void {
     this.advisorForm.reset();
     this.advisorSuccess = false;
-    this.advisorError   = '';
+    this.advisorError = '';
     this.showAdvisorModal = true;
   }
 
@@ -488,7 +487,7 @@ export class ParametresComponent implements OnInit {
   }
 
   private _passwordsMatch(group: FormGroup) {
-    const pwd  = group.get('password')?.value;
+    const pwd = group.get('password')?.value;
     const pwd2 = group.get('password2')?.value;
     return pwd && pwd2 && pwd !== pwd2 ? { passwordsMismatch: true } : null;
   }
@@ -500,20 +499,20 @@ export class ParametresComponent implements OnInit {
   submitAdvisor(): void {
     if (this.advisorForm.invalid) { this.advisorForm.markAllAsTouched(); return; }
     this.advisorLoading = true;
-    this.advisorError   = '';
+    this.advisorError = '';
     this.advisorSuccess = false;
 
     const v = this.advisorForm.value;
     this.authService.createConseiller({
-      username:   v.username,
-      email:      v.email,
-      password:   v.password,
-      password2:  v.password2,
-      role:       'conseiller',
+      username: v.username,
+      email: v.email,
+      password: v.password,
+      password2: v.password2,
+      role: 'conseiller',
       first_name: v.firstName || undefined,
-      last_name:  v.lastName  || undefined,
-      telephone:  v.phone     || undefined,
-      adresse:    v.adresse   || undefined,
+      last_name: v.lastName || undefined,
+      telephone: v.phone || undefined,
+      adresse: v.adresse || undefined,
     }).subscribe({
       next: () => {
         this.advisorLoading = false;

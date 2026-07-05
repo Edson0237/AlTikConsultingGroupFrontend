@@ -1,12 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RapportAnalyseService, RapportAnalyse } from '../../services/rapport-analyse/rapport-analyse.service';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { RapportAnalyseService, RapportAnalyse, FiliereSuggeree } from '../../services/rapport-analyse/rapport-analyse.service';
 
 @Component({
   selector: 'app-rapport-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './rapport-detail.component.html',
   styleUrls: ['./rapport-detail.component.scss'],
 })
@@ -14,6 +15,7 @@ export class RapportDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private rapportService = inject(RapportAnalyseService);
+  private translate = inject(TranslateService);
 
   rapport = signal<RapportAnalyse | null>(null);
   loading = signal(true);
@@ -33,12 +35,12 @@ export class RapportDetailComponent implements OnInit {
         if (rapport) {
           this.rapport.set(rapport);
         } else {
-          this.error.set('Rapport non trouvé');
+          this.error.set(this.translate.instant('RAPPORT_DETAIL.NOT_FOUND'));
         }
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Erreur de chargement');
+        this.error.set(this.translate.instant('RAPPORT_DETAIL.LOAD_ERROR'));
         this.loading.set(false);
       }
     });
@@ -56,14 +58,9 @@ export class RapportDetailComponent implements OnInit {
   }
 
   getNiveauLabel(niveau: string): string {
-    const labels: { [key: string]: string } = {
-      'excellent': 'Excellent',
-      'tres_bon': 'Très bon',
-      'bon': 'Bon',
-      'moyen': 'Moyen',
-      'faible': 'Faible',
-    };
-    return labels[niveau] || niveau;
+    const key = `RAPPORT_DETAIL.NIVEAU_${niveau.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : niveau;
   }
 
   getNoteColor(note: number | null): string {
@@ -76,23 +73,47 @@ export class RapportDetailComponent implements OnInit {
   }
 
   getDistributionItems(distribution: { [key: string]: number }): any[] {
-    const labels: { [key: string]: { label: string; color: string } } = {
-      'excellent': { label: 'Excellent (≥16)', color: '#22C55E' },
-      'tres_bon': { label: 'Très bon (14-16)', color: '#3B82F6' },
-      'bon': { label: 'Bon (12-14)', color: '#06B6D4' },
-      'moyen': { label: 'Moyen (10-12)', color: '#F59E0B' },
-      'insuffisant': { label: 'Insuffisant (<10)', color: '#EF4444' },
+    const labels: { [key: string]: { labelKey: string; color: string } } = {
+      'excellent': { labelKey: 'RAPPORT_DETAIL.DIST_EXCELLENT', color: '#22C55E' },
+      'tres_bon': { labelKey: 'RAPPORT_DETAIL.DIST_TRES_BON', color: '#3B82F6' },
+      'bon': { labelKey: 'RAPPORT_DETAIL.DIST_BON', color: '#06B6D4' },
+      'moyen': { labelKey: 'RAPPORT_DETAIL.DIST_MOYEN', color: '#F59E0B' },
+      'insuffisant': { labelKey: 'RAPPORT_DETAIL.DIST_INSUFFISANT', color: '#EF4444' },
     };
 
     const total = Object.values(distribution).reduce((a, b) => a + b, 0);
-    
+
     return Object.entries(distribution).map(([key, count]) => ({
       key,
-      label: labels[key]?.label || key,
+      label: this.translate.instant(labels[key]?.labelKey || key),
       color: labels[key]?.color || '#6B7280',
       count,
       percent: total > 0 ? (count / total) * 100 : 0,
     }));
+  }
+
+  getEcartLabel(ecart: number): string {
+    if (Math.abs(ecart) < 0.01) return 'Correspond exactement';
+    if (ecart > 0) return `+${ecart.toFixed(1)} pts au-dessus`;
+    return `${ecart.toFixed(1)} pts en-dessous`;
+  }
+
+  getEcartColor(ecart: number): string {
+    const abs = Math.abs(ecart);
+    if (abs <= 0.5) return '#22C55E';
+    if (abs <= 1) return '#3B82F6';
+    if (abs <= 1.5) return '#F59E0B';
+    return '#EF4444';
+  }
+
+  getNiveauDisplay(niveau: string): string {
+    const labels: { [key: string]: string } = {
+      'licence': 'Licence (Bac+3)',
+      'master': 'Master (Bac+5)',
+      'doctorat': 'Doctorat (Bac+8)',
+      'bts': 'BTS / DUT (Bac+2)',
+    };
+    return labels[niveau] || niveau;
   }
 
   goBack(): void {

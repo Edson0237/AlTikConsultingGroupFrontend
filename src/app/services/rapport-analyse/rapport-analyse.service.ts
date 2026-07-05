@@ -53,6 +53,25 @@ export interface RapportAnalyse {
   date_generation: string;
   // Matières détaillées
   matieres: Matiere[];
+  // Filières suggérées par l'IA (score ±2)
+  filieres_suggerees: FiliereSuggeree[];
+}
+
+export interface FiliereSuggeree {
+  id: number;
+  nom: string;
+  domaine: string;
+  niveau: string;
+  duree: number;
+  description: string;
+  score_minimum: number;
+  ecart_score: number;
+  etablissement: {
+    id: number;
+    nom: string;
+    pays: string;
+    ville: string;
+  } | null;
 }
 
 export interface StatsRapports {

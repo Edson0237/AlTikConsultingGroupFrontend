@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { LanguageService, AppLanguage, LanguageOption } from '../../services/language/language.service';
+import { NotificationCounterService } from '../../services/notification/notification-counter.service';
 
 @Component({
   selector: 'app-header',
@@ -18,6 +19,7 @@ export class HeaderComponent {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly languageService = inject(LanguageService);
+  private readonly notificationService = inject(NotificationCounterService);
 
   constructor() {
     // Le header n'est rendu que sur les pages déjà authentifiées : on est
@@ -29,7 +31,9 @@ export class HeaderComponent {
   showUserMenu = false;
   showLangMenu = false;
   searchQuery = '';
-  unreadCount = 3;
+  get unreadCount(): number {
+    return this.notificationService.unreadCount();
+  }
 
   // ── Langue ───────────────────────────────────────────────────────
   readonly languageOptions: LanguageOption[] = this.languageService.options;

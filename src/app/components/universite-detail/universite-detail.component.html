@@ -3,7 +3,7 @@
   <!-- ═══ LOADING ═════════════════════════════════════════════ -->
   <div class="state-block" *ngIf="loading()">
     <div class="state-block__spinner"></div>
-    <p class="state-block__text">Chargement de l'établissement…</p>
+    <p class="state-block__text">{{ 'UNIVERSITE_DETAIL.LOADING' | translate }}</p>
   </div>
 
   <!-- ═══ ERROR ════════════════════════════════════════════════ -->
@@ -14,7 +14,7 @@
       <line x1="12" y1="16" x2="12.01" y2="16"/>
     </svg>
     <p>{{ error() }}</p>
-    <button class="btn btn--outline" (click)="goBack()">← Retour</button>
+    <button class="btn btn--outline" (click)="goBack()">← {{ 'UNIVERSITE_DETAIL.BACK' | translate }}</button>
   </div>
 
   <!-- ═══ CONTENT ══════════════════════════════════════════════ -->
@@ -28,7 +28,7 @@
           <line x1="19" y1="12" x2="5" y2="12"/>
           <polyline points="12 19 5 12 12 5"/>
         </svg>
-        Retour
+        {{ 'UNIVERSITE_DETAIL.BACK' | translate }}
       </button>
       <span class="breadcrumb__sep">/</span>
       <span class="breadcrumb__current">{{ etab.nom }}</span>
@@ -83,7 +83,7 @@
                 <line x1="8" y1="2" x2="8" y2="6"/>
                 <line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
-              Fondée en {{ etab.annee_fondation }}
+              {{ 'UNIVERSITE_DETAIL.FONDEE_EN' | translate }} {{ etab.annee_fondation }}
             </span>
             <span class="meta-pill" *ngIf="etab.langue_enseignement">
               <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
@@ -102,7 +102,7 @@
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
                 <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
               </svg>
-              Partenaire depuis {{ etab.partenaire_depuis | date:'yyyy' }}
+              {{ 'UNIVERSITE_DETAIL.PARTENAIRE_DEPUIS' | translate }} {{ etab.partenaire_depuis | date:'yyyy' }}
             </span>
           </div>
 
@@ -116,7 +116,7 @@
                 <line x1="2" y1="12" x2="22" y2="12"/>
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
               </svg>
-              Site web
+              {{ 'UNIVERSITE_DETAIL.SITE_WEB' | translate }}
             </a>
             <a *ngIf="etab.email_contact" class="link-btn" [href]="'mailto:' + etab.email_contact">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
@@ -141,19 +141,19 @@
       <div class="kpi-strip">
         <div class="kpi-strip__item">
           <span class="kpi-strip__val kpi-strip__val--blue">{{ etab.nb_filieres }}</span>
-          <span class="kpi-strip__label">Filières</span>
+          <span class="kpi-strip__label">{{ 'UNIVERSITE_DETAIL.FILIERES' | translate }}</span>
         </div>
         <div class="kpi-strip__sep"></div>
         <div class="kpi-strip__item">
           <span class="kpi-strip__val kpi-strip__val--green">{{ getTotalBourses(etab) }}</span>
-          <span class="kpi-strip__label">Bourses</span>
+          <span class="kpi-strip__label">{{ 'UNIVERSITE_DETAIL.BOURSES' | translate }}</span>
         </div>
         <div class="kpi-strip__sep"></div>
         <div class="kpi-strip__item">
           <span class="kpi-strip__val kpi-strip__val--purple">
             {{ etab.classement ? '#' + etab.classement : '—' }}
           </span>
-          <span class="kpi-strip__label">Classement {{ etab.classement_source }}</span>
+          <span class="kpi-strip__label">{{ 'UNIVERSITE_DETAIL.CLASSEMENT' | translate }} {{ etab.classement_source }}</span>
         </div>
       </div>
     </div>

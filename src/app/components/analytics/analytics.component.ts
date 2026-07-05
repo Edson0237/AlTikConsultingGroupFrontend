@@ -12,6 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { RapportAnalyseService, RapportAnalyse, StatsRapports } from '../../services/rapport-analyse/rapport-analyse.service';
 
 Chart.register(...registerables);
@@ -30,7 +31,7 @@ interface KpiCard {
   templateUrl: './analytics.component.html',
   styleUrls: ['./analytics.component.scss'],
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
 })
 export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('lineChartRef') lineChartRef!: ElementRef<HTMLCanvasElement>;
@@ -39,6 +40,7 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private rapportService = inject(RapportAnalyseService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   private lineChart!: Chart;
   private pieChart!: Chart;
@@ -54,41 +56,42 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
   kpiCards = computed<KpiCard[]>(() => {
     const s = this.stats();
     const rapportsList = this.rapports();
-    
+    const t = this.translate;
+
     return [
       {
         icon: 'group',
         value: '1 247',
-        label: 'Total Candidatures',
+        label: t.instant('ANALYTICS.KPI_TOTAL_APPLICATIONS'),
         color: '#3B82F6',
         bgColor: 'rgba(59,130,246,0.10)',
       },
       {
         icon: 'auto_awesome',
         value: s ? s.total_analyses.toString() : '—',
-        label: 'Analyses IA',
+        label: t.instant('ANALYTICS.KPI_AI_ANALYSES'),
         color: '#8B5CF6',
         bgColor: 'rgba(139,92,246,0.10)',
-        trend: s ? `${s.analyses_reussies} réussies` : undefined,
+        trend: s ? t.instant('ANALYTICS.KPI_SUCCESSFUL', { count: s.analyses_reussies }) : undefined,
       },
       {
         icon: 'trending_up',
         value: s ? `${s.score_moyen_ia}/20` : '—',
-        label: 'Score moyen',
+        label: t.instant('ANALYTICS.KPI_AVERAGE_SCORE'),
         color: '#22C55E',
         bgColor: 'rgba(34,197,94,0.10)',
       },
       {
         icon: 'emoji_events',
         value: s ? `${s.repartition_niveaux['excellent'] || 0}` : '—',
-        label: 'Niveau Excellent',
+        label: t.instant('ANALYTICS.KPI_EXCELLENT_LEVEL'),
         color: '#F59E0B',
         bgColor: 'rgba(245,158,11,0.10)',
       },
       {
         icon: 'public',
         value: '45',
-        label: 'Destinations',
+        label: t.instant('ANALYTICS.KPI_DESTINATIONS'),
         color: '#06B6D4',
         bgColor: 'rgba(6,182,212,0.10)',
       },
@@ -97,11 +100,11 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // ── Données graphiques ────────────────────────────────────────
   private monthlyData = [
-    { month: 'Jan', applications: 45, accepted: 38 },
-    { month: 'Fév', applications: 52, accepted: 44 },
-    { month: 'Mar', applications: 48, accepted: 40 },
-    { month: 'Avr', applications: 61, accepted: 53 },
-    { month: 'Mai', applications: 55, accepted: 48 },
+    { monthKey: 'ANALYTICS.MONTH_JAN', applications: 45, accepted: 38 },
+    { monthKey: 'ANALYTICS.MONTH_FEB', applications: 52, accepted: 44 },
+    { monthKey: 'ANALYTICS.MONTH_MAR', applications: 48, accepted: 40 },
+    { monthKey: 'ANALYTICS.MONTH_APR', applications: 61, accepted: 53 },
+    { monthKey: 'ANALYTICS.MONTH_MAY', applications: 55, accepted: 48 },
   ];
 
   private countryData = [
@@ -140,12 +143,12 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
           // Construire le graphique des niveaux après chargement
           setTimeout(() => this.buildNiveauChart(), 100);
         } else {
-          this.error.set('Impossible de charger les rapports');
+          this.error.set(this.translate.instant('ANALYTICS.LOAD_ERROR'));
         }
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('Erreur de connexion');
+        this.error.set(this.translate.instant('ANALYTICS.CONNECTION_ERROR'));
         this.loading.set(false);
       }
     });
@@ -169,14 +172,9 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getNiveauLabel(niveau: string): string {
-    const labels: { [key: string]: string } = {
-      'excellent': 'Excellent',
-      'tres_bon': 'Très bon',
-      'bon': 'Bon',
-      'moyen': 'Moyen',
-      'faible': 'Faible',
-    };
-    return labels[niveau] || niveau;
+    const key = `ANALYTICS.LEVEL_${niveau.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : niveau;
   }
 
   getTypeDocumentIcon(type: string): string {
@@ -220,10 +218,10 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.lineChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: this.monthlyData.map(d => d.month),
+        labels: this.monthlyData.map(d => this.translate.instant(d.monthKey)),
         datasets: [
           {
-            label: 'Candidatures',
+            label: this.translate.instant('ANALYTICS.CHART_CANDIDATURES'),
             data: this.monthlyData.map(d => d.applications),
             borderColor: '#3B82F6',
             backgroundColor: 'rgba(59,130,246,0.10)',
@@ -234,7 +232,7 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
             fill: true,
           },
           {
-            label: 'Acceptées',
+            label: this.translate.instant('ANALYTICS.CHART_ACCEPTED'),
             data: this.monthlyData.map(d => d.accepted),
             borderColor: '#22C55E',
             backgroundColor: 'rgba(34,197,94,0.10)',
@@ -314,9 +312,15 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.niveauChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Excellent', 'Très bon', 'Bon', 'Moyen', 'Faible'],
+        labels: [
+          this.translate.instant('ANALYTICS.LEVEL_EXCELLENT'),
+          this.translate.instant('ANALYTICS.LEVEL_TRES_BON'),
+          this.translate.instant('ANALYTICS.LEVEL_BON'),
+          this.translate.instant('ANALYTICS.LEVEL_MOYEN'),
+          this.translate.instant('ANALYTICS.LEVEL_FAIBLE'),
+        ],
         datasets: [{
-          label: 'Étudiants',
+          label: this.translate.instant('ANALYTICS.CHART_STUDENTS'),
           data: [
             s.repartition_niveaux['excellent'] || 0,
             s.repartition_niveaux['tres_bon'] || 0,

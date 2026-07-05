@@ -439,9 +439,12 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   &:disabled { opacity: .45; cursor: not-allowed; transform: none !important; }
   &:hover:not(:disabled) { transform: scale(1.08); }
 
-  &--activate  { &:hover:not(:disabled) { background: $green-light; border-color: #a7f3d0; } }
-  &--deactivate{ &:hover:not(:disabled) { background: $red-light;   border-color: #fecaca; } }
-  &--delete    { &:hover:not(:disabled) { background: $red-light;   border-color: #fecaca; } }
+  &--activate   { &:hover:not(:disabled) { background: $green-light;  border-color: #a7f3d0; } }
+  &--deactivate { &:hover:not(:disabled) { background: $red-light;    border-color: #fecaca; } }
+  &--delete     { &:hover:not(:disabled) { background: $red-light;    border-color: #fecaca; } }
+  &--view       { &:hover:not(:disabled) { background: $blue-light;   border-color: #bfdbfe; } }
+  &--archive    { &:hover:not(:disabled) { background: $orange-light; border-color: #fde68a; } }
+  &--unarchive  { &:hover:not(:disabled) { background: $purple-light; border-color: #c4b5fd; } }
 }
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
@@ -476,6 +479,24 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
       box-shadow: 0 4px 14px rgba($red, .35);
     }
   }
+
+  &--warning {
+    background: $orange;
+    color: #fff;
+    &:hover:not(:disabled) {
+      background: darken($orange, 8%);
+      box-shadow: 0 4px 14px rgba($orange, .35);
+    }
+  }
+
+  &--primary {
+    background: $blue;
+    color: #fff;
+    &:hover:not(:disabled) {
+      background: darken($blue, 6%);
+      box-shadow: 0 4px 14px rgba($blue, .3);
+    }
+  }
 }
 
 // ── Spinner ───────────────────────────────────────────────────────────────────
@@ -502,6 +523,25 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   p { font-size: .875rem; margin: 0; }
 }
 
+// ── Archived row ─────────────────────────────────────────────────────────────
+.students-table__row--archived {
+  opacity: .55;
+  background: #F9FAFB;
+
+  td { color: $text-muted !important; }
+
+  .student-cell__avatar {
+    background: #D1D5DB !important;
+    color: #6B7280 !important;
+  }
+
+  .status-badge--active {
+    background: #F3F4F6;
+    color: $text-muted;
+    .status-badge__dot { background: $text-subtle; }
+  }
+}
+
 // ── Modal ─────────────────────────────────────────────────────────────────────
 .modal-overlay {
   position: fixed;
@@ -524,7 +564,123 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   box-shadow: $shadow-modal;
   animation: slideUp .18s ease;
 
-  &--sm { max-width: 420px; }
+  &--sm      { max-width: 420px; }
+  &--details { max-width: 480px; }
+}
+
+// ── Modal détails utilisateur ─────────────────────────────────────────────────
+.modal-details {
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid $border;
+    position: relative;
+  }
+
+  &__avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: $blue-mid;
+    color: $blue;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &--responsable { background: #E0E7FF; color: #4338CA; }
+    &--etudiant    { background: #DCFCE7; color: #15803D; }
+  }
+
+  &__header-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0 0 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__username {
+    font-size: .8rem;
+    color: $text-muted;
+    margin: 0 0 6px;
+    font-family: monospace;
+  }
+
+  &__badges {
+    display: flex;
+    gap: .4rem;
+    flex-wrap: wrap;
+  }
+
+  &__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 30px;
+    height: 30px;
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    background: $bg-card;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $text-muted;
+    transition: background .12s;
+
+    &:hover { background: $bg-page; color: $text-dark; }
+  }
+
+  &__body {
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .625rem;
+  }
+
+  &__footer {
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid $border;
+    display: flex;
+    gap: .625rem;
+    justify-content: flex-end;
+  }
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+
+  .detail-label {
+    width: 90px;
+    flex-shrink: 0;
+    font-size: .75rem;
+    font-weight: 600;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+
+  .detail-value {
+    font-size: .875rem;
+    color: $text-dark;
+    word-break: break-word;
+
+    &--warn { color: $orange; font-weight: 600; }
+  }
 }
 
 // ── Delete confirm ────────────────────────────────────────────────────────────

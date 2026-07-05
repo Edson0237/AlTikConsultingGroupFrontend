@@ -6,7 +6,7 @@
             [class.info]="notification.type === 'info'" [class.hiding]="!notification.show"
             (click)="dismissNotification(notification.id)">
             <span class="notification-message">{{ notification.message }}</span>
-            <button class="notification-close" aria-label="Fermer">
+            <button class="notification-close" aria-label="{{ 'DOSSIER_DETAIL.CLOSE' | translate }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -28,10 +28,9 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="scholarship__title">Gestion des Dossiers</h1>
+                    <h1 class="scholarship__title">{{ 'SCHOLARSHIP.TITLE' | translate }}</h1>
                     <p class="scholarship__subtitle">
-                        {{ filteredDossiers().length }} dossier{{ filteredDossiers().length > 1 ? 's' : '' }} trouvé{{
-                        filteredDossiers().length > 1 ? 's' : '' }}
+                        {{ filteredDossiers().length }} {{ 'SCHOLARSHIP.SUBTITLE' | translate }}
                     </p>
                 </div>
             </div>
@@ -42,7 +41,7 @@
                     aria-hidden="true">
                     <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                 </svg>
-                Filtres
+                {{ 'SCHOLARSHIP.FILTERS' | translate }}
             </button>
         </div>
 
@@ -54,9 +53,9 @@
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-            <input type="text" class="scholarship__search-input" placeholder="Rechercher un candidat..."
+            <input type="text" class="scholarship__search-input" placeholder="{{ 'SCHOLARSHIP.SEARCH_PLACEHOLDER' | translate }}"
                 [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" (ngModelChange)="onSearch()"
-                aria-label="Rechercher un candidat" />
+                aria-label="{{ 'SCHOLARSHIP.SEARCH_PLACEHOLDER' | translate }}" />
         </div>
     </div>
 
@@ -64,7 +63,7 @@
     @if (isLoading()) {
     <div class="loading-container">
         <div class="spinner"></div>
-        <p>Chargement des dossiers...</p>
+        <p>{{ 'SCHOLARSHIP.LOADING' | translate }}</p>
     </div>
     }
 
@@ -79,7 +78,7 @@
             <div class="kanban__col-header">
                 <div class="kanban__col-title">
                     <span class="kanban__col-dot" [style.background]="col.color"></span>
-                    <span class="kanban__col-label">{{ col.label }}</span>
+                    <span class="kanban__col-label">{{ 'SCHOLARSHIP.COLUMN_' + col.id.toUpperCase() | translate }}</span>
                 </div>
                 <span class="kanban__col-count">{{ getColumnDossiers(col.id).length }}</span>
             </div>
@@ -100,7 +99,7 @@
                             <polyline points="15 3 21 3 21 9"></polyline>
                             <line x1="10" y1="14" x2="21" y2="3"></line>
                         </svg>
-                        <span>Voir le dossier</span>
+                        <span>{{ 'SCHOLARSHIP.VIEW_DOSSIER' | translate }}</span>
                     </div>
 
                     <!-- Card top: avatar + name -->
@@ -115,28 +114,28 @@
                     <!-- Details -->
                     <div class="kanban-card__details">
                         <div class="kanban-card__row">
-                            <span class="kanban-card__row-label">Type</span>
+                            <span class="kanban-card__row-label">{{ 'SCHOLARSHIP.TYPE' | translate }}</span>
                             <span class="kanban-card__row-value">{{ dossier.type_dossier_display }}</span>
                         </div>
 
                         @if (dossier.est_bourse) {
                         <div class="kanban-card__row">
-                            <span class="kanban-card__row-label">Niveau</span>
+                            <span class="kanban-card__row-label">{{ 'SCHOLARSHIP.LEVEL' | translate }}</span>
                             <span class="kanban-card__row-value kanban-card__row-value--blue">
                                 {{ dossier.niveau_etudes || 'N/A' }}
                             </span>
                         </div>
                         <div class="kanban-card__row">
-                            <span class="kanban-card__row-label">Domaine</span>
+                            <span class="kanban-card__row-label">{{ 'SCHOLARSHIP.FIELD' | translate }}</span>
                             <span class="kanban-card__row-value">{{ dossier.domaine_etudes || 'N/A' }}</span>
                         </div>
                         } @else {
                         <div class="kanban-card__row">
-                            <span class="kanban-card__row-label">Entreprise</span>
+                            <span class="kanban-card__row-label">{{ 'SCHOLARSHIP.COMPANY' | translate }}</span>
                             <span class="kanban-card__row-value">{{ dossier.entreprise || 'N/A' }}</span>
                         </div>
                         <div class="kanban-card__row">
-                            <span class="kanban-card__row-label">Poste</span>
+                            <span class="kanban-card__row-label">{{ 'SCHOLARSHIP.POSITION' | translate }}</span>
                             <span class="kanban-card__row-value">{{ dossier.poste || 'N/A' }}</span>
                         </div>
                         }
@@ -151,7 +150,7 @@
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                 <polyline points="14 2 14 8 20 8" />
                             </svg>
-                            <span>{{ dossier.nombre_documents }} doc{{ dossier.nombre_documents > 1 ? 's' : '' }}</span>
+                            <span>{{ dossier.nombre_documents }} {{ 'SCHOLARSHIP.DOCUMENTS' | translate }}</span>
                         </div>
                         <span class="kanban-card__date">{{ formatDate(dossier.date_creation) }}</span>
                     </div>
@@ -161,7 +160,7 @@
                 <!-- Empty column placeholder -->
                 @if (getColumnDossiers(col.id).length === 0) {
                 <div class="kanban__empty">
-                    Déposer ici
+                    {{ 'SCHOLARSHIP.DROP_HERE' | translate }}
                 </div>
                 }
             </div>
@@ -185,11 +184,11 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="modal__title">Filtres</h2>
-                        <p class="modal__subtitle">Filtrer les dossiers par statut et type</p>
+                        <h2 class="modal__title">{{ 'SCHOLARSHIP.FILTER_MODAL_TITLE' | translate }}</h2>
+                        <p class="modal__subtitle">{{ 'SCHOLARSHIP.FILTER_MODAL_SUBTITLE' | translate }}</p>
                     </div>
                 </div>
-                <button class="modal__close" (click)="closeFilterModal()" aria-label="Fermer">
+                <button class="modal__close" (click)="closeFilterModal()" aria-label="{{ 'DOSSIER_DETAIL.CLOSE' | translate }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -204,20 +203,20 @@
 
                     <!-- Filtre Statut -->
                     <div class="form__group">
-                        <label class="form__label">Statut</label>
+                        <label class="form__label">{{ 'SCHOLARSHIP.STATUS_LABEL' | translate }}</label>
                         <div class="form__select-wrap">
                             <select class="form__input form__select" formControlName="status">
-                                <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+                                <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label | translate }}</option>
                             </select>
                         </div>
                     </div>
 
                     <!-- Filtre Type de dossier -->
                     <div class="form__group">
-                        <label class="form__label">Type de dossier</label>
+                        <label class="form__label">{{ 'SCHOLARSHIP.TYPE_DOSSIER_LABEL' | translate }}</label>
                         <div class="form__select-wrap">
                             <select class="form__input form__select" formControlName="type_dossier">
-                                <option *ngFor="let t of typeDossierOptions" [value]="t.value">{{ t.label }}</option>
+                                <option *ngFor="let t of typeDossierOptions" [value]="t.value">{{ t.label | translate }}</option>
                             </select>
                         </div>
                     </div>
@@ -228,10 +227,10 @@
             <!-- Actions -->
             <div class="modal__actions">
                 <button type="button" class="btn btn--outline" (click)="resetFilters()">
-                    Réinitialiser
+                    {{ 'SCHOLARSHIP.RESET_FILTERS' | translate }}
                 </button>
                 <button type="button" class="btn btn--primary" (click)="applyFilters()">
-                    Appliquer les filtres
+                    {{ 'SCHOLARSHIP.APPLY_FILTERS' | translate }}
                 </button>
             </div>
 

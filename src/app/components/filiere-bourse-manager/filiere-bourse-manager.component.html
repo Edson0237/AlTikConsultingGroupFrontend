@@ -11,15 +11,15 @@
         </svg>
       </div>
       <div>
-        <h2 class="manager__title">Filières & Bourses</h2>
+        <h2 class="manager__title">{{ 'FILIERE_BOURSE_MANAGER.TITLE' | translate }}</h2>
         <p class="manager__subtitle">
-          {{ filieres().length }} filière{{ filieres().length > 1 ? 's' : '' }} associée{{ filieres().length > 1 ? 's' : '' }}
+          {{ filieres().length }} {{ 'FILIERE_BOURSE_MANAGER.SUBTITLE' | translate }}
         </p>
       </div>
     </div>
 
     <div class="manager__header-actions">
-      <button class="btn btn--outline btn--sm" (click)="loadFilieres()" [disabled]="loading()" title="Actualiser">
+      <button class="btn btn--outline btn--sm" (click)="loadFilieres()" [disabled]="loading()" title="{{ 'FILIERE_BOURSE_MANAGER.REFRESH_TITLE' | translate }}">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
           [class.spin]="loading()">
@@ -29,13 +29,13 @@
       </button>
 
       <!-- Bouton Créer une filière (référentiel) -->
-      <button *ngIf="isAdmin()" class="btn btn--outline btn--sm" (click)="openCreateFiliere()" title="Créer une filière dans le référentiel">
+      <button *ngIf="isAdmin()" class="btn btn--outline btn--sm" (click)="openCreateFiliere()" title="{{ 'FILIERE_BOURSE_MANAGER.CREATE_FILIERE_TITLE' | translate }} {{ 'FILIERE_BOURSE_MANAGER.CREATE_FILIERE_DESC' | translate }}">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/>
           <line x1="5" y1="12" x2="19" y2="12"/>
         </svg>
-        Nouvelle filière
+        {{ 'FILIERE_BOURSE_MANAGER.CREATE_FILIERE_TITLE' | translate }}
       </button>
 
       <!-- Bouton Associer une filière existante — visible à tous pour test -->
@@ -45,7 +45,7 @@
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
         </svg>
-        Associer
+        {{ 'FILIERE_BOURSE_MANAGER.ASSOCIER_BUTTON' | translate }}
       </button>
     </div>
   </div>
@@ -53,7 +53,7 @@
   <!-- ═══ LOADING ══════════════════════════════════════════════════════════════ -->
   <div class="state-block" *ngIf="loading()">
     <div class="state-block__spinner"></div>
-    <p class="state-block__text">Chargement des filières…</p>
+    <p class="state-block__text">{{ 'FILIERE_BOURSE_MANAGER.LOADING' | translate }}</p>
   </div>
 
   <!-- ═══ ERROR ════════════════════════════════════════════════════════════════ -->
@@ -65,7 +65,7 @@
       <line x1="12" y1="16" x2="12.01" y2="16"/>
     </svg>
     <p>{{ error() }}</p>
-    <button class="btn btn--outline btn--sm" (click)="loadFilieres()">Réessayer</button>
+    <button class="btn btn--outline btn--sm" (click)="loadFilieres()">{{ 'FILIERE_BOURSE_MANAGER.RETRY' | translate }}</button>
   </div>
 
   <!-- ═══ EMPTY ════════════════════════════════════════════════════════════════ -->
@@ -75,13 +75,13 @@
       <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
       <path d="M6 12v5c3 3 9 3 12 0v-5"/>
     </svg>
-    <p>Aucune filière associée à cet établissement.</p>
+    <p>{{ 'FILIERE_BOURSE_MANAGER.EMPTY_STATE' | translate }}</p>
     <div class="empty-state__actions" *ngIf="isAdmin()">
       <button class="btn btn--outline btn--sm" (click)="openCreateFiliere()">
-        Créer une filière
+        {{ 'FILIERE_BOURSE_MANAGER.CREATE_FIRST_FILIERE' | translate }}
       </button>
       <button class="btn btn--primary btn--sm" (click)="openAssocierFiliere()">
-        Associer une filière existante
+        {{ 'FILIERE_BOURSE_MANAGER.ASSOCIER_EXISTING_FILIERE' | translate }}
       </button>
     </div>
   </div>
@@ -107,29 +107,29 @@
           <div class="filiere-card__name-row">
             <h3 class="filiere-card__name">{{ ef.filiere_detail.nom }}</h3>
             <span class="actif-dot" [class.actif-dot--off]="!ef.actif"
-              [attr.title]="ef.actif ? 'Active' : 'Inactive'"></span>
+              [attr.title]="ef.actif ? ('FILIERE_BOURSE_MANAGER.ACTIVE' | translate) : ('FILIERE_BOURSE_MANAGER.INACTIVE' | translate)"></span>
           </div>
           <div class="filiere-card__badges">
             <span class="badge-level">{{ ef.filiere_detail.niveau_display }}</span>
             <span class="badge-domain">{{ ef.filiere_detail.domaine_display }}</span>
             <span class="badge-bourse-count" *ngIf="ef.bourses.length > 0">
-              {{ ef.bourses.length }} bourse{{ ef.bourses.length > 1 ? 's' : '' }}
+              {{ ef.bourses.length }} {{ ef.bourses.length > 1 ? ('FILIERE_BOURSE_MANAGER.BOURSES' | translate) : ('FILIERE_BOURSE_MANAGER.BOURSE' | translate) }}
             </span>
           </div>
         </div>
 
         <!-- Actions admin filière -->
         <div class="filiere-card__actions" *ngIf="isAdmin()" (click)="$event.stopPropagation()">
-          <button class="action-btn action-btn--add" title="Ajouter une bourse"
+          <button class="action-btn action-btn--add" title="{{ 'FILIERE_BOURSE_MANAGER.ADD_BOURSE_TITLE' | translate }}"
             (click)="openCreateBourse(ef)">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            Bourse
+            {{ 'FILIERE_BOURSE_MANAGER.BOURSE' | translate }}
           </button>
-          <button class="action-btn action-btn--edit" title="Modifier les conditions"
+          <button class="action-btn action-btn--edit" title="{{ 'FILIERE_BOURSE_MANAGER.EDIT_CONDITIONS_TITLE' | translate }}"
             (click)="openEditFiliere(ef, $event)">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -137,7 +137,7 @@
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
             </svg>
           </button>
-          <button class="action-btn action-btn--delete" title="Dissocier la filière"
+          <button class="action-btn action-btn--delete" title="{{ 'FILIERE_BOURSE_MANAGER.DISSOCIER_FILIERE_TITLE' | translate }}"
             (click)="confirmDeleteFiliere(ef, $event)">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -166,7 +166,7 @@
               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
-            Score min : <strong>{{ ef.score_minimal }}/20</strong>
+            {{ 'FILIERE_BOURSE_MANAGER.SCORE_MIN' | translate }} : <strong>{{ ef.score_minimal }}/20</strong>
           </div>
           <div class="cond-item" *ngIf="ef.frais_scolarite">
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
@@ -174,7 +174,7 @@
               <line x1="12" y1="1" x2="12" y2="23"/>
               <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
-            Scolarité : <strong>{{ ef.frais_scolarite }} {{ ef.devise }}</strong>
+            {{ 'FILIERE_BOURSE_MANAGER.SCOLARITE' | translate }} : <strong>{{ ef.frais_scolarite }} {{ ef.devise }}</strong>
           </div>
           <div class="cond-item" *ngIf="ef.places_disponibles">
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
@@ -184,7 +184,7 @@
               <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
               <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
-            <strong>{{ ef.places_disponibles }}</strong> places
+            <strong>{{ ef.places_disponibles }}</strong> {{ 'FILIERE_BOURSE_MANAGER.PLACES' | translate }}
           </div>
           <div class="cond-item" *ngIf="ef.langue">
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
@@ -201,28 +201,28 @@
               <circle cx="12" cy="12" r="10"/>
               <polyline points="12 6 12 12 16 14"/>
             </svg>
-            {{ ef.filiere_detail.duree }} an{{ ef.filiere_detail.duree > 1 ? 's' : '' }}
+            {{ ef.filiere_detail.duree }} {{ ef.filiere_detail.duree > 1 ? ('FILIERE_BOURSE_MANAGER.YEARS' | translate) : ('FILIERE_BOURSE_MANAGER.YEAR' | translate) }}
           </div>
           <p class="no-conditions"
             *ngIf="!ef.score_minimal && !ef.frais_scolarite && !ef.places_disponibles && !ef.langue">
-            Aucune condition renseignée.
+            {{ 'FILIERE_BOURSE_MANAGER.NO_CONDITIONS' | translate }}
             <button *ngIf="isAdmin()" class="inline-link" (click)="openEditFiliere(ef, $event)">
-              Ajouter des conditions
+              {{ 'FILIERE_BOURSE_MANAGER.ADD_CONDITIONS' | translate }}
             </button>
           </p>
         </div>
 
         <!-- Débouchés -->
         <p class="debouches" *ngIf="ef.filiere_detail.debouches">
-          <strong>Débouchés :</strong> {{ ef.filiere_detail.debouches }}
+          <strong>{{ 'FILIERE_BOURSE_MANAGER.DEBOUCHES_LABEL' | translate }}</strong> {{ ef.filiere_detail.debouches }}
         </p>
 
         <!-- ── Bourses ── -->
         <div class="bourses-section">
           <p class="bourses-section__empty" *ngIf="ef.bourses.length === 0">
-            Aucune bourse associée à cette filière.
+            {{ 'FILIERE_BOURSE_MANAGER.NO_BOURSE_ASSOCIATED' | translate }}
             <button *ngIf="isAdmin()" class="inline-link" (click)="openCreateBourse(ef)">
-              Créer la première bourse
+              {{ 'FILIERE_BOURSE_MANAGER.CREATE_FIRST_BOURSE' | translate }}
             </button>
           </p>
 
@@ -248,13 +248,13 @@
                   {{ b.montant }} {{ b.devise }}
                 </span>
                 <span class="bourse-card__places">
-                  {{ b.nombre_bourses }} bourse{{ b.nombre_bourses > 1 ? 's' : '' }}
+                  {{ b.nombre_bourses }} {{ b.nombre_bourses > 1 ? ('FILIERE_BOURSE_MANAGER.BOURSES' | translate) : ('FILIERE_BOURSE_MANAGER.BOURSE' | translate) }}
                 </span>
 
                 <!-- Actions admin bourse -->
                 <div class="bourse-card__actions" *ngIf="isAdmin()">
                   <button class="action-btn action-btn--sm action-btn--icon"
-                    title="Ajouter une période" (click)="openCreatePeriode(b)">
+                    title="{{ 'FILIERE_BOURSE_MANAGER.ADD_PERIOD_TITLE' | translate }}" (click)="openCreatePeriode(b)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
                       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -264,7 +264,7 @@
                     </svg>
                   </button>
                   <button class="action-btn action-btn--sm action-btn--icon"
-                    title="Ajouter un document" (click)="openCreateDocument(b)">
+                    title="{{ 'FILIERE_BOURSE_MANAGER.ADD_DOCUMENT_TITLE' | translate }}" (click)="openCreateDocument(b)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
                       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -274,7 +274,7 @@
                     </svg>
                   </button>
                   <button class="action-btn action-btn--sm action-btn--edit"
-                    title="Modifier" (click)="openEditBourse(b)">
+                    title="{{ 'UNIVERSITIES.EDIT' | translate }}" (click)="openEditBourse(b)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
                       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -282,7 +282,7 @@
                     </svg>
                   </button>
                   <button class="action-btn action-btn--sm action-btn--delete"
-                    title="Supprimer" (click)="deleteBourse(b)">
+                    title="{{ 'UNIVERSITIES.DELETE' | translate }}" (click)="deleteBourse(b)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
                       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="3 6 5 6 21 6"/>
@@ -311,7 +311,7 @@
 
             <!-- Périodes -->
             <div class="periodes" *ngIf="b.periodes && b.periodes.length > 0">
-              <p class="periodes__title">Périodes de candidature</p>
+              <p class="periodes__title">{{ 'FILIERE_BOURSE_MANAGER.PERIODES_TITLE' | translate }}</p>
               <div class="periodes__list">
                 <div *ngFor="let p of b.periodes" class="periode-chip">
                   <span class="periode-chip__annee">{{ p.annee }}</span>
@@ -322,7 +322,7 @@
                     {{ p.places_cette_periode }} places
                   </span>
                   <span class="periode-chip__resultats" *ngIf="p.date_annonce_resultats">
-                    Résultats le {{ p.date_annonce_resultats | date:'dd/MM/yyyy' }}
+                    {{ 'FILIERE_BOURSE_MANAGER.RESULTS_ON' | translate }} {{ p.date_annonce_resultats | date:'dd/MM/yyyy' }}
                   </span>
                 </div>
               </div>
@@ -330,12 +330,12 @@
 
             <!-- Documents requis -->
             <div class="documents" *ngIf="b.documents_requis && b.documents_requis.length > 0">
-              <p class="documents__title">Documents requis</p>
+              <p class="documents__title">{{ 'FILIERE_BOURSE_MANAGER.DOCUMENTS_TITLE' | translate }}</p>
               <div class="documents__list">
                 <span *ngFor="let d of b.documents_requis" class="doc-chip"
                   [class.doc-chip--optional]="!d.obligatoire">
                   {{ d.nom_document }}
-                  <span class="doc-chip__opt" *ngIf="!d.obligatoire">facultatif</span>
+                  <span class="doc-chip__opt" *ngIf="!d.obligatoire">{{ 'FILIERE_BOURSE_MANAGER.OPTIONAL' | translate }}</span>
                 </span>
               </div>
             </div>
@@ -365,8 +365,8 @@
               </svg>
             </div>
             <div>
-              <h3 class="modal__title">Créer une filière</h3>
-              <p class="modal__subtitle">Ajout au référentiel global — sera ensuite associable à un établissement</p>
+              <h3 class="modal__title">{{ 'FILIERE_BOURSE_MANAGER.MODAL_CREATE_FILIERE_TITLE' | translate }}</h3>
+              <p class="modal__subtitle">{{ 'FILIERE_BOURSE_MANAGER.MODAL_CREATE_FILIERE_SUBTITLE' | translate }}</p>
             </div>
           </div>
           <button class="modal__close" (click)="closeModal()">
@@ -381,62 +381,62 @@
 
           <!-- Nom -->
           <div class="form__group form__group--full">
-            <label class="form__label">Nom de la filière <span class="req">*</span></label>
+            <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.NAME_LABEL' | translate }} <span class="req">*</span></label>
             <input type="text" class="form__input" formControlName="nom"
               [class.form__input--error]="isInvalid(createFiliereForm, 'nom')"
-              placeholder="ex : Génie Logiciel, Droit des Affaires…" />
-            <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'nom')">Nom requis (2 min.)</span>
+              placeholder="{{ 'FILIERE_BOURSE_MANAGER.NAME_PLACEHOLDER' | translate }}" />
+            <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'nom')">{{ 'FILIERE_BOURSE_MANAGER.NAME_REQUIRED' | translate }}</span>
           </div>
 
           <!-- Domaine + Niveau -->
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Domaine <span class="req">*</span></label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DOMAINE_LABEL' | translate }} <span class="req">*</span></label>
               <div class="form__select-wrap">
                 <select class="form__input form__select" formControlName="domaine"
                   [class.form__input--error]="isInvalid(createFiliereForm, 'domaine')">
-                  <option value="" disabled>Choisir un domaine…</option>
-                  <option *ngFor="let d of domaineOptions" [value]="d.value">{{ d.label }}</option>
+                  <option value="" disabled>{{ 'FILIERE_BOURSE_MANAGER.CHOOSE_DOMAINE' | translate }}</option>
+                  <option *ngFor="let d of domaineOptionsWithLabels" [value]="d.value">{{ d.label }}</option>
                 </select>
               </div>
-              <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'domaine')">Domaine requis</span>
+              <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'domaine')">{{ 'FILIERE_BOURSE_MANAGER.DOMAINE_REQUIRED' | translate }}</span>
             </div>
             <div class="form__group">
-              <label class="form__label">Niveau <span class="req">*</span></label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.NIVEAU_LABEL' | translate }} <span class="req">*</span></label>
               <div class="form__select-wrap">
                 <select class="form__input form__select" formControlName="niveau"
                   [class.form__input--error]="isInvalid(createFiliereForm, 'niveau')">
-                  <option value="" disabled>Choisir un niveau…</option>
-                  <option *ngFor="let n of niveauOptions" [value]="n.value">{{ n.label }}</option>
+                  <option value="" disabled>{{ 'FILIERE_BOURSE_MANAGER.CHOOSE_NIVEAU' | translate }}</option>
+                  <option *ngFor="let n of niveauOptionsWithLabels" [value]="n.value">{{ n.label }}</option>
                 </select>
               </div>
-              <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'niveau')">Niveau requis</span>
+              <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'niveau')">{{ 'FILIERE_BOURSE_MANAGER.NIVEAU_REQUIRED' | translate }}</span>
             </div>
           </div>
 
           <!-- Durée -->
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Durée (années) <span class="req">*</span></label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DUREE_LABEL' | translate }} <span class="req">*</span></label>
               <input type="number" class="form__input" formControlName="duree"
                 [class.form__input--error]="isInvalid(createFiliereForm, 'duree')"
-                placeholder="ex : 2" min="1" max="10" />
-              <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'duree')">Durée invalide (1-10 ans)</span>
+                placeholder="{{ 'FILIERE_BOURSE_MANAGER.DUREE_PLACEHOLDER' | translate }}" min="1" max="10" />
+              <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'duree')">{{ 'FILIERE_BOURSE_MANAGER.DUREE_REQUIRED' | translate }}</span>
             </div>
           </div>
 
           <!-- Description -->
           <div class="form__group form__group--full">
-            <label class="form__label">Description</label>
+            <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DESCRIPTION_LABEL' | translate }}</label>
             <textarea class="form__input form__textarea" formControlName="description" rows="2"
-              placeholder="Présentation générale de la formation…"></textarea>
+              placeholder="{{ 'FILIERE_BOURSE_MANAGER.DESCRIPTION_PLACEHOLDER' | translate }}"></textarea>
           </div>
 
           <!-- Débouchés -->
           <div class="form__group form__group--full">
-            <label class="form__label">Débouchés professionnels</label>
+            <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DEBOUCHES_PRO_LABEL' | translate }}</label>
             <textarea class="form__input form__textarea" formControlName="debouches" rows="2"
-              placeholder="ex : Développeur senior, Architecte logiciel, Chef de projet…"></textarea>
+              placeholder="{{ 'FILIERE_BOURSE_MANAGER.DEBOUCHES_PRO_PLACEHOLDER' | translate }}"></textarea>
           </div>
 
           <!-- Info banner -->
@@ -447,11 +447,11 @@
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            <span>Après création, vous serez redirigé vers le formulaire d'association pour lier cette filière à cet établissement.</span>
+            <span>{{ 'FILIERE_BOURSE_MANAGER.INFO_BANNER' | translate }}</span>
           </div>
 
           <ng-container *ngTemplateOutlet="modalFeedback"></ng-container>
-          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'Créer la filière' }"></ng-container>
+          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'FILIERE_BOURSE_MANAGER.CREATE_FILIERE_BUTTON' }"></ng-container>
         </form>
       </ng-container>
 
@@ -469,8 +469,8 @@
               </svg>
             </div>
             <div>
-              <h3 class="modal__title">Associer une filière</h3>
-              <p class="modal__subtitle">Liez une filière du catalogue à cet établissement</p>
+              <h3 class="modal__title">{{ 'FILIERE_BOURSE_MANAGER.MODAL_ASSOCIER_TITLE' | translate }}</h3>
+              <p class="modal__subtitle">{{ 'FILIERE_BOURSE_MANAGER.MODAL_ASSOCIER_SUBTITLE' | translate }}</p>
             </div>
           </div>
           <button class="modal__close" (click)="closeModal()">
@@ -486,25 +486,25 @@
           <!-- Loading catalogue -->
           <div class="catalog-loading" *ngIf="loadingCatalog()">
             <div class="catalog-loading__spinner"></div>
-            <span>Chargement du catalogue…</span>
+            <span>{{ 'FILIERE_BOURSE_MANAGER.CATALOG_LOADING' | translate }}</span>
           </div>
 
           <!-- Select filière -->
           <div class="form__group form__group--full" *ngIf="!loadingCatalog()">
-            <label class="form__label">Filière <span class="req">*</span></label>
+            <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.FILIERE_LABEL' | translate }} <span class="req">*</span></label>
 
             <div *ngIf="catalogAvailable().length > 0; else noCatalog">
               <div class="form__select-wrap">
                 <select class="form__input form__select" formControlName="filiere"
                   [class.form__input--error]="isInvalid(filiereForm, 'filiere')"
                   (change)="onFiliereChange($event)">
-                  <option [ngValue]="null" disabled selected>Sélectionner une filière…</option>
+                  <option [ngValue]="null" disabled selected>{{ 'FILIERE_BOURSE_MANAGER.SELECT_FILIERE' | translate }}</option>
                   <option *ngFor="let f of catalogAvailable()" [ngValue]="f.id">
                     {{ f.nom }} — {{ f.niveau_display }} ({{ f.domaine_display }})
                   </option>
                 </select>
               </div>
-              <span class="form__error" *ngIf="isInvalid(filiereForm, 'filiere')">Filière requise</span>
+              <span class="form__error" *ngIf="isInvalid(filiereForm, 'filiere')">{{ 'FILIERE_BOURSE_MANAGER.FILIERE_REQUIRED' | translate }}</span>
             </div>
 
             <ng-template #noCatalog>
@@ -515,10 +515,10 @@
                   <path d="M6 12v5c3 3 9 3 12 0v-5"/>
                 </svg>
                 <p>
-                  <span *ngIf="filieresCatalog().length === 0">Le catalogue est vide. </span>
-                  <span *ngIf="filieresCatalog().length > 0">Toutes les filières sont déjà associées. </span>
+                  <span *ngIf="filieresCatalog().length === 0">{{ 'FILIERE_BOURSE_MANAGER.CATALOG_EMPTY' | translate }}</span>
+                  <span *ngIf="filieresCatalog().length > 0">{{ 'FILIERE_BOURSE_MANAGER.CATALOG_ALL_ASSOCIATED' | translate }}</span>
                   <button type="button" class="inline-link" (click)="closeModal(); openCreateFiliere()">
-                    Créer une nouvelle filière
+                    {{ 'FILIERE_BOURSE_MANAGER.CREATE_NEW_FILIERE' | translate }}
                   </button>
                 </p>
               </div>
@@ -527,7 +527,7 @@
 
           <!-- Séparateur -->
           <div class="form-section-divider" *ngIf="catalogAvailable().length > 0 && !loadingCatalog()">
-            <span>Conditions d'admission (optionnelles)</span>
+            <span>{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_SECTION' | translate }}</span>
           </div>
 
           <ng-container *ngIf="catalogAvailable().length > 0 && !loadingCatalog()">
@@ -535,7 +535,7 @@
           </ng-container>
 
           <ng-container *ngTemplateOutlet="modalFeedback"></ng-container>
-          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'Associer la filière' }"></ng-container>
+          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'FILIERE_BOURSE_MANAGER.ASSOCIER_BUTTON_MODAL' }"></ng-container>
         </form>
       </ng-container>
 
@@ -553,7 +553,7 @@
               </svg>
             </div>
             <div>
-              <h3 class="modal__title">Modifier les conditions</h3>
+              <h3 class="modal__title">{{ 'FILIERE_BOURSE_MANAGER.MODAL_EDIT_CONDITIONS_TITLE' | translate }}</h3>
               <p class="modal__subtitle" *ngIf="currentEtabFiliere()">
                 {{ currentEtabFiliere()!.filiere_detail.nom }}
               </p>
@@ -570,7 +570,7 @@
         <form [formGroup]="editFiliereForm" (ngSubmit)="submitEditFiliereForm()" class="modal__body">
           <ng-container *ngTemplateOutlet="conditionsFields; context: { form: editFiliereForm }"></ng-container>
           <ng-container *ngTemplateOutlet="modalFeedback"></ng-container>
-          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'Enregistrer les modifications' }"></ng-container>
+          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'FILIERE_BOURSE_MANAGER.SAVE_BUTTON' }"></ng-container>
         </form>
       </ng-container>
 
@@ -589,10 +589,10 @@
             </div>
             <div>
               <h3 class="modal__title">
-                {{ modalType() === 'bourse-create' ? 'Créer une bourse' : 'Modifier la bourse' }}
+                {{ modalType() === 'bourse-create' ? ('FILIERE_BOURSE_MANAGER.MODAL_CREATE_BOURSE_TITLE' | translate) : ('FILIERE_BOURSE_MANAGER.MODAL_EDIT_BOURSE_TITLE' | translate) }}
               </h3>
               <p class="modal__subtitle" *ngIf="modalType() === 'bourse-create' && currentEtabFiliere()">
-                Pour : {{ currentEtabFiliere()!.filiere_detail.nom }}
+                {{ 'FILIERE_BOURSE_MANAGER.FOR_LABEL' | translate }} {{ currentEtabFiliere()!.filiere_detail.nom }}
               </p>
             </div>
           </div>
@@ -607,45 +607,45 @@
         <form [formGroup]="bourseForm" (ngSubmit)="submitBourseForm()" class="modal__body">
 
           <div class="form__group form__group--full">
-            <label class="form__label">Nom de la bourse <span class="req">*</span></label>
+            <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.BOURSE_NAME_LABEL' | translate }} <span class="req">*</span></label>
             <input type="text" class="form__input" formControlName="nom"
               [class.form__input--error]="isInvalid(bourseForm, 'nom')"
-              placeholder="ex : Bourse Excellence Afrique 2026" />
-            <span class="form__error" *ngIf="isInvalid(bourseForm, 'nom')">Nom requis (2 min.)</span>
+              placeholder="{{ 'FILIERE_BOURSE_MANAGER.BOURSE_NAME_PLACEHOLDER' | translate }}" />
+            <span class="form__error" *ngIf="isInvalid(bourseForm, 'nom')">{{ 'FILIERE_BOURSE_MANAGER.BOURSE_NAME_REQUIRED' | translate }}</span>
           </div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Type <span class="req">*</span></label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.TYPE_LABEL' | translate }} <span class="req">*</span></label>
               <div class="form__select-wrap">
                 <select class="form__input form__select" formControlName="type_bourse"
                   [class.form__input--error]="isInvalid(bourseForm, 'type_bourse')">
-                  <option value="" disabled>Choisir…</option>
-                  <option *ngFor="let t of typeBourseOptions" [value]="t.value">{{ t.label }}</option>
+                  <option value="" disabled>{{ 'FILIERE_BOURSE_MANAGER.CHOOSE_TYPE' | translate }}</option>
+                  <option *ngFor="let t of typeBourseOptionsWithLabels" [value]="t.value">{{ t.label }}</option>
                 </select>
               </div>
-              <span class="form__error" *ngIf="isInvalid(bourseForm, 'type_bourse')">Type requis</span>
+              <span class="form__error" *ngIf="isInvalid(bourseForm, 'type_bourse')">{{ 'FILIERE_BOURSE_MANAGER.TYPE_REQUIRED' | translate }}</span>
             </div>
             <div class="form__group">
-              <label class="form__label">Statut</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.STATUS_LABEL' | translate }}</label>
               <div class="form__select-wrap">
                 <select class="form__input form__select" formControlName="statut">
-                  <option *ngFor="let s of statutBourseOptions" [value]="s.value">{{ s.label }}</option>
+                  <option *ngFor="let s of statutBourseOptionsWithLabels" [value]="s.value">{{ s.label }}</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <div class="form-section-divider"><span>Valeur financière</span></div>
+          <div class="form-section-divider"><span>{{ 'FILIERE_BOURSE_MANAGER.FINANCIAL_VALUE' | translate }}</span></div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Montant</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.AMOUNT_LABEL' | translate }}</label>
               <input type="number" class="form__input" formControlName="montant"
                 placeholder="ex : 2000" min="0" />
             </div>
             <div class="form__group">
-              <label class="form__label">Couverture (%)</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.COVERAGE_LABEL' | translate }}</label>
               <input type="number" class="form__input" formControlName="pourcentage_couverture"
                 placeholder="ex : 50" min="1" max="100" />
             </div>
@@ -653,47 +653,47 @@
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Nombre de bourses</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.NUMBER_SCHOLARSHIPS' | translate }}</label>
               <input type="number" class="form__input" formControlName="nombre_bourses"
                 placeholder="ex : 5" min="1" />
             </div>
             <div class="form__group">
-              <label class="form__label">Devise</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.CURRENCY_LABEL' | translate }}</label>
               <input type="text" class="form__input" formControlName="devise" maxlength="5"
                 placeholder="EUR" />
             </div>
           </div>
 
-          <div class="form-section-divider"><span>Éligibilité</span></div>
+          <div class="form-section-divider"><span>{{ 'FILIERE_BOURSE_MANAGER.ELIGIBILITY' | translate }}</span></div>
 
           <div class="form__group form__group--full">
-            <label class="form__label">Conditions d'éligibilité</label>
+            <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.ELIGIBILITY_CONDITIONS' | translate }}</label>
             <textarea class="form__input form__textarea" formControlName="conditions_eligibilite" rows="2"
-              placeholder="ex : Moyenne ≥ 14/20, ressortissant africain…"></textarea>
+              placeholder="{{ 'FILIERE_BOURSE_MANAGER.ELIGIBILITY_CONDITIONS_PLACEHOLDER' | translate }}"></textarea>
           </div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Niveau requis</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.REQUIRED_LEVEL' | translate }}</label>
               <input type="text" class="form__input" formControlName="niveau_requis"
-                placeholder="ex : Bac+3 minimum" />
+                placeholder="{{ 'FILIERE_BOURSE_MANAGER.REQUIRED_LEVEL_PLACEHOLDER' | translate }}" />
             </div>
             <div class="form__group">
-              <label class="form__label">Nationalité éligible</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.ELIGIBLE_NATIONALITY' | translate }}</label>
               <input type="text" class="form__input" formControlName="nationalite_eligible"
-                placeholder="ex : Afrique subsaharienne" />
+                placeholder="{{ 'FILIERE_BOURSE_MANAGER.ELIGIBLE_NATIONALITY_PLACEHOLDER' | translate }}" />
             </div>
           </div>
 
           <div class="form__group form__group--full">
-            <label class="form__label">Description</label>
+            <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.BOURSE_DESCRIPTION' | translate }}</label>
             <textarea class="form__input form__textarea" formControlName="description" rows="2"
-              placeholder="Description de la bourse…"></textarea>
+              placeholder="{{ 'FILIERE_BOURSE_MANAGER.BOURSE_DESCRIPTION_PLACEHOLDER' | translate }}"></textarea>
           </div>
 
           <ng-container *ngTemplateOutlet="modalFeedback"></ng-container>
           <ng-container *ngTemplateOutlet="modalActions; context: {
-            label: modalType() === 'bourse-create' ? 'Créer la bourse' : 'Enregistrer'
+            label: modalType() === 'bourse-create' ? 'FILIERE_BOURSE_MANAGER.CREATE_BOURSE_BUTTON' : 'FILIERE_BOURSE_MANAGER.SAVE_BUTTON_SHORT'
           }"></ng-container>
         </form>
       </ng-container>
@@ -714,7 +714,7 @@
               </svg>
             </div>
             <div>
-              <h3 class="modal__title">Ajouter une période</h3>
+              <h3 class="modal__title">{{ 'FILIERE_BOURSE_MANAGER.ADD_PERIOD_TITLE' | translate }}</h3>
               <p class="modal__subtitle" *ngIf="currentBourse()">{{ currentBourse()!.nom }}</p>
             </div>
           </div>
@@ -730,51 +730,51 @@
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Année académique <span class="req">*</span></label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.PERIOD_ACADEMIC_YEAR' | translate }} <span class="req">*</span></label>
               <input type="number" class="form__input" formControlName="annee"
                 [class.form__input--error]="isInvalid(periodeForm, 'annee')"
                 placeholder="ex : 2026" min="2020" max="2050" />
-              <span class="form__error" *ngIf="isInvalid(periodeForm, 'annee')">Année requise</span>
+              <span class="form__error" *ngIf="isInvalid(periodeForm, 'annee')">{{ 'FILIERE_BOURSE_MANAGER.PERIOD_YEAR_REQUIRED' | translate }}</span>
             </div>
             <div class="form__group">
-              <label class="form__label">Places cette période</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.PERIOD_PLACES_LABEL' | translate }}</label>
               <input type="number" class="form__input" formControlName="places_cette_periode"
                 placeholder="ex : 5" min="1" />
             </div>
           </div>
 
-          <div class="form-section-divider"><span>Dates de candidature</span></div>
+          <div class="form-section-divider"><span>{{ 'FILIERE_BOURSE_MANAGER.PERIOD_DATES_DIVIDER' | translate }}</span></div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Ouverture des candidatures <span class="req">*</span></label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.PERIOD_OPENING' | translate }} <span class="req">*</span></label>
               <input type="date" class="form__input" formControlName="date_ouverture"
                 [class.form__input--error]="isInvalid(periodeForm, 'date_ouverture')" />
-              <span class="form__error" *ngIf="isInvalid(periodeForm, 'date_ouverture')">Date requise</span>
+              <span class="form__error" *ngIf="isInvalid(periodeForm, 'date_ouverture')">{{ 'FILIERE_BOURSE_MANAGER.PERIOD_DATE_REQUIRED' | translate }}</span>
             </div>
             <div class="form__group">
-              <label class="form__label">Clôture des candidatures <span class="req">*</span></label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.PERIOD_CLOSING' | translate }} <span class="req">*</span></label>
               <input type="date" class="form__input" formControlName="date_cloture"
                 [class.form__input--error]="isInvalid(periodeForm, 'date_cloture')" />
-              <span class="form__error" *ngIf="isInvalid(periodeForm, 'date_cloture')">Date requise</span>
+              <span class="form__error" *ngIf="isInvalid(periodeForm, 'date_cloture')">{{ 'FILIERE_BOURSE_MANAGER.PERIOD_DATE_REQUIRED' | translate }}</span>
             </div>
           </div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Annonce des résultats</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.PERIOD_RESULTS_ANNOUNCEMENT' | translate }}</label>
               <input type="date" class="form__input" formControlName="date_annonce_resultats" />
             </div>
           </div>
 
           <div class="form__group form__group--full">
-            <label class="form__label">Notes</label>
+            <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.PERIOD_NOTES' | translate }}</label>
             <textarea class="form__input form__textarea" formControlName="notes" rows="2"
-              placeholder="Informations complémentaires sur cette période…"></textarea>
+              placeholder="{{ 'FILIERE_BOURSE_MANAGER.PERIOD_NOTES_PLACEHOLDER' | translate }}"></textarea>
           </div>
 
           <ng-container *ngTemplateOutlet="modalFeedback"></ng-container>
-          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'Ajouter la période' }"></ng-container>
+          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'FILIERE_BOURSE_MANAGER.ADD_PERIOD_TITLE' }"></ng-container>
         </form>
       </ng-container>
 
@@ -792,7 +792,7 @@
               </svg>
             </div>
             <div>
-              <h3 class="modal__title">Ajouter un document requis</h3>
+              <h3 class="modal__title">{{ 'FILIERE_BOURSE_MANAGER.ADD_DOCUMENT_TITLE' | translate }}</h3>
               <p class="modal__subtitle" *ngIf="currentBourse()">{{ currentBourse()!.nom }}</p>
             </div>
           </div>
@@ -807,33 +807,33 @@
         <form [formGroup]="documentForm" (ngSubmit)="submitDocumentForm()" class="modal__body">
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Type de document <span class="req">*</span></label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DOCUMENT_TYPE_LABEL' | translate }} <span class="req">*</span></label>
               <div class="form__select-wrap">
                 <select class="form__input form__select" formControlName="type_document"
                   [class.form__input--error]="isInvalid(documentForm, 'type_document')">
-                  <option value="" disabled>Choisir…</option>
-                  <option *ngFor="let t of typeDocOptions" [value]="t.value">{{ t.label }}</option>
+                  <option value="" disabled>{{ 'FILIERE_BOURSE_MANAGER.CHOOSE_TYPE' | translate }}</option>
+                  <option *ngFor="let t of typeDocOptionsWithLabels" [value]="t.value">{{ t.label }}</option>
                 </select>
               </div>
-              <span class="form__error" *ngIf="isInvalid(documentForm, 'type_document')">Requis</span>
+              <span class="form__error" *ngIf="isInvalid(documentForm, 'type_document')">{{ 'FILIERE_BOURSE_MANAGER.DOCUMENT_NAME_REQUIRED' | translate }}</span>
             </div>
             <div class="form__group">
-              <label class="form__label">Nom du document <span class="req">*</span></label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DOCUMENT_NAME_LABEL' | translate }} <span class="req">*</span></label>
               <input type="text" class="form__input" formControlName="nom_document"
                 [class.form__input--error]="isInvalid(documentForm, 'nom_document')"
                 placeholder="ex : Curriculum Vitae" />
-              <span class="form__error" *ngIf="isInvalid(documentForm, 'nom_document')">Requis</span>
+              <span class="form__error" *ngIf="isInvalid(documentForm, 'nom_document')">{{ 'FILIERE_BOURSE_MANAGER.DOCUMENT_NAME_REQUIRED' | translate }}</span>
             </div>
           </div>
 
           <div class="form__row">
             <div class="form__group">
-              <label class="form__label">Format accepté</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DOCUMENT_FORMAT_LABEL' | translate }}</label>
               <input type="text" class="form__input" formControlName="format_accepte"
-                placeholder="ex : PDF, max 2 Mo" />
+                placeholder="{{ 'FILIERE_BOURSE_MANAGER.DOCUMENT_FORMAT_PLACEHOLDER' | translate }}" />
             </div>
             <div class="form__group form__group--center">
-              <label class="form__label">Obligatoire</label>
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DOCUMENT_REQUIRED_LABEL' | translate }}</label>
               <label class="toggle">
                 <input type="checkbox" formControlName="obligatoire" />
                 <span class="toggle__track"></span>
@@ -842,13 +842,13 @@
           </div>
 
           <div class="form__group form__group--full">
-            <label class="form__label">Description</label>
+            <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DOCUMENT_DESCRIPTION_LABEL' | translate }}</label>
             <textarea class="form__input form__textarea" formControlName="description" rows="2"
-              placeholder="Instructions supplémentaires…"></textarea>
+              placeholder="{{ 'FILIERE_BOURSE_MANAGER.DOCUMENT_DESCRIPTION_PLACEHOLDER' | translate }}"></textarea>
           </div>
 
           <ng-container *ngTemplateOutlet="modalFeedback"></ng-container>
-          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'Ajouter le document' }"></ng-container>
+          <ng-container *ngTemplateOutlet="modalActions; context: { label: 'FILIERE_BOURSE_MANAGER.ADD_DOCUMENT_TITLE' }"></ng-container>
         </form>
       </ng-container>
 
@@ -867,19 +867,17 @@
             <path d="M6 12v5c3 3 9 3 12 0v-5"/>
           </svg>
         </div>
-        <h3 class="delete-confirm__title">Dissocier la filière ?</h3>
+        <h3 class="delete-confirm__title">{{ 'FILIERE_BOURSE_MANAGER.CONFIRM_DELETE_FILIERE_TITLE' | translate }}</h3>
         <p class="delete-confirm__text">
-          Vous êtes sur le point de dissocier
-          <strong>{{ deleteFilierTarget?.filiere_detail?.nom }}</strong>
-          de cet établissement. Toutes les bourses associées seront également supprimées.
+          {{ 'FILIERE_BOURSE_MANAGER.CONFIRM_DELETE_FILIERE_TEXT' | translate }}
         </p>
         <div class="delete-confirm__actions">
           <button class="btn btn--outline" (click)="cancelDeleteFiliere()" [disabled]="deleteFilierLoading">
-            Annuler
+            {{ 'FILIERE_BOURSE_MANAGER.CANCEL_BUTTON' | translate }}
           </button>
           <button class="btn btn--danger" (click)="doDeleteFiliere()" [disabled]="deleteFilierLoading">
             <span class="btn__spinner btn__spinner--white" *ngIf="deleteFilierLoading"></span>
-            <ng-container *ngIf="!deleteFilierLoading">Oui, dissocier</ng-container>
+            <ng-container *ngIf="!deleteFilierLoading">{{ 'FILIERE_BOURSE_MANAGER.CONFIRM_DELETE_BUTTON' | translate }}</ng-container>
           </button>
         </div>
       </div>
@@ -893,36 +891,36 @@
     <div [formGroup]="form">
       <div class="form__row">
         <div class="form__group">
-          <label class="form__label">Score minimal (/20)</label>
+          <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_SCORE_MIN_LABEL' | translate }}</label>
           <input type="number" class="form__input" formControlName="score_minimal"
-            placeholder="ex : 12" min="0" max="20" step="0.5" />
+            placeholder="{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_SCORE_MIN_PLACEHOLDER' | translate }}" min="0" max="20" step="0.5" />
         </div>
         <div class="form__group">
-          <label class="form__label">Frais de scolarité</label>
+          <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_SCOLARITE_LABEL' | translate }}</label>
           <input type="number" class="form__input" formControlName="frais_scolarite"
-            placeholder="ex : 3500" min="0" />
+            placeholder="{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_SCOLARITE_PLACEHOLDER' | translate }}" min="0" />
         </div>
       </div>
       <div class="form__row">
         <div class="form__group">
-          <label class="form__label">Devise</label>
+          <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_CURRENCY_LABEL' | translate }}</label>
           <input type="text" class="form__input" formControlName="devise"
             placeholder="EUR" maxlength="5" />
         </div>
         <div class="form__group">
-          <label class="form__label">Langue d'enseignement</label>
+          <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_LANGUAGE_LABEL' | translate }}</label>
           <input type="text" class="form__input" formControlName="langue"
-            placeholder="ex : Français" />
+            placeholder="{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_LANGUAGE_PLACEHOLDER' | translate }}" />
         </div>
       </div>
       <div class="form__row">
         <div class="form__group">
-          <label class="form__label">Places disponibles</label>
+          <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_PLACES_LABEL' | translate }}</label>
           <input type="number" class="form__input" formControlName="places_disponibles"
-            placeholder="ex : 30" min="1" />
+            placeholder="{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_PLACES_PLACEHOLDER' | translate }}" min="1" />
         </div>
         <div class="form__group form__group--center">
-          <label class="form__label">Active</label>
+          <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.CONDITIONS_ACTIVE_LABEL' | translate }}</label>
           <label class="toggle">
             <input type="checkbox" formControlName="actif" />
             <span class="toggle__track"></span>
@@ -954,11 +952,11 @@
   <ng-template #modalActions let-label="label">
     <div class="modal__actions">
       <button type="button" class="btn btn--outline" (click)="closeModal()" [disabled]="modalLoading()">
-        Annuler
+        {{ 'FILIERE_BOURSE_MANAGER.CANCEL_BUTTON' | translate }}
       </button>
       <button type="submit" class="btn btn--primary" [disabled]="modalLoading()">
         <span class="btn__spinner" *ngIf="modalLoading()"></span>
-        <ng-container *ngIf="!modalLoading()">{{ label }}</ng-container>
+        <ng-container *ngIf="!modalLoading()">{{ label | translate }}</ng-container>
       </button>
     </div>
   </ng-template>

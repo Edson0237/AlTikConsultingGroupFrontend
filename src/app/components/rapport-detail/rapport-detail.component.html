@@ -5,7 +5,7 @@
     <div class="page-header">
       <button class="back-btn" (click)="goBack()">
         <span class="material-icons">arrow_back</span>
-        Retour
+        {{ 'RAPPORT_DETAIL.BACK' | translate }}
       </button>
     </div>
 
@@ -13,7 +13,7 @@
     @if (loading()) {
       <div class="loading-state">
         <div class="spinner"></div>
-        <p>Chargement du rapport...</p>
+        <p>{{ 'RAPPORT_DETAIL.LOADING' | translate }}</p>
       </div>
     }
 
@@ -35,15 +35,15 @@
             <span class="material-icons">assessment</span>
           </div>
           <div>
-            <h1 class="report-title">Rapport d'analyse IA</h1>
+            <h1 class="report-title">{{ 'RAPPORT_DETAIL.REPORT_TITLE' | translate }}</h1>
             <p class="report-subtitle">
-              {{ r.type_document_display }} · Généré le {{ r.date_generation | date:'dd/MM/yyyy HH:mm' }}
+              {{ r.type_document_display }} · {{ 'RAPPORT_DETAIL.GENERATED_ON' | translate }} {{ r.date_generation | date:'dd/MM/yyyy HH:mm' }}
             </p>
           </div>
         </div>
         <div class="confidence-badge">
           <span class="material-icons">verified</span>
-          <span>Confiance : {{ (r.score_confiance_extraction * 100) | number:'1.0-0' }}%</span>
+          <span>{{ 'RAPPORT_DETAIL.CONFIDENCE' | translate }} : {{ (r.score_confiance_extraction * 100) | number:'1.0-0' }}%</span>
         </div>
       </div>
 
@@ -51,31 +51,31 @@
       <section class="report-section">
         <h2 class="section-title">
           <span class="material-icons">person</span>
-          Informations du candidat
+          {{ 'RAPPORT_DETAIL.CANDIDATE_INFO' | translate }}
         </h2>
         <div class="info-grid">
           <div class="info-item">
-            <span class="info-label">Nom complet</span>
+            <span class="info-label">{{ 'RAPPORT_DETAIL.FULL_NAME' | translate }}</span>
             <span class="info-value">{{ r.nom_complet || '—' }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">Matricule</span>
+            <span class="info-label">{{ 'RAPPORT_DETAIL.MATRICULE' | translate }}</span>
             <span class="info-value">{{ r.matricule || '—' }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">Établissement</span>
+            <span class="info-label">{{ 'RAPPORT_DETAIL.ESTABLISHMENT' | translate }}</span>
             <span class="info-value">{{ r.etablissement || '—' }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">Filière</span>
+            <span class="info-label">{{ 'RAPPORT_DETAIL.FILIERE' | translate }}</span>
             <span class="info-value">{{ r.filiere || '—' }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">Niveau</span>
+            <span class="info-label">{{ 'RAPPORT_DETAIL.LEVEL' | translate }}</span>
             <span class="info-value">{{ r.niveau_etudes || '—' }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">Session</span>
+            <span class="info-label">{{ 'RAPPORT_DETAIL.SESSION' | translate }}</span>
             <span class="info-value">{{ r.session || '—' }}</span>
           </div>
         </div>
@@ -85,7 +85,7 @@
       <section class="report-section">
         <h2 class="section-title">
           <span class="material-icons">emoji_events</span>
-          Résultats académiques
+          {{ 'RAPPORT_DETAIL.ACADEMIC_RESULTS' | translate }}
         </h2>
         <div class="scores-grid">
           <div class="score-card">
@@ -93,7 +93,7 @@
               {{ r.moyenne_generale !== null ? (r.moyenne_generale | number:'1.2-2') : '—' }}
               <span class="score-unit">/20</span>
             </div>
-            <div class="score-label">Moyenne générale</div>
+            <div class="score-label">{{ 'RAPPORT_DETAIL.GENERAL_AVERAGE' | translate }}</div>
             <div class="score-badge" [style.background]="getNiveauColor(r.niveau_performance) + '20'"
                  [style.color]="getNiveauColor(r.niveau_performance)">
               {{ getNiveauLabel(r.niveau_performance) }}
@@ -105,38 +105,38 @@
               {{ r.score_combine !== null ? (r.score_combine | number:'1.2-2') : '—' }}
               <span class="score-unit">/20</span>
             </div>
-            <div class="score-label">Score combiné</div>
-            <div class="score-sub">Probatoire + Bac</div>
+            <div class="score-label">{{ 'RAPPORT_DETAIL.COMBINED_SCORE' | translate }}</div>
+            <div class="score-sub">{{ 'RAPPORT_DETAIL.PROBATOIRE_BAC' | translate }}</div>
           </div>
 
           <div class="score-card">
             <div class="score-main">{{ r.moyenne_probatoire !== null ? (r.moyenne_probatoire | number:'1.2-2') : '—' }}</div>
-            <div class="score-label">Moyenne Probatoire</div>
+            <div class="score-label">{{ 'RAPPORT_DETAIL.PROBATOIRE_AVERAGE' | translate }}</div>
           </div>
 
           <div class="score-card">
             <div class="score-main">{{ r.moyenne_bac !== null ? (r.moyenne_bac | number:'1.2-2') : '—' }}</div>
-            <div class="score-label">Moyenne Baccalauréat</div>
+            <div class="score-label">{{ 'RAPPORT_DETAIL.BAC_AVERAGE' | translate }}</div>
           </div>
         </div>
 
         <div class="stats-row">
           <div class="stat-item">
             <span class="stat-value">{{ r.total_matieres }}</span>
-            <span class="stat-label">Matières</span>
+            <span class="stat-label">{{ 'RAPPORT_DETAIL.SUBJECTS' | translate }}</span>
           </div>
           <div class="stat-item stat-success">
             <span class="stat-value">{{ r.matieres_validees }}</span>
-            <span class="stat-label">Validées (≥10)</span>
+            <span class="stat-label">{{ 'RAPPORT_DETAIL.PASSED' | translate }} (≥10)</span>
           </div>
           <div class="stat-item stat-danger">
             <span class="stat-value">{{ r.matieres_echouees }}</span>
-            <span class="stat-label">Échouées (&lt;10)</span>
+            <span class="stat-label">{{ 'RAPPORT_DETAIL.FAILED' | translate }} (&lt;10)</span>
           </div>
           @if (r.rang) {
             <div class="stat-item">
               <span class="stat-value">#{{ r.rang }}</span>
-              <span class="stat-label">Rang</span>
+              <span class="stat-label">{{ 'RAPPORT_DETAIL.RANK' | translate }}</span>
             </div>
           }
         </div>
@@ -146,7 +146,7 @@
       <section class="report-section">
         <h2 class="section-title">
           <span class="material-icons">bar_chart</span>
-          Distribution des notes
+          {{ 'RAPPORT_DETAIL.GRADES_DISTRIBUTION' | translate }}
         </h2>
         <div class="distribution-chart">
           @for (item of getDistributionItems(r.distribution_notes); track item.label) {
@@ -168,19 +168,19 @@
       <section class="report-section">
         <h2 class="section-title">
           <span class="material-icons">list_alt</span>
-          Détail des matières ({{ r.matieres.length }})
+          {{ 'RAPPORT_DETAIL.SUBJECTS_DETAIL' | translate }} ({{ r.matieres.length }})
         </h2>
         <div class="matieres-table">
           <table>
             <thead>
               <tr>
-                <th>Matière</th>
-                <th>Note</th>
-                <th>Sur</th>
+                <th>{{ 'RAPPORT_DETAIL.SUBJECT' | translate }}</th>
+                <th>{{ 'RAPPORT_DETAIL.GRADE' | translate }}</th>
+                <th>{{ 'RAPPORT_DETAIL.OUT_OF' | translate }}</th>
                 <th>/20</th>
-                <th>Coef.</th>
-                <th>Semestre</th>
-                <th>Mention</th>
+                <th>{{ 'RAPPORT_DETAIL.COEF' | translate }}</th>
+                <th>{{ 'RAPPORT_DETAIL.SEMESTER' | translate }}</th>
+                <th>{{ 'RAPPORT_DETAIL.MENTION' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -214,20 +214,20 @@
       <section class="report-section">
         <h2 class="section-title">
           <span class="material-icons">psychology</span>
-          Analyse qualitative
+          {{ 'RAPPORT_DETAIL.QUALITATIVE_ANALYSIS' | translate }}
         </h2>
         <div class="qualitative-grid">
           <div class="qualitative-card strengths">
             <h3>
               <span class="material-icons">check_circle</span>
-              Points forts
+              {{ 'RAPPORT_DETAIL.STRENGTHS' | translate }}
             </h3>
             <ul>
               @for (point of r.points_forts; track point) {
                 <li>{{ point }}</li>
               }
               @if (r.points_forts.length === 0) {
-                <li class="empty">Aucun point fort identifié</li>
+                <li class="empty">{{ 'RAPPORT_DETAIL.NO_STRENGTHS' | translate }}</li>
               }
             </ul>
           </div>
@@ -235,14 +235,14 @@
           <div class="qualitative-card weaknesses">
             <h3>
               <span class="material-icons">warning</span>
-              Points à améliorer
+              {{ 'RAPPORT_DETAIL.WEAKNESSES' | translate }}
             </h3>
             <ul>
               @for (point of r.points_faibles; track point) {
                 <li>{{ point }}</li>
               }
               @if (r.points_faibles.length === 0) {
-                <li class="empty">Aucun point faible identifié</li>
+                <li class="empty">{{ 'RAPPORT_DETAIL.NO_WEAKNESSES' | translate }}</li>
               }
             </ul>
           </div>
@@ -253,7 +253,7 @@
       <section class="report-section">
         <h2 class="section-title">
           <span class="material-icons">lightbulb</span>
-          Recommandations
+          {{ 'RAPPORT_DETAIL.RECOMMENDATIONS' | translate }}
         </h2>
         <div class="recommendations-list">
           @for (rec of r.recommandations; track rec; let i = $index) {
@@ -264,6 +264,70 @@
           }
         </div>
       </section>
+
+      <!-- ── Filières suggérées par l'IA ──────────────────────── -->
+      @if (r.filieres_suggerees && r.filieres_suggerees.length > 0) {
+        <section class="report-section">
+          <h2 class="section-title">
+            <span class="material-icons">school</span>
+            Filières suggérées
+            <span class="section-badge">Score ±2 pts</span>
+          </h2>
+
+          @if (r.score_combine !== null) {
+            <div class="score-intervalle-info">
+              <span class="material-icons">analytics</span>
+              Intervalle : <strong>{{ (r.score_combine - 2) | number:'1.1-1' }}/20</strong>
+              &nbsp;→&nbsp;
+              <strong>{{ (r.score_combine + 2) | number:'1.1-1' }}/20</strong>
+              &nbsp;|&nbsp;
+              <strong>{{ r.filieres_suggerees.length }}</strong> filière(s) trouvée(s)
+            </div>
+          }
+
+          <div class="filieres-grid">
+            @for (f of r.filieres_suggerees; track f.id) {
+              <div class="filiere-card-admin"
+                   [class.ecart-above]="f.ecart_score > 0"
+                   [class.ecart-below]="f.ecart_score < 0">
+                <div class="filiere-card-header">
+                  <div>
+                    <h4 class="filiere-nom">{{ f.nom }}</h4>
+                    @if (f.etablissement) {
+                      <p class="filiere-etab">
+                        <span class="material-icons">location_on</span>
+                        {{ f.etablissement.nom }} — {{ f.etablissement.ville }}, {{ f.etablissement.pays }}
+                      </p>
+                    }
+                  </div>
+                  <div class="ecart-chip"
+                       [style.color]="getEcartColor(f.ecart_score)"
+                       [style.background]="getEcartColor(f.ecart_score) + '18'">
+                    {{ getEcartLabel(f.ecart_score) }}
+                  </div>
+                </div>
+
+                <div class="filiere-tags-admin">
+                  <span class="tag-admin tag-niveau">{{ getNiveauDisplay(f.niveau) }}</span>
+                  <span class="tag-admin tag-duree">{{ f.duree }} an{{ f.duree > 1 ? 's' : '' }}</span>
+                  @if (f.domaine) {
+                    <span class="tag-admin tag-domaine">{{ f.domaine }}</span>
+                  }
+                </div>
+
+                <div class="filiere-score-row">
+                  <span class="material-icons">emoji_events</span>
+                  Score minimum requis : <strong>{{ f.score_minimum | number:'1.1-1' }}/20</strong>
+                </div>
+
+                @if (f.description) {
+                  <p class="filiere-desc">{{ f.description }}</p>
+                }
+              </div>
+            }
+          </div>
+        </section>
+      }
 
     }
 

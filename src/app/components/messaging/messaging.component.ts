@@ -1,13 +1,14 @@
 import { Component, inject, OnInit, OnDestroy, signal, computed, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { MessagingService, ConversationStaff, Message, ConversationDetail, UserForConversation } from '../../services/messaging/messaging.service';
 import { StaffMessagingService } from '../../services/staff-messaging/staff-messaging.service';
 
 @Component({
   selector: 'app-messaging-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './messaging.component.html',
   styleUrl: './messaging.component.scss',  
 })
@@ -16,7 +17,8 @@ export class MessagingComponent implements OnInit, AfterViewChecked {
   @ViewChild('messageInput') messageInput!: ElementRef;
 
   private messagingService = inject(MessagingService);
-  
+  private translate = inject(TranslateService);
+
   // ✅ AJOUTER : Injection du service StaffMessagingService
   private staffMessagingService = inject(StaffMessagingService);
 
@@ -236,7 +238,7 @@ export class MessagingComponent implements OnInit, AfterViewChecked {
     if (diffDays === 0) {
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     } else if (diffDays === 1) {
-      return 'Hier';
+      return this.translate.instant('MESSAGING.YESTERDAY');
     } else if (diffDays < 7) {
       return date.toLocaleDateString([], { weekday: 'short' });
     } else {

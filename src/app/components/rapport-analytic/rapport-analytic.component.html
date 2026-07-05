@@ -3,8 +3,8 @@
     <!-- Page Header -->
     <div class="reports__header">
         <div>
-            <h1 class="reports__title">Rapports & Analytiques</h1>
-            <p class="reports__subtitle">Aperçu complet des performances et métriques métier</p>
+            <h1 class="reports__title">{{ 'RAPPORT_ANALYTIC.TITLE' | translate }}</h1>
+            <p class="reports__subtitle">{{ 'RAPPORT_ANALYTIC.SUBTITLE' | translate }}</p>
         </div>
         <div class="reports__export-actions">
             <button class="btn btn--outline" (click)="exportPDF()">
@@ -15,7 +15,7 @@
                     <polyline points="7 10 12 15 17 10" />
                     <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
-                Export PDF
+                {{ 'RAPPORT_ANALYTIC.EXPORT_PDF' | translate }}
             </button>
             <button class="btn btn--green" (click)="exportExcel()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -26,7 +26,7 @@
                     <line x1="16" y1="13" x2="8" y2="13" />
                     <line x1="16" y1="17" x2="8" y2="17" />
                 </svg>
-                Export Excel
+                {{ 'RAPPORT_ANALYTIC.EXPORT_EXCEL' | translate }}
             </button>
         </div>
     </div>
@@ -34,7 +34,7 @@
     <!-- KPI Cards -->
     <div class="kpi-grid">
         <div class="kpi-card" *ngFor="let kpi of kpiCards">
-            <p class="kpi-card__label">{{ kpi.label }}</p>
+            <p class="kpi-card__label">{{ kpi.label | translate }}</p>
             <p class="kpi-card__value">{{ kpi.value }}</p>
             <p class="kpi-card__trend" [ngClass]="kpi.trendUp ? 'kpi-card__trend--up' : 'kpi-card__trend--down'">
                 {{ kpi.trend }}
@@ -52,12 +52,12 @@
                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
                     <polyline points="17 6 23 6 23 12" />
                 </svg>
-                Tendance des Revenus
+                {{ 'RAPPORT_ANALYTIC.REVENUE_TREND' | translate }}
             </h2>
             <select class="chart-card__select" [(ngModel)]="selectedPeriod">
-                <option value="6">6 derniers mois</option>
-                <option value="12">12 derniers mois</option>
-                <option value="year">Cette année</option>
+                <option value="6">{{ 'RAPPORT_ANALYTIC.PERIOD_6_MONTHS' | translate }}</option>
+                <option value="12">{{ 'RAPPORT_ANALYTIC.PERIOD_12_MONTHS' | translate }}</option>
+                <option value="year">{{ 'RAPPORT_ANALYTIC.PERIOD_THIS_YEAR' | translate }}</option>
             </select>
         </div>
         <canvas id="lineChart" class="chart-canvas"></canvas>
@@ -68,19 +68,19 @@
 
         <!-- Pie: Cases by Status -->
         <div class="chart-card">
-            <h2 class="chart-card__title">Dossiers par Statut</h2>
+            <h2 class="chart-card__title">{{ 'RAPPORT_ANALYTIC.CASES_BY_STATUS' | translate }}</h2>
             <canvas id="pieChart" class="chart-canvas chart-canvas--sm"></canvas>
             <div class="pie-legend">
                 <div class="pie-legend__item" *ngFor="let s of statusData; let i = index">
                     <span class="pie-legend__dot" [style.background]="chartColors[i]"></span>
-                    <span class="pie-legend__label">{{ s.status }} ({{ s.count }})</span>
+                    <span class="pie-legend__label">{{ s.status | translate }} ({{ s.count }})</span>
                 </div>
             </div>
         </div>
 
         <!-- Bar: Service Performance -->
         <div class="chart-card">
-            <h2 class="chart-card__title">Performance par Service</h2>
+            <h2 class="chart-card__title">{{ 'RAPPORT_ANALYTIC.PERFORMANCE_BY_SERVICE' | translate }}</h2>
             <canvas id="barChart" class="chart-canvas chart-canvas--sm"></canvas>
         </div>
 
@@ -88,22 +88,22 @@
 
     <!-- Performance Table -->
     <div class="chart-card">
-        <h2 class="chart-card__title">Performance Détaillée par Service</h2>
+        <h2 class="chart-card__title">{{ 'RAPPORT_ANALYTIC.PERFORMANCE_TABLE_TITLE' | translate }}</h2>
         <div class="table-wrap">
-            <table class="perf-table" aria-label="Performance des services">
+            <table class="perf-table" aria-label="{{ 'RAPPORT_ANALYTIC.PERFORMANCE_TABLE_ARIA' | translate }}">
                 <thead class="perf-table__head">
                     <tr>
-                        <th class="perf-table__th">Service</th>
-                        <th class="perf-table__th">Dossiers actifs</th>
-                        <th class="perf-table__th">Revenu mensuel</th>
-                        <th class="perf-table__th">Délai moyen</th>
-                        <th class="perf-table__th">Taux de réussite</th>
-                        <th class="perf-table__th">Croissance</th>
+                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_SERVICE' | translate }}</th>
+                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_ACTIVE_CASES' | translate }}</th>
+                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_MONTHLY_REVENUE' | translate }}</th>
+                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_AVG_TIME' | translate }}</th>
+                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_SUCCESS_RATE' | translate }}</th>
+                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_GROWTH' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="perf-table__row" *ngFor="let svc of servicePerformance; let i = index">
-                        <td class="perf-table__td perf-table__td--name">{{ svc.service }}</td>
+                        <td class="perf-table__td perf-table__td--name">{{ svc.service | translate }}</td>
                         <td class="perf-table__td">{{ svc.cases }}</td>
                         <td class="perf-table__td">{{ svc.revenue | currency:'USD':'symbol':'1.0-0' }}</td>
                         <td class="perf-table__td">{{ svc.avgTime }}</td>
@@ -117,10 +117,10 @@
 
     <!-- Predictive Analytics -->
     <div class="predictive">
-        <h2 class="predictive__title">📊 Analyses Prédictives & Insights</h2>
+        <h2 class="predictive__title">📊 {{ 'RAPPORT_ANALYTIC.PREDICTIVE_TITLE' | translate }}</h2>
         <div class="predictive__grid">
             <div class="predictive__card" *ngFor="let pred of predictions">
-                <p class="predictive__card-label">{{ pred.label }}</p>
+                <p class="predictive__card-label">{{ pred.label | translate }}</p>
                 <p class="predictive__card-value" [ngClass]="pred.colorClass">{{ pred.value }}</p>
                 <p class="predictive__card-note" [ngClass]="pred.noteUp ? 'trend-up' : 'text-muted'">
                     {{ pred.note }}

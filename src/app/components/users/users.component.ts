@@ -1,28 +1,29 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UserService, AppUser, UserFilters } from '../../services/users/user.service';
 import { AuthService } from '../../services/auth/auth.service';
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
-const ROLE_LABELS: Record<string, string> = {
-  etudiant: 'Étudiant',
-  responsable: 'Responsable',
-  conseiller: 'Conseiller',
-  admin: 'Admin',
+const ROLE_LABEL_KEYS: Record<string, string> = {
+  etudiant: 'USERS.ROLE_ETUDIANT',
+  responsable: 'USERS.ROLE_RESPONSABLE',
+  conseiller: 'USERS.ROLE_CONSEILLER',
+  admin: 'USERS.ROLE_ADMIN',
 };
 
 const ROLE_OPTIONS_RESTRICTED = [
-  { value: '', label: 'Étudiants & Responsables' },
-  { value: 'etudiant', label: 'Étudiants uniquement' },
-  { value: 'responsable', label: 'Responsables uniquement' },
+  { value: '', labelKey: 'USERS.FILTER_ALL_ROLES' },
+  { value: 'etudiant', labelKey: 'USERS.FILTER_ETUDIANTS_ONLY' },
+  { value: 'responsable', labelKey: 'USERS.FILTER_RESPONSABLES_ONLY' },
 ];
 
 const STATUT_OPTIONS = [
-  { value: '', label: 'Tous les statuts' },
-  { value: 'actif', label: 'Actifs' },
-  { value: 'inactif', label: 'Inactifs' },
+  { value: '', labelKey: 'USERS.FILTER_ALL_STATUSES' },
+  { value: 'actif', labelKey: 'USERS.FILTER_ACTIVE' },
+  { value: 'inactif', labelKey: 'USERS.FILTER_INACTIVE' },
 ];
 
 /** Rôles exclus de l'affichage (filtre côté client en filet de sécurité) */
@@ -33,7 +34,7 @@ const EXCLUDED_ROLES = new Set(['conseiller', 'admin']);
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [CommonModule, FormsModule, DatePipe, TranslatePipe],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
 })
@@ -41,6 +42,7 @@ export class UsersComponent implements OnInit {
 
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private translate = inject(TranslateService);
 
   // ── Auth ──────────────────────────────────────────────────────
   get isAdmin(): boolean { return this.authService.isAdmin(); }
@@ -64,14 +66,25 @@ export class UsersComponent implements OnInit {
   readonly roleOptions = ROLE_OPTIONS_RESTRICTED;
   readonly statutOptions = STATUT_OPTIONS;
 
+  get roleOptionsWithLabels() {
+    return this.roleOptions.map(opt => ({ value: opt.value, label: this.translate.instant(opt.labelKey) }));
+  }
+  get statutOptionsWithLabels() {
+    return this.statutOptions.map(opt => ({ value: opt.value, label: this.translate.instant(opt.labelKey) }));
+  }
+
   // ── Actions en cours ──────────────────────────────────────────
   togglingId: number | null = null;
-  deletingId: number | null = null;
+  archivingId: number | null = null;
 
-  // ── Confirm suppression ───────────────────────────────────────
-  showDeleteConfirm = false;
-  deleteTarget: AppUser | null = null;
-  deleteLoading = false;
+  // ── Modale détails utilisateur ───────────────────────────────
+  showDetailsModal = false;
+  detailsTarget: AppUser | null = null;
+
+  // ── Confirm archivage ─────────────────────────────────────────
+  showArchiveConfirm = false;
+  archiveTarget: AppUser | null = null;
+  archiveLoading = false;
 
   // ── Toast ─────────────────────────────────────────────────────
   toast: { message: string; type: 'success' | 'error' } | null = null;
@@ -104,7 +117,7 @@ export class UsersComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set(err?.error?.message ?? 'Impossible de charger les utilisateurs.');
+        this.error.set(err?.error?.message ?? this.translate.instant('USERS.LOAD_ERROR'));
         this.loading.set(false);
       },
     });
@@ -151,8 +164,8 @@ export class UsersComponent implements OnInit {
         this.togglingId = null;
         this._showToast(
           newState
-            ? `Compte de ${this.getFullName(user)} activé avec succès.`
-            : `Compte de ${this.getFullName(user)} désactivé avec succès.`,
+            ? this.translate.instant('USERS.ACCOUNT_ACTIVATED', { name: this.getFullName(user) })
+            : this.translate.instant('USERS.ACCOUNT_DEACTIVATED', { name: this.getFullName(user) }),
           'success'
         );
       },
@@ -162,39 +175,72 @@ export class UsersComponent implements OnInit {
           list.map(u => u.id === user.id ? { ...u, is_active: !newState, actif: !newState } : u)
         );
         this.togglingId = null;
-        this._showToast(err?.error?.message ?? 'Erreur lors de la modification.', 'error');
+        this._showToast(err?.error?.message ?? this.translate.instant('USERS.TOGGLE_ERROR'), 'error');
       },
     });
   }
 
-  // ── Suppression ───────────────────────────────────────────────
-  confirmDelete(user: AppUser): void {
-    this.deleteTarget = user;
-    this.showDeleteConfirm = true;
+  // ── Modale détails ─────────────────────────────────────────
+  openDetails(user: AppUser): void {
+    this.detailsTarget = user;
+    this.showDetailsModal = true;
   }
 
-  cancelDelete(): void {
-    this.showDeleteConfirm = false;
-    this.deleteTarget = null;
+  closeDetails(): void {
+    this.showDetailsModal = false;
+    this.detailsTarget = null;
   }
 
-  doDelete(): void {
-    if (!this.deleteTarget || this.deleteLoading) return;
-    this.deleteLoading = true;
+  // ── Archivage ─────────────────────────────────────────────────
+  confirmArchive(user: AppUser): void {
+    this.archiveTarget = user;
+    this.showArchiveConfirm = true;
+  }
 
-    this.userService.deleteUser(this.deleteTarget.id).subscribe({
-      next: () => {
-        const nom = this.getFullName(this.deleteTarget!);
-        this.users.update(list => list.filter(u => u.id !== this.deleteTarget!.id));
-        this.totalCount.update(n => n - 1);
-        this.deleteLoading = false;
-        this.showDeleteConfirm = false;
-        this.deleteTarget = null;
-        this._showToast(`Compte de ${nom} supprimé avec succès.`, 'success');
+  cancelArchive(): void {
+    this.showArchiveConfirm = false;
+    this.archiveTarget = null;
+  }
+
+  doArchive(): void {
+    if (!this.archiveTarget || this.archiveLoading) return;
+    this.archiveLoading = true;
+    const isCurrentlyArchived = this.archiveTarget.est_archive;
+
+    this.userService.archiveUser(this.archiveTarget.id, !isCurrentlyArchived).subscribe({
+      next: (updated) => {
+        this.users.update(list => list.map(u => u.id === updated.id ? updated : u));
+        this.archiveLoading = false;
+        this.showArchiveConfirm = false;
+        const nom = this.getFullName(this.archiveTarget!);
+        const msg = isCurrentlyArchived
+          ? `${nom} a été désarchivé avec succès.`
+          : `${nom} a été archivé avec succès.`;
+        this.archiveTarget = null;
+        this._showToast(msg, 'success');
       },
       error: (err) => {
-        this.deleteLoading = false;
-        this._showToast(err?.error?.message ?? 'Erreur lors de la suppression.', 'error');
+        this.archiveLoading = false;
+        this._showToast(err?.error?.message ?? 'Erreur lors de l’archivage.', 'error');
+      },
+    });
+  }
+
+  toggleArchive(user: AppUser): void {
+    if (this.archivingId === user.id) return;
+    this.archivingId = user.id;
+    this.userService.archiveUser(user.id, !user.est_archive).subscribe({
+      next: (updated) => {
+        this.users.update(list => list.map(u => u.id === updated.id ? updated : u));
+        this.archivingId = null;
+        const msg = updated.est_archive
+          ? `${this.getFullName(updated)} archivé.`
+          : `${this.getFullName(updated)} désarchivé.`;
+        this._showToast(msg, 'success');
+      },
+      error: (err) => {
+        this.archivingId = null;
+        this._showToast(err?.error?.message ?? 'Erreur archivage.', 'error');
       },
     });
   }
@@ -212,7 +258,8 @@ export class UsersComponent implements OnInit {
   }
 
   getRoleLabel(role: string): string {
-    return ROLE_LABELS[role] ?? role;
+    const key = ROLE_LABEL_KEYS[role];
+    return key ? this.translate.instant(key) : role;
   }
 
   canToggle(user: AppUser): boolean {
@@ -221,8 +268,13 @@ export class UsersComponent implements OnInit {
     return true;
   }
 
-  canDelete(user: AppUser): boolean {
-    return this.isAdmin || this.isConseiller;
+  canArchive(user: AppUser): boolean {
+    return this.isAdmin;
+  }
+
+  formatDate(dateStr: string | null): string {
+    if (!dateStr) return '—';
+    return new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
 

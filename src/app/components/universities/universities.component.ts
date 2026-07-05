@@ -11,6 +11,7 @@ import {
   EtablissementFilters,
 } from '../../services/etablissement/etablissement.service';
 import { AuthService } from '../../services/auth/auth.service';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 // ── Types locaux ──────────────────────────────────────────────────────────────
 
@@ -21,23 +22,23 @@ interface Toast { message: string; type: 'success' | 'error'; }
 // ── Constantes ────────────────────────────────────────────────────────────────
 
 export const TYPE_OPTIONS = [
-  { value: 'universite', label: 'Université' },
-  { value: 'grande_ecole', label: 'Grande École' },
-  { value: 'institut', label: 'Institut' },
-  { value: 'ecole_superieure', label: 'École Supérieure' },
+  { value: 'universite', labelKey: 'UNIVERSITIES.TYPE_UNIVERSITE' },
+  { value: 'grande_ecole', labelKey: 'UNIVERSITIES.TYPE_GRANDE_ECOLE' },
+  { value: 'institut', labelKey: 'UNIVERSITIES.TYPE_INSTITUT' },
+  { value: 'ecole_superieure', labelKey: 'UNIVERSITIES.TYPE_ECOLE_SUPERIEURE' },
 ];
 
-export const STATUT_OPTIONS: { value: EtablissementStatut; label: string }[] = [
-  { value: 'actif', label: 'Actif' },
-  { value: 'inactif', label: 'Inactif' },
-  { value: 'suspendu', label: 'Suspendu' },
+export const STATUT_OPTIONS: { value: EtablissementStatut; labelKey: string }[] = [
+  { value: 'actif', labelKey: 'UNIVERSITE_DETAIL.STATUT_ACTIF' },
+  { value: 'inactif', labelKey: 'UNIVERSITE_DETAIL.STATUT_INACTIF' },
+  { value: 'suspendu', labelKey: 'UNIVERSITE_DETAIL.STATUT_SUSPENDU' },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
 @Component({
   selector: 'app-universities',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './universities.component.html',
   styleUrl: './universities.component.scss',
 })
@@ -47,6 +48,7 @@ export class UniversitiesComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   // ── Auth ──────────────────────────────────────────────────────
   isAdmin = this.authService.isAdmin;
@@ -91,6 +93,21 @@ export class UniversitiesComponent implements OnInit {
   readonly typeOptions = TYPE_OPTIONS;
   readonly statutOptions = STATUT_OPTIONS;
 
+  // ── Computed options with translations ─────────────────────────────
+  get typeOptionsWithLabels() {
+    return this.typeOptions.map(opt => ({
+      value: opt.value,
+      label: this.translate.instant(opt.labelKey)
+    }));
+  }
+
+  get statutOptionsWithLabels() {
+    return this.statutOptions.map(opt => ({
+      value: opt.value,
+      label: this.translate.instant(opt.labelKey)
+    }));
+  }
+
   form!: FormGroup;
 
   // ── Delete confirm ────────────────────────────────────────────
@@ -115,7 +132,7 @@ export class UniversitiesComponent implements OnInit {
     this.svc.getAll().subscribe({
       next: list => { this.etablissements.set(list); this.loading.set(false); },
       error: err => {
-        this.error.set(err?.error?.detail ?? 'Impossible de charger les établissements.');
+        this.error.set(err?.error?.detail ?? this.translate.instant('UNIVERSITIES.LOAD_ERROR'));
         this.loading.set(false);
       },
     });
@@ -134,7 +151,8 @@ export class UniversitiesComponent implements OnInit {
   }
 
   getStatutLabel(statut: string): string {
-    return STATUT_OPTIONS.find(s => s.value === statut)?.label ?? statut;
+    const opt = STATUT_OPTIONS.find(s => s.value === statut);
+    return opt ? this.translate.instant(opt.labelKey) : statut;
   }
 
   // ── Navigation ────────────────────────────────────────────────
@@ -218,8 +236,8 @@ export class UniversitiesComponent implements OnInit {
         this.load();
         this._showToast(
           this.modalMode === 'create'
-            ? `Établissement "${saved.nom}" créé avec succès`
-            : `Établissement "${saved.nom}" mis à jour`,
+            ? this.translate.instant('UNIVERSITIES.TOAST_CREATED', { name: saved.nom })
+            : this.translate.instant('UNIVERSITIES.TOAST_UPDATED', { name: saved.nom }),
           'success'
         );
         setTimeout(() => this.closeModal(), 1200);
@@ -241,7 +259,7 @@ export class UniversitiesComponent implements OnInit {
             })
             .join(' | ');
         } else {
-          this.modalError = body?.detail ?? body?.message ?? 'Une erreur est survenue.';
+          this.modalError = body?.detail ?? body?.message ?? this.translate.instant('UNIVERSITIES.ERROR_OCCURRED');
         }
       },
     });
@@ -264,7 +282,7 @@ export class UniversitiesComponent implements OnInit {
     this.deleteLoading = true;
     this.svc.delete(this.deleteTarget.id).subscribe({
       next: () => {
-        this._showToast(`Établissement "${this.deleteTarget!.nom}" supprimé.`, 'success');
+        this._showToast(this.translate.instant('UNIVERSITIES.TOAST_DELETED', { name: this.deleteTarget!.nom }), 'success');
         this.deleteLoading = false;
         this.showDeleteConfirm = false;
         this.deleteTarget = null;
@@ -272,7 +290,7 @@ export class UniversitiesComponent implements OnInit {
       },
       error: (err) => {
         this.deleteLoading = false;
-        this._showToast(err?.error?.detail ?? 'Erreur lors de la suppression.', 'error');
+        this._showToast(err?.error?.detail ?? this.translate.instant('UNIVERSITIES.TOAST_DELETE_ERROR'), 'error');
       },
     });
   }

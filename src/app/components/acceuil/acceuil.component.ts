@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 import { DashboardService, DashboardStats } from '../../services/dashboard/dashboard.service';
 Chart.register(...registerables);
@@ -29,6 +29,7 @@ export interface Activity {
 export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
 
   private dashboardService = inject(DashboardService);
+  private translate = inject(TranslateService);
 
   private lineChart?: Chart;
   private pieChart?: Chart;
@@ -40,7 +41,11 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
   error = signal(false);
 
   // Labels des mois
-  monthLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+  monthLabels = [
+    'ACCEUIL.MONTH_JAN', 'ACCEUIL.MONTH_FEB', 'ACCEUIL.MONTH_MAR', 'ACCEUIL.MONTH_APR',
+    'ACCEUIL.MONTH_MAY', 'ACCEUIL.MONTH_JUN', 'ACCEUIL.MONTH_JUL', 'ACCEUIL.MONTH_AUG',
+    'ACCEUIL.MONTH_SEP', 'ACCEUIL.MONTH_OCT', 'ACCEUIL.MONTH_NOV', 'ACCEUIL.MONTH_DEC'
+  ];
 
   // ✅ Couleurs pour les graphiques (public pour accès depuis le template)
   readonly COLORS = {
@@ -60,10 +65,10 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
 
   // ✅ PUBLIC - accessible depuis le template
   readonly TYPE_LABELS: { [key: string]: string } = {
-    'bourse_chine': 'Bourses Chine',
-    'bourse_allemagne': 'Bourses Allemagne',
-    'bourse_canada': 'Bourses Canada',
-    'visa_affaires': 'Visas Affaires',
+    'bourse_chine': 'ACCEUIL.TYPE_BOURSE_CHINE',
+    'bourse_allemagne': 'ACCEUIL.TYPE_BOURSE_ALLEMAGNE',
+    'bourse_canada': 'ACCEUIL.TYPE_BOURSE_CANADA',
+    'visa_affaires': 'ACCEUIL.TYPE_VISA_AFFAIRES',
   };
 
   ngOnInit(): void {
@@ -133,7 +138,7 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
 
     const months = charts.evolution_dossiers.map((e: { month: string; count: number }) => {
       const date = new Date(e.month);
-      return this.monthLabels[date.getMonth()];
+      return this.translate.instant(this.monthLabels[date.getMonth()]);
     });
 
     this.lineChart?.destroy();
@@ -143,7 +148,7 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
         labels: months,
         datasets: [
           {
-            label: 'Dossiers',
+            label: this.translate.instant('ACCEUIL.CHART_DATA_DOSSIERS'),
             data: charts.evolution_dossiers.map((e: { month: string; count: number }) => e.count),
             borderColor: this.COLORS.bourses,
             backgroundColor: 'rgba(37,99,235,.08)',
@@ -154,7 +159,7 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
             fill: true,
           },
           {
-            label: 'Utilisateurs',
+            label: this.translate.instant('ACCEUIL.CHART_DATA_USERS'),
             data: charts.evolution_users.map((e: { month: string; count: number }) => e.count),
             borderColor: this.COLORS.users,
             backgroundColor: 'rgba(245,158,11,.08)',
@@ -165,7 +170,7 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
             fill: true,
           },
           {
-            label: 'Documents',
+            label: this.translate.instant('ACCEUIL.CHART_DATA_DOCUMENTS'),
             data: charts.evolution_documents.map((e: { month: string; count: number }) => e.count),
             borderColor: this.COLORS.documents,
             backgroundColor: 'rgba(16,185,129,.08)',
@@ -210,7 +215,7 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
     this.pieChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: repartition.map((r: { type_dossier: string; count: number }) => this.TYPE_LABELS[r.type_dossier] || r.type_dossier),
+        labels: repartition.map((r: { type_dossier: string; count: number }) => this.translate.instant(this.TYPE_LABELS[r.type_dossier]) || r.type_dossier),
         datasets: [{
           data: repartition.map((r: { type_dossier: string; count: number }) => r.count),
           backgroundColor: repartition.map((r: { type_dossier: string; count: number }) => this.TYPE_COLORS[r.type_dossier] || '#94A3B8'),
@@ -252,9 +257,9 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
     this.barChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: top.map((f: { nom_filiere: string; count: number }) => f.nom_filiere || 'Inconnu'),
+        labels: top.map((f: { nom_filiere: string; count: number }) => f.nom_filiere || this.translate.instant('ACCEUIL.UNKNOWN')),
         datasets: [{
-          label: 'Candidatures',
+          label: this.translate.instant('ACCEUIL.CHART_DATA_CANDIDATURES'),
           data: top.map((f: { nom_filiere: string; count: number }) => f.count),
           backgroundColor: colors,
           borderRadius: 8,
@@ -295,10 +300,10 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMin < 1) return "À l'instant";
-    if (diffMin < 60) return `Il y a ${diffMin} min`;
-    if (diffHours < 24) return `Il y a ${diffHours}h`;
-    if (diffDays < 7) return `Il y a ${diffDays}j`;
+    if (diffMin < 1) return this.translate.instant('ACCEUIL.JUST_NOW');
+    if (diffMin < 60) return this.translate.instant('ACCEUIL.MINUTES_AGO', { count: diffMin });
+    if (diffHours < 24) return this.translate.instant('ACCEUIL.HOURS_AGO', { count: diffHours });
+    if (diffDays < 7) return this.translate.instant('ACCEUIL.DAYS_AGO', { count: diffDays });
     return date.toLocaleDateString('fr-FR');
   }
 
@@ -318,19 +323,15 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
     return max > 0 ? (count / max) * 100 : 0;
   }
 
+  getStatusLabel(statut: string): string {
+    const key = `ACCEUIL.STATUS_${statut.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : statut;
+  }
+
   getDocumentLabel(type: string): string {
-    const labels: { [key: string]: string } = {
-      'releve_notes': 'Relevés de notes',
-      'releve_probatoire': 'Relevé probatoire',
-      'releve_bac': 'Relevé bac',
-      'diplome': 'Diplômes',
-      'passeport': 'Passeports',
-      'photo_identite': 'Photos identité',
-      'casier_judiciaire': 'Casiers judiciaires',
-      'certificat_medical': 'Certificats médicaux',
-      'cv': 'CV',
-      'lettre_motivation': 'Lettres motivation',
-    };
-    return labels[type] || type;
+    const key = `ACCEUIL.DOC_${type.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : type;
   }
 }

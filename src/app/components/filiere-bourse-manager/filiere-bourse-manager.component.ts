@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule, FormBuilder, FormGroup, Validators,
 } from '@angular/forms';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   FiliereBourseService,
   Filiere,
@@ -35,50 +36,50 @@ interface Toast { message: string; type: 'success' | 'error'; }
 // ── Constantes ────────────────────────────────────────────────────────────────
 
 export const TYPE_BOURSE_OPTIONS = [
-  { value: 'totale',    label: 'Bourse totale'    },
-  { value: 'partielle', label: 'Bourse partielle' },
-  { value: 'logement',  label: 'Bourse logement'  },
-  { value: 'transport', label: 'Bourse transport' },
-  { value: 'mixte',     label: 'Mixte'            },
+  { value: 'totale',    labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_BOURSE_TOTALE'    },
+  { value: 'partielle', labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_BOURSE_PARTIELLE' },
+  { value: 'logement',  labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_BOURSE_LOGEMENT'  },
+  { value: 'transport', labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_BOURSE_TRANSPORT' },
+  { value: 'mixte',     labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_BOURSE_MIXTE'      },
 ];
 
 export const STATUT_BOURSE_OPTIONS = [
-  { value: 'ouverte', label: 'Ouverte'  },
-  { value: 'fermee',  label: 'Fermée'   },
-  { value: 'a_venir', label: 'À venir'  },
-  { value: 'expiree', label: 'Expirée'  },
+  { value: 'ouverte', labelKey: 'FILIERE_BOURSE_MANAGER.STATUT_BOURSE_OUVERTE'  },
+  { value: 'fermee',  labelKey: 'FILIERE_BOURSE_MANAGER.STATUT_BOURSE_FERMEE'   },
+  { value: 'a_venir', labelKey: 'FILIERE_BOURSE_MANAGER.STATUT_BOURSE_A_VENIR' },
+  { value: 'expiree', labelKey: 'FILIERE_BOURSE_MANAGER.STATUT_BOURSE_EXPIREE'  },
 ];
 
 export const TYPE_DOC_OPTIONS = [
-  { value: 'cv',                label: 'CV'                       },
-  { value: 'lettre_motivation', label: 'Lettre de motivation'     },
-  { value: 'releve_notes',      label: 'Relevé de notes'          },
-  { value: 'diplome',           label: 'Diplôme'                  },
-  { value: 'passeport',         label: "Passeport / Pièce d'id"   },
-  { value: 'photo',             label: "Photo d'identité"         },
-  { value: 'recommandation',    label: 'Lettre de recommandation' },
-  { value: 'autre',             label: 'Autre'                    },
+  { value: 'cv',                labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_DOC_CV'                },
+  { value: 'lettre_motivation', labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_DOC_LETTRE_MOTIVATION' },
+  { value: 'releve_notes',      labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_DOC_RELEVE_NOTES'      },
+  { value: 'diplome',           labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_DOC_DIPLOME'             },
+  { value: 'passeport',         labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_DOC_PASSEPORT'           },
+  { value: 'photo',             labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_DOC_PHOTO'               },
+  { value: 'recommandation',    labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_DOC_RECOMMANDATION'    },
+  { value: 'autre',             labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_DOC_AUTRE'             },
 ];
 
 export const DOMAINE_OPTIONS = [
-  { value: 'informatique',      label: 'Informatique & Numérique'   },
-  { value: 'gestion',           label: 'Gestion & Management'       },
-  { value: 'droit',             label: 'Droit & Sciences Politiques'},
-  { value: 'medecine',          label: 'Médecine & Santé'           },
-  { value: 'ingenierie',        label: 'Ingénierie & Sciences'      },
-  { value: 'lettres',           label: 'Lettres & Langues'          },
-  { value: 'arts',              label: 'Arts & Design'              },
-  { value: 'economie',          label: 'Économie & Finance'         },
-  { value: 'sciences_sociales', label: 'Sciences Sociales'          },
-  { value: 'autre',             label: 'Autre'                      },
+  { value: 'informatique',      labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_INFORMATIQUE' },
+  { value: 'gestion',           labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_GESTION'      },
+  { value: 'droit',             labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_DROIT'        },
+  { value: 'medecine',          labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_MEDECINE'      },
+  { value: 'ingenierie',        labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_INGENIERIE'    },
+  { value: 'lettres',           labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_LETTRES'       },
+  { value: 'arts',              labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_ARTS'          },
+  { value: 'economie',          labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_ECONOMIE'      },
+  { value: 'sciences_sociales', labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_SC_SOC'        },
+  { value: 'autre',             labelKey: 'FILIERE_BOURSE_MANAGER.DOMAINE_AUTRE'         },
 ];
 
 export const NIVEAU_OPTIONS = [
-  { value: 'bts',      label: 'BTS / DUT (Bac+2)'  },
-  { value: 'licence',  label: 'Licence (Bac+3)'    },
-  { value: 'master',   label: 'Master (Bac+5)'     },
-  { value: 'doctorat', label: 'Doctorat (Bac+8)'   },
-  { value: 'autre',    label: 'Autre'               },
+  { value: 'bts',      labelKey: 'FILIERE_BOURSE_MANAGER.NIVEAU_BTS'      },
+  { value: 'licence',  labelKey: 'FILIERE_BOURSE_MANAGER.NIVEAU_LICENCE'  },
+  { value: 'master',   labelKey: 'FILIERE_BOURSE_MANAGER.NIVEAU_MASTER'   },
+  { value: 'doctorat', labelKey: 'FILIERE_BOURSE_MANAGER.NIVEAU_DOCTORAT' },
+  { value: 'autre',    labelKey: 'FILIERE_BOURSE_MANAGER.NIVEAU_AUTRE'     },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -86,7 +87,7 @@ export const NIVEAU_OPTIONS = [
 @Component({
   selector:    'app-filiere-bourse-manager',
   standalone:  true,
-  imports:     [CommonModule, ReactiveFormsModule],
+  imports:     [CommonModule, ReactiveFormsModule,TranslatePipe],
   templateUrl: './filiere-bourse-manager.component.html',
   styleUrl:    './filiere-bourse-manager.component.scss',
 })
@@ -97,6 +98,7 @@ export class FiliereBourseManagerComponent implements OnInit {
   private readonly svc     = inject(FiliereBourseService);
   private readonly authSvc = inject(AuthService);
   private readonly fb      = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   // ── Auth ──────────────────────────────────────────────────────
   // Wrapping défensif : fonctionne que authSvc.isAdmin soit un Signal,
@@ -148,6 +150,23 @@ export class FiliereBourseManagerComponent implements OnInit {
   readonly domaineOptions      = DOMAINE_OPTIONS;
   readonly niveauOptions       = NIVEAU_OPTIONS;
 
+  // ── Translated options ──────────────────────────────────────────
+  get typeBourseOptionsWithLabels() {
+    return this.typeBourseOptions.map(opt => ({ value: opt.value, label: this.translate.instant(opt.labelKey) }));
+  }
+  get statutBourseOptionsWithLabels() {
+    return this.statutBourseOptions.map(opt => ({ value: opt.value, label: this.translate.instant(opt.labelKey) }));
+  }
+  get typeDocOptionsWithLabels() {
+    return this.typeDocOptions.map(opt => ({ value: opt.value, label: this.translate.instant(opt.labelKey) }));
+  }
+  get domaineOptionsWithLabels() {
+    return this.domaineOptions.map(opt => ({ value: opt.value, label: this.translate.instant(opt.labelKey) }));
+  }
+  get niveauOptionsWithLabels() {
+    return this.niveauOptions.map(opt => ({ value: opt.value, label: this.translate.instant(opt.labelKey) }));
+  }
+
   // ── Computed : filières du catalogue non encore associées ─────
   catalogAvailable = computed(() => {
     const associatedIds = new Set(this.filieres().map(ef => ef.filiere));
@@ -172,7 +191,7 @@ export class FiliereBourseManagerComponent implements OnInit {
     this.svc.getEtablissementFilieres(this.etabId).subscribe({
       next:  data => { this.filieres.set(data); this.loading.set(false); },
       error: err  => {
-        this.error.set(err?.error?.detail ?? 'Impossible de charger les filières.');
+        this.error.set(err?.error?.detail ?? this.translate.instant('FILIERE_BOURSE_MANAGER.LOAD_FILIERES_ERROR'));
         this.loading.set(false);
       },
     });
@@ -191,7 +210,7 @@ export class FiliereBourseManagerComponent implements OnInit {
       },
       error: err  => {
         console.error('[FiliereBourseManager] erreur catalogue:', err);
-        this.errorCatalog.set(err?.error?.detail ?? 'Impossible de charger le catalogue.');
+        this.errorCatalog.set(err?.error?.detail ?? this.translate.instant('FILIERE_BOURSE_MANAGER.LOAD_CATALOG_ERROR'));
         this.loadingCatalog.set(false);
       },
     });
@@ -254,7 +273,7 @@ export class FiliereBourseManagerComponent implements OnInit {
         this.modalLoading.set(false);
         this.modalSuccess.set(true);
         this._loadCatalog();
-        this._showToast(`Filière « ${filiere.nom} » créée avec succès.`, 'success');
+        this._showToast(this.translate.instant('FILIERE_BOURSE_MANAGER.FILIERE_CREATED_SUCCESS', { name: filiere.nom }), 'success');
         setTimeout(() => {
           this.closeModal();
           this._openAssocierWithFiliere(filiere.id);
@@ -337,7 +356,7 @@ export class FiliereBourseManagerComponent implements OnInit {
         this.modalLoading.set(false);   // ← remettre à false AVANT closeModal
         this.modalSuccess.set(true);
         this.loadFilieres();
-        this._showToast('Filière associée avec succès.', 'success');
+        this._showToast(this.translate.instant('FILIERE_BOURSE_MANAGER.FILIERE_ASSOCIATED_SUCCESS'), 'success');
         setTimeout(() => this.closeModal(), 1200);
       },
       error: err => {
@@ -381,7 +400,7 @@ export class FiliereBourseManagerComponent implements OnInit {
         this.modalLoading.set(false);
         this.modalSuccess.set(true);
         this.loadFilieres();
-        this._showToast('Conditions de la filière mises à jour.', 'success');
+        this._showToast(this.translate.instant('FILIERE_BOURSE_MANAGER.FILIERE_CONDITIONS_UPDATED'), 'success');
         setTimeout(() => this.closeModal(), 1200);
       },
       error: err => {
@@ -409,7 +428,7 @@ export class FiliereBourseManagerComponent implements OnInit {
     this.svc.deleteEtablissementFiliere(this.deleteFilierTarget.id).subscribe({
       next: () => {
         const nom = this.deleteFilierTarget!.filiere_detail.nom;
-        this._showToast(`Filière « ${nom} » dissociée.`, 'success');
+        this._showToast(this.translate.instant('FILIERE_BOURSE_MANAGER.FILIERE_DISSOCIATED', { name: nom }), 'success');
         this.deleteFilierLoading = false;
         this.showDeleteFiliere   = false;
         this.deleteFilierTarget  = null;
@@ -480,7 +499,7 @@ export class FiliereBourseManagerComponent implements OnInit {
         this.modalSuccess.set(true);
         this.loadFilieres();
         this._showToast(
-          isEdit ? 'Bourse mise à jour.' : 'Bourse créée avec succès.',
+          isEdit ? this.translate.instant('FILIERE_BOURSE_MANAGER.BOURSE_UPDATED_SUCCESS') : this.translate.instant('FILIERE_BOURSE_MANAGER.BOURSE_CREATED_SUCCESS'),
           'success',
         );
         setTimeout(() => this.closeModal(), 1200);
@@ -493,10 +512,10 @@ export class FiliereBourseManagerComponent implements OnInit {
   }
 
   deleteBourse(bourse: Bourse): void {
-    if (!confirm(`Supprimer la bourse « ${bourse.nom} » ?`)) return;
+    if (!confirm(this.translate.instant('FILIERE_BOURSE_MANAGER.BOURSE_DELETE_CONFIRM', { name: bourse.nom }))) return;
     this.svc.deleteBourse(bourse.id).subscribe({
-      next:  () => { this._showToast('Bourse supprimée.', 'success'); this.loadFilieres(); },
-      error: () => this._showToast('Erreur lors de la suppression.', 'error'),
+      next:  () => { this._showToast(this.translate.instant('FILIERE_BOURSE_MANAGER.BOURSE_DELETED_SUCCESS'), 'success'); this.loadFilieres(); },
+      error: () => this._showToast(this.translate.instant('FILIERE_BOURSE_MANAGER.BOURSE_DELETE_ERROR'), 'error'),
     });
   }
 
@@ -516,13 +535,13 @@ export class FiliereBourseManagerComponent implements OnInit {
     // Validation croisée dates
     if (raw.date_cloture && raw.date_ouverture && raw.date_cloture <= raw.date_ouverture) {
       this.modalLoading.set(false);
-      this.modalError.set('La date de clôture doit être postérieure à la date d\'ouverture.');
+      this.modalError.set(this.translate.instant('FILIERE_BOURSE_MANAGER.PERIOD_ERROR_OPENING_BEFORE_CLOSING'));
       return;
     }
 
     if (raw.date_annonce_resultats && raw.date_cloture && raw.date_annonce_resultats <= raw.date_cloture) {
       this.modalLoading.set(false);
-      this.modalError.set('La date d\'annonce des résultats doit être postérieure à la date de clôture.');
+      this.modalError.set(this.translate.instant('FILIERE_BOURSE_MANAGER.PERIOD_ERROR_RESULTS_AFTER_CLOSING'));
       return;
     }
 
@@ -540,7 +559,7 @@ export class FiliereBourseManagerComponent implements OnInit {
         this.modalLoading.set(false);
         this.modalSuccess.set(true);
         this.loadFilieres();
-        this._showToast('Période ajoutée.', 'success');
+        this._showToast(this.translate.instant('FILIERE_BOURSE_MANAGER.PERIOD_ADDED'), 'success');
         setTimeout(() => this.closeModal(), 1200);
       },
       error: err => {
@@ -575,7 +594,7 @@ export class FiliereBourseManagerComponent implements OnInit {
         this.modalLoading.set(false);
         this.modalSuccess.set(true);
         this.loadFilieres();
-        this._showToast('Document ajouté.', 'success');
+        this._showToast(this.translate.instant('FILIERE_BOURSE_MANAGER.DOCUMENT_ADDED'), 'success');
         setTimeout(() => this.closeModal(), 1200);
       },
       error: err => {
@@ -614,7 +633,7 @@ export class FiliereBourseManagerComponent implements OnInit {
         )
         .join(' | ');
     }
-    return body?.detail ?? body?.message ?? 'Une erreur est survenue.';
+    return body?.detail ?? body?.message ?? this.translate.instant('FILIERE_BOURSE_MANAGER.ERROR_OCCURRED');
   }
 
   // ── Form builders ─────────────────────────────────────────────

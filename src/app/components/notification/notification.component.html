@@ -1,0 +1,297 @@
+<div class="notif">
+
+    <!-- En-tête -->
+    <div class="notif__header">
+        <div>
+            <h1 class="notif__title">{{ 'NOTIFICATION.TITLE' | translate }}</h1>
+            <p class="notif__subtitle">{{ 'NOTIFICATION.SUBTITLE' | translate }}</p>
+        </div>
+        <div class="notif__header-actions">
+            @if (isAdmin) {
+            <button class="notif__btn-primary" (click)="openModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                {{ 'NOTIFICATION.NEW_NOTIFICATION' | translate }}
+            </button>
+            }
+            <button class="notif__btn-outline" (click)="markAllAsRead()">
+                {{ 'NOTIFICATION.MARK_ALL_READ' | translate }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="notif__stats">
+        <div class="notif__stat-card">
+            <p class="notif__stat-label">{{ 'NOTIFICATION.STAT_TOTAL' | translate }}</p>
+            <p class="notif__stat-value">{{ notifications().length }}</p>
+        </div>
+        <div class="notif__stat-card">
+            <p class="notif__stat-label">{{ 'NOTIFICATION.STAT_UNREAD' | translate }}</p>
+            <p class="notif__stat-value notif__stat-value--blue">{{ unreadCount() }}</p>
+        </div>
+        <div class="notif__stat-card">
+            <p class="notif__stat-label">{{ 'NOTIFICATION.STAT_ERRORS' | translate }}</p>
+            <p class="notif__stat-value notif__stat-value--red">{{ countByType('error') }}</p>
+        </div>
+        <div class="notif__stat-card">
+            <p class="notif__stat-label">{{ 'NOTIFICATION.STAT_WARNINGS' | translate }}</p>
+            <p class="notif__stat-value notif__stat-value--orange">{{ countByType('warning') }}</p>
+        </div>
+        <div class="notif__stat-card">
+            <p class="notif__stat-label">{{ 'NOTIFICATION.STAT_SUCCESS' | translate }}</p>
+            <p class="notif__stat-value notif__stat-value--green">{{ countByType('success') }}</p>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="notif__filters-card">
+        <div class="notif__filters-heading">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            </svg>
+            <h3>{{ 'NOTIFICATION.FILTERS' | translate }}</h3>
+        </div>
+        <div class="notif__filters-row">
+            <div class="notif__checkbox-group">
+                <input type="checkbox" id="unread" [(ngModel)]="showUnreadOnly" />
+                <label for="unread">{{ 'NOTIFICATION.SHOW_UNREAD_ONLY' | translate }}</label>
+            </div>
+            <select class="notif__select" [(ngModel)]="filterType">
+                <option value="all">{{ 'NOTIFICATION.TYPE_ALL' | translate }}</option>
+                <option value="info">{{ 'NOTIFICATION.TYPE_INFO' | translate }}</option>
+                <option value="success">{{ 'NOTIFICATION.TYPE_SUCCESS' | translate }}</option>
+                <option value="warning">{{ 'NOTIFICATION.TYPE_WARNING' | translate }}</option>
+                <option value="error">{{ 'NOTIFICATION.TYPE_ERROR' | translate }}</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    @if (loading()) {
+    <div class="notif__loading">
+        <div class="notif__spinner"></div>
+        <p>{{ 'NOTIFICATION.LOADING' | translate }}</p>
+    </div>
+    }
+
+    <!-- Liste des notifications -->
+    @if (!loading()) {
+    <div class="notif__list">
+
+        @if (filteredNotifications().length === 0) {
+        <div class="notif__empty">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+            </svg>
+            <p>{{ 'NOTIFICATION.EMPTY' | translate }}</p>
+        </div>
+        }
+
+        @for (notification of filteredNotifications(); track notification.id) {
+        <div class="notif__card" [class]="'notif__card--' + notification.notification_type"
+            [class.notif__card--unread]="!notification.is_read">
+            <div class="notif__card-body">
+
+                <!-- Icône -->
+                <div class="notif__icon" [ngSwitch]="notification.notification_type">
+                    <svg *ngSwitchCase="'success'" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                    <svg *ngSwitchCase="'error'" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="m15 9-6 6" />
+                        <path d="m9 9 6 6" />
+                    </svg>
+                    <svg *ngSwitchCase="'warning'" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                        <path d="M12 9v4" />
+                        <path d="M12 17h.01" />
+                    </svg>
+                    <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 16v-4" />
+                        <path d="M12 8h.01" />
+                    </svg>
+                </div>
+
+                <!-- Contenu -->
+                <div class="notif__content">
+                    <div class="notif__content-top">
+                        <div>
+                            <p class="notif__card-title">
+                                {{ notification.title }}
+                                @if (!notification.is_read) {
+                                <span class="notif__dot"></span>
+                                }
+                            </p>
+                            <p class="notif__card-message">{{ notification.message }}</p>
+                        </div>
+                        <span class="notif__badge" [class]="'notif__badge--' + notification.notification_type">
+                            {{ getTypeLabel(notification.notification_type) }}
+                        </span>
+                    </div>
+
+                    <div class="notif__content-bottom">
+                        <p class="notif__date">{{ formatDate(notification.created_at) }}</p>
+                        <div class="notif__actions">
+                            @if (notification.sender_name) {
+                            <span class="notif__sender">{{ 'NOTIFICATION.FROM' | translate }} : {{ notification.sender_name }}</span>
+                            }
+                            @if (!notification.is_read) {
+                            <button class="notif__btn-read" (click)="markAsRead(notification)">
+                                {{ 'NOTIFICATION.MARK_AS_READ' | translate }}
+                            </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        }
+
+    </div>
+    }
+
+</div>
+
+<!-- Modal : Créer une notification (admin uniquement) -->
+@if (showModal()) {
+<div class="modal-overlay" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+
+        <div class="modal__header">
+            <div class="modal__header-left">
+                <div class="modal__icon modal__icon--blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="#2563EB" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="modal__title">{{ 'NOTIFICATION.MODAL_TITLE' | translate }}</h2>
+                    <p class="modal__subtitle">{{ 'NOTIFICATION.MODAL_SUBTITLE' | translate }}</p>
+                </div>
+            </div>
+            <button class="modal__close" (click)="closeModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal__body">
+
+            @if (sendSuccess()) {
+            <div class="modal__feedback modal__feedback--success">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="#15803d" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                {{ 'NOTIFICATION.SEND_SUCCESS' | translate }}
+            </div>
+            }
+
+            @if (sendError()) {
+            <div class="modal__feedback modal__feedback--error">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="#b91c1c" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                {{ sendError() }}
+            </div>
+            }
+
+            <div class="modal__form-group">
+                <label class="modal__label">
+                    {{ 'NOTIFICATION.RECIPIENTS_LABEL' | translate }} <span class="modal__required">*</span>
+                    <span class="modal__count">({{ selectedConseillers().length }} {{ 'NOTIFICATION.SELECTED_COUNT' | translate }})</span>
+                </label>
+
+                <div class="modal__conseillers-actions">
+                    <button type="button" class="modal__btn-link" (click)="selectAll()">{{ 'NOTIFICATION.SELECT_ALL' | translate }}</button>
+                    <button type="button" class="modal__btn-link" (click)="deselectAll()">{{ 'NOTIFICATION.DESELECT_ALL' | translate }}</button>
+                </div>
+
+                <input type="text" class="modal__input" placeholder="{{ 'NOTIFICATION.SEARCH_COUNSELOR' | translate }}"
+                    [(ngModel)]="searchConseiller" />
+
+                <div class="modal__conseillers-list">
+                    @for (conseiller of filteredConseillers; track conseiller.id) {
+                    <div class="modal__conseiller-item" [class.selected]="isSelected(conseiller.id)"
+                        (click)="toggleConseiller(conseiller.id)">
+                        <div class="modal__conseiller-checkbox">
+                            <input type="checkbox" [checked]="isSelected(conseiller.id)" />
+                        </div>
+                        <div class="modal__conseiller-info">
+                            <div class="modal__conseiller-name">{{ conseiller.full_name }}</div>
+                            <div class="modal__conseiller-email">{{ conseiller.email }}</div>
+                        </div>
+                    </div>
+                    }
+
+                    @if (filteredConseillers.length === 0) {
+                    <div class="modal__conseillers-empty">
+                        {{ 'NOTIFICATION.NO_COUNSELORS' | translate }}
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="modal__form-group">
+                <label class="modal__label">{{ 'NOTIFICATION.NOTIFICATION_TYPE_LABEL' | translate }}</label>
+                <select class="modal__select" [(ngModel)]="newNotifType">
+                    <option value="info">{{ 'NOTIFICATION.TYPE_INFORMATION' | translate }}</option>
+                    <option value="success">{{ 'NOTIFICATION.TYPE_SUCCESS' | translate }}</option>
+                    <option value="warning">{{ 'NOTIFICATION.TYPE_WARNING' | translate }}</option>
+                    <option value="error">{{ 'NOTIFICATION.TYPE_ERROR' | translate }}</option>
+                </select>
+            </div>
+
+            <div class="modal__form-group">
+                <label class="modal__label">{{ 'NOTIFICATION.TITLE_LABEL' | translate }} <span class="modal__required">*</span></label>
+                <input type="text" class="modal__input" placeholder="{{ 'NOTIFICATION.TITLE_PLACEHOLDER' | translate }}"
+                    [(ngModel)]="newNotifTitle" maxlength="180" />
+            </div>
+
+            <div class="modal__form-group">
+                <label class="modal__label">{{ 'NOTIFICATION.MESSAGE_LABEL' | translate }} <span class="modal__required">*</span></label>
+                <textarea class="modal__textarea" placeholder="{{ 'NOTIFICATION.MESSAGE_PLACEHOLDER' | translate }}" [(ngModel)]="newNotifMessage"
+                    rows="5"></textarea>
+            </div>
+
+        </div>
+
+        <div class="modal__actions">
+            <button class="modal__btn modal__btn--outline" (click)="closeModal()" [disabled]="sending()">
+                {{ 'NOTIFICATION.CANCEL' | translate }}
+            </button>
+            <button class="modal__btn modal__btn--primary" (click)="sendNotification()" [disabled]="sending()">
+                @if (sending()) {
+                <span class="modal__spinner"></span>
+                }
+                @if (!sending()) {
+                {{ 'NOTIFICATION.SEND' | translate }}
+                }
+            </button>
+        </div>
+
+    </div>
+</div>
+}

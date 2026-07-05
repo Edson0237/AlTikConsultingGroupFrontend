@@ -7,8 +7,8 @@
 
     <!-- Header -->
     <div class="panel-header">
-      <h2>Messagerie</h2>
-      <button class="new-conv-btn" (click)="openNewConvModal()" title="Nouvelle conversation">
+      <h2>{{ 'MESSAGING.TITLE' | translate }}</h2>
+      <button class="new-conv-btn" (click)="openNewConvModal()" title="{{ 'MESSAGING.NEW_CONVERSATION_TITLE' | translate }}">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 5v14M5 12h14"/>
         </svg>
@@ -24,7 +24,7 @@
         </svg>
         <input
           type="text"
-          placeholder="Rechercher..."
+          placeholder="{{ 'MESSAGING.SEARCH_PLACEHOLDER' | translate }}"
           [value]="searchQuery()"
           (input)="onSearchChange($event)"
           class="search-input"
@@ -58,7 +58,7 @@
                 <span class="conv-time">{{ formatTime(conv.last_message_time) }}</span>
               </div>
               <div class="conv-bottom-row">
-                <span class="conv-last">{{ conv.last_message || 'Aucun message' }}</span>
+                <span class="conv-last">{{ conv.last_message || ('MESSAGING.NO_MESSAGE' | translate) }}</span>
                 @if (conv.unread_count > 0) {
                   <span class="unread-badge">{{ conv.unread_count }}</span>
                 }
@@ -75,8 +75,8 @@
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
-            <p>Aucune conversation</p>
-            <button class="empty-btn" (click)="openNewConvModal()">Démarrer une conversation</button>
+            <p>{{ 'MESSAGING.EMPTY_CONVERSATIONS' | translate }}</p>
+            <button class="empty-btn" (click)="openNewConvModal()">{{ 'MESSAGING.START_CONVERSATION' | translate }}</button>
           </div>
         }
       </div>
@@ -106,7 +106,7 @@
           @if (conv.subject) {
             <span class="subject-tag">{{ conv.subject }}</span>
           }
-          <button class="icon-btn" (click)="archiveConversation()" [title]="conv.is_archived ? 'Désarchiver' : 'Archiver'">
+          <button class="icon-btn" (click)="archiveConversation()" [title]="conv.is_archived ? ('MESSAGING.UNARCHIVE' | translate) : ('MESSAGING.ARCHIVE' | translate)">
             @if (conv.is_archived) {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="1 4 1 10 7 10"/>
@@ -151,7 +151,7 @@
         <textarea
           #messageInput
           class="msg-input"
-          placeholder="Écrire un message..."
+          placeholder="{{ 'MESSAGING.WRITE_MESSAGE' | translate }}"
           [(ngModel)]="messageText"
           (keyup)="onKeyUp($event)"
           rows="1"
@@ -179,10 +179,10 @@
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
-        <h3>Sélectionnez une conversation</h3>
-        <p>Ou démarrez une nouvelle discussion avec un utilisateur</p>
+        <h3>{{ 'MESSAGING.SELECT_CONVERSATION' | translate }}</h3>
+        <p>{{ 'MESSAGING.SELECT_CONVERSATION_SUBTITLE' | translate }}</p>
         <button class="primary-btn" (click)="openNewConvModal()">
-          Nouvelle conversation
+          {{ 'MESSAGING.NEW_CONVERSATION' | translate }}
         </button>
       </div>
     }
@@ -195,7 +195,7 @@
     <div class="modal-overlay" (click)="closeNewConvModal()">
       <div class="modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>Nouvelle conversation</h3>
+          <h3>{{ 'MESSAGING.NEW_CONVERSATION' | translate }}</h3>
           <button class="close-btn" (click)="closeNewConvModal()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 6 6 18M6 6l12 12"/>
@@ -206,7 +206,7 @@
         <div class="modal-body">
           <!-- Sélection utilisateur -->
           <div class="form-group">
-            <label>Destinataire *</label>
+            <label>{{ 'MESSAGING.RECIPIENT_LABEL' | translate }}</label>
             @if (selectedUser(); as user) {
               <div class="selected-user">
                 <div class="selected-user-avatar">{{ getInitial(user.full_name) }}</div>
@@ -223,7 +223,7 @@
             } @else {
               <input
                 type="text"
-                placeholder="Rechercher un utilisateur..."
+                placeholder="{{ 'MESSAGING.SEARCH_USER_PLACEHOLDER' | translate }}"
                 class="modal-search"
                 (input)="onUserSearchChange($event)"
               />
@@ -243,7 +243,7 @@
                     </div>
                   }
                   @if (usersList().length === 0) {
-                    <p class="no-users">Aucun utilisateur trouvé</p>
+                    <p class="no-users">{{ 'MESSAGING.NO_USERS_FOUND' | translate }}</p>
                   }
                 }
               </div>
@@ -252,10 +252,10 @@
 
           <!-- Sujet -->
           <div class="form-group">
-            <label>Sujet (optionnel)</label>
+            <label>{{ 'MESSAGING.SUBJECT_LABEL' | translate }}</label>
             <input
               type="text"
-              placeholder="Ex: Suivi de votre dossier de bourse"
+              placeholder="{{ 'MESSAGING.SUBJECT_PLACEHOLDER' | translate }}"
               [(ngModel)]="newConvSubject"
               class="modal-input"
               [disabled]="!selectedUser()"
@@ -264,9 +264,9 @@
 
           <!-- Message initial -->
           <div class="form-group">
-            <label>Message initial (optionnel)</label>
+            <label>{{ 'MESSAGING.INITIAL_MESSAGE_LABEL' | translate }}</label>
             <textarea
-              placeholder="Bonjour, je vous contacte concernant..."
+              placeholder="{{ 'MESSAGING.INITIAL_MESSAGE_PLACEHOLDER' | translate }}"
               [(ngModel)]="newConvMessage"
               class="modal-textarea"
               rows="4"
@@ -276,7 +276,7 @@
         </div>
 
         <div class="modal-footer">
-          <button class="secondary-btn" (click)="closeNewConvModal()">Annuler</button>
+          <button class="secondary-btn" (click)="closeNewConvModal()">{{ 'MESSAGING.CANCEL' | translate }}</button>
           <button
             class="primary-btn"
             (click)="startConversation()"
@@ -285,7 +285,7 @@
             @if (startingConv()) {
               <div class="spinner-small"></div>
             }
-            Démarrer la conversation
+            {{ 'MESSAGING.START_CONVERSATION' | translate }}
           </button>
         </div>
       </div>
