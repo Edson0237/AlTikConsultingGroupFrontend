@@ -1,34 +1,37 @@
 // ── Tokens charte graphique ───────────────────────────────────────────────────
-$blue:         #2563EB;
-$blue-light:   #EFF6FF;
-$blue-mid:     #DBEAFE;
-$cyan:         #0EA5E9;
-$green:        #10B981;
-$green-light:  #D1FAE5;
-$red:          #EF4444;
-$red-light:    #FEF2F2;
-$orange:       #F59E0B;
+$blue: #2563EB;
+$blue-light: #EFF6FF;
+$blue-mid: #DBEAFE;
+$cyan: #0EA5E9;
+$green: #10B981;
+$green-light: #D1FAE5;
+$red: #EF4444;
+$red-light: #FEF2F2;
+$orange: #F59E0B;
 $orange-light: #FEF3C7;
-$purple:       #8B5CF6;
+$purple: #8B5CF6;
 $purple-light: #EDE9FE;
 
-$border:      #E5E7EB;
-$text-dark:   #111827;
-$text-mid:    #374151;
-$text-muted:  #6B7280;
+$border: #E5E7EB;
+$text-dark: #111827;
+$text-mid: #374151;
+$text-muted: #6B7280;
 $text-subtle: #9CA3AF;
-$bg-page:     #F8F9FB;
-$bg-card:     #FFFFFF;
-$bg-head:     #F9FAFB;
+$bg-page: #F8F9FB;
+$bg-card: #FFFFFF;
+$bg-head: #F9FAFB;
 
-$radius-sm:   8px;
-$radius-md:   12px;
-$radius-lg:   16px;
-$shadow-sm:   0 1px 4px rgba(0,0,0,.06);
-$shadow-modal:0 20px 60px rgba(0,0,0,.18);
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$shadow-sm: 0 1px 4px rgba(0, 0, 0, .06);
+$shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
 
 // ── Host ─────────────────────────────────────────────────────────────────────
-:host { display: block; min-height: 100%; }
+:host {
+  display: block;
+  min-height: 100%;
+}
 
 // ── Page wrapper ─────────────────────────────────────────────────────────────
 .students {
@@ -112,7 +115,9 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     width: 260px;
     transition: border-color .15s, box-shadow .15s;
 
-    &::placeholder { color: $text-subtle; }
+    &::placeholder {
+      color: $text-subtle;
+    }
 
     &:focus {
       border-color: $blue;
@@ -134,7 +139,9 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     cursor: pointer;
     transition: background .12s, border-color .12s, box-shadow .15s;
 
-    &:hover { background: $bg-page; }
+    &:hover {
+      background: $bg-page;
+    }
 
     &--active {
       background: $blue-light;
@@ -156,8 +163,15 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     cursor: pointer;
     transition: background .12s, color .12s;
 
-    &:hover:not(:disabled) { background: $bg-page; color: $blue; }
-    &:disabled { opacity: .5; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      background: $bg-page;
+      color: $blue;
+    }
+
+    &:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
   }
 
   // ── Table wrapper ──────────────────────────────────────────────
@@ -165,8 +179,12 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     background: $bg-card;
     border: 1px solid $border;
     border-radius: $radius-lg;
-    overflow: hidden;
     box-shadow: $shadow-sm;
+    // Scroll horizontal au lieu de tronquer le contenu qui dépasse
+    // (ex: colonne Actions coupée sur petits écrans / beaucoup de colonnes)
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -229,7 +247,11 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     transition: background .12s, color .12s;
     white-space: nowrap;
 
-    &:hover { background: $bg-page; color: $red; border-color: lighten($red, 25%); }
+    &:hover {
+      background: $bg-page;
+      color: $red;
+      border-color: lighten($red, 25%);
+    }
   }
 }
 
@@ -255,17 +277,33 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     animation: spin .7s linear infinite;
   }
 
-  p { font-size: .9rem; margin: 0; }
+  p {
+    font-size: .9rem;
+    margin: 0;
+  }
 
-  &--error { color: $red; svg { color: $red; } }
+  &--error {
+    color: $red;
+
+    svg {
+      color: $red;
+    }
+  }
 }
 
 // ── Table ─────────────────────────────────────────────────────────────────────
 .students-table {
   width: 100%;
+  min-width: 90vw;
   border-collapse: collapse;
 
-  &__head { background: $bg-head; }
+  &__head {
+    background: $bg-head;
+
+    .students-table__th:last-child {
+      background: $bg-head; // évite la transparence quand la colonne est sticky
+    }
+  }
 
   &__th {
     padding: .75rem 1.25rem;
@@ -283,8 +321,13 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     border-bottom: 1px solid #f3f4f6;
     transition: background .12s;
 
-    &:last-child { border-bottom: none; }
-    &:hover { background: #fafafa; }
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: #fafafa;
+    }
   }
 
   &__td {
@@ -293,8 +336,23 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     color: $text-dark;
     white-space: nowrap;
 
-    &--muted { color: $text-muted; font-size: .8125rem; }
-    &--name  { font-weight: 600; }
+    &--muted {
+      color: $text-muted;
+      font-size: .8125rem;
+    }
+
+    &--name {
+      font-weight: 600;
+    }
+  }
+
+  // Colonne Actions toujours accessible, même en scroll horizontal
+  &__th:last-child,
+  &__td:last-child {
+    position: sticky;
+    right: 0;
+    background: $bg-card;
+    z-index: 1;
   }
 
   &__empty {
@@ -324,10 +382,21 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     // Couleur selon le rôle
     background: linear-gradient(135deg, $blue, $cyan);
 
-    &--admin      { background: linear-gradient(135deg, $purple, #a78bfa); }
-    &--conseiller { background: linear-gradient(135deg, $blue, $cyan);     }
-    &--responsable{ background: linear-gradient(135deg, $orange, #fbbf24); }
-    &--etudiant   { background: linear-gradient(135deg, $green, #34d399);  }
+    &--admin {
+      background: linear-gradient(135deg, $purple, #a78bfa);
+    }
+
+    &--conseiller {
+      background: linear-gradient(135deg, $blue, $cyan);
+    }
+
+    &--responsable {
+      background: linear-gradient(135deg, $orange, #fbbf24);
+    }
+
+    &--etudiant {
+      background: linear-gradient(135deg, $green, #34d399);
+    }
   }
 
   &__name {
@@ -365,25 +434,37 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   &--admin {
     background: $purple-light;
     color: darken($purple, 5%);
-    .role-badge__dot { background: $purple; }
+
+    .role-badge__dot {
+      background: $purple;
+    }
   }
 
   &--conseiller {
     background: $blue-light;
     color: $blue;
-    .role-badge__dot { background: $blue; }
+
+    .role-badge__dot {
+      background: $blue;
+    }
   }
 
   &--responsable {
     background: $orange-light;
     color: darken($orange, 15%);
-    .role-badge__dot { background: $orange; }
+
+    .role-badge__dot {
+      background: $orange;
+    }
   }
 
   &--etudiant {
     background: $green-light;
     color: darken($green, 12%);
-    .role-badge__dot { background: $green; }
+
+    .role-badge__dot {
+      background: $green;
+    }
   }
 }
 
@@ -406,13 +487,19 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   &--active {
     background: $green-light;
     color: darken($green, 12%);
-    .status-badge__dot { background: $green; }
+
+    .status-badge__dot {
+      background: $green;
+    }
   }
 
   &--inactive {
     background: #F3F4F6;
     color: $text-muted;
-    .status-badge__dot { background: $text-subtle; }
+
+    .status-badge__dot {
+      background: $text-subtle;
+    }
   }
 }
 
@@ -421,6 +508,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   display: flex;
   align-items: center;
   gap: .3rem;
+  flex-wrap: nowrap; // empêche les boutons de passer à la ligne et de disparaître visuellement
 }
 
 .icon-btn {
@@ -436,15 +524,57 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   transition: background .12s, border-color .12s, transform .1s;
   flex-shrink: 0;
 
-  &:disabled { opacity: .45; cursor: not-allowed; transform: none !important; }
-  &:hover:not(:disabled) { transform: scale(1.08); }
+  &:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none !important;
+  }
 
-  &--activate   { &:hover:not(:disabled) { background: $green-light;  border-color: #a7f3d0; } }
-  &--deactivate { &:hover:not(:disabled) { background: $red-light;    border-color: #fecaca; } }
-  &--delete     { &:hover:not(:disabled) { background: $red-light;    border-color: #fecaca; } }
-  &--view       { &:hover:not(:disabled) { background: $blue-light;   border-color: #bfdbfe; } }
-  &--archive    { &:hover:not(:disabled) { background: $orange-light; border-color: #fde68a; } }
-  &--unarchive  { &:hover:not(:disabled) { background: $purple-light; border-color: #c4b5fd; } }
+  &:hover:not(:disabled) {
+    transform: scale(1.08);
+  }
+
+  &--activate {
+    &:hover:not(:disabled) {
+      background: $green-light;
+      border-color: #a7f3d0;
+    }
+  }
+
+  &--deactivate {
+    &:hover:not(:disabled) {
+      background: $red-light;
+      border-color: #fecaca;
+    }
+  }
+
+  &--delete {
+    &:hover:not(:disabled) {
+      background: $red-light;
+      border-color: #fecaca;
+    }
+  }
+
+  &--view {
+    &:hover:not(:disabled) {
+      background: $blue-light;
+      border-color: #bfdbfe;
+    }
+  }
+
+  &--archive {
+    &:hover:not(:disabled) {
+      background: $orange-light;
+      border-color: #fde68a;
+    }
+  }
+
+  &--unarchive {
+    &:hover:not(:disabled) {
+      background: $purple-light;
+      border-color: #c4b5fd;
+    }
+  }
 }
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
@@ -460,20 +590,30 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   border: none;
   transition: background .15s, box-shadow .15s, opacity .15s;
 
-  &:disabled { opacity: .6; cursor: not-allowed; }
+  &:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
 
-  &--sm { padding: .3rem .75rem; font-size: .75rem; }
+  &--sm {
+    padding: .3rem .75rem;
+    font-size: .75rem;
+  }
 
   &--outline {
     background: $bg-card;
     border: 1px solid $border;
     color: $text-mid;
-    &:hover:not(:disabled) { background: $bg-page; }
+
+    &:hover:not(:disabled) {
+      background: $bg-page;
+    }
   }
 
   &--danger {
     background: $red;
     color: #fff;
+
     &:hover:not(:disabled) {
       background: darken($red, 6%);
       box-shadow: 0 4px 14px rgba($red, .35);
@@ -483,6 +623,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   &--warning {
     background: $orange;
     color: #fff;
+
     &:hover:not(:disabled) {
       background: darken($orange, 8%);
       box-shadow: 0 4px 14px rgba($orange, .35);
@@ -492,6 +633,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   &--primary {
     background: $blue;
     color: #fff;
+
     &:hover:not(:disabled) {
       background: darken($blue, 6%);
       box-shadow: 0 4px 14px rgba($blue, .3);
@@ -504,12 +646,15 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   display: inline-block;
   width: 12px;
   height: 12px;
-  border: 2px solid rgba(255,255,255,.35);
+  border: 2px solid rgba(255, 255, 255, .35);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin .6s linear infinite;
 
-  &--white { border-color: rgba(255,255,255,.35); border-top-color: #fff; }
+  &--white {
+    border-color: rgba(255, 255, 255, .35);
+    border-top-color: #fff;
+  }
 }
 
 // ── Empty state ───────────────────────────────────────────────────────────────
@@ -520,7 +665,10 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   gap: .75rem;
   color: $text-muted;
 
-  p { font-size: .875rem; margin: 0; }
+  p {
+    font-size: .875rem;
+    margin: 0;
+  }
 }
 
 // ── Archived row ─────────────────────────────────────────────────────────────
@@ -528,7 +676,9 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   opacity: .55;
   background: #F9FAFB;
 
-  td { color: $text-muted !important; }
+  td {
+    color: $text-muted !important;
+  }
 
   .student-cell__avatar {
     background: #D1D5DB !important;
@@ -538,7 +688,10 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   .status-badge--active {
     background: #F3F4F6;
     color: $text-muted;
-    .status-badge__dot { background: $text-subtle; }
+
+    .status-badge__dot {
+      background: $text-subtle;
+    }
   }
 }
 
@@ -546,7 +699,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(17,24,39,.45);
+  background: rgba(17, 24, 39, .45);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -564,8 +717,13 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   box-shadow: $shadow-modal;
   animation: slideUp .18s ease;
 
-  &--sm      { max-width: 420px; }
-  &--details { max-width: 480px; }
+  &--sm {
+    max-width: 420px;
+  }
+
+  &--details {
+    max-width: 480px;
+  }
 }
 
 // ── Modal détails utilisateur ─────────────────────────────────────────────────
@@ -592,8 +750,15 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     justify-content: center;
     flex-shrink: 0;
 
-    &--responsable { background: #E0E7FF; color: #4338CA; }
-    &--etudiant    { background: #DCFCE7; color: #15803D; }
+    &--responsable {
+      background: #E0E7FF;
+      color: #4338CA;
+    }
+
+    &--etudiant {
+      background: #DCFCE7;
+      color: #15803D;
+    }
   }
 
   &__header-info {
@@ -640,7 +805,10 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     color: $text-muted;
     transition: background .12s;
 
-    &:hover { background: $bg-page; color: $text-dark; }
+    &:hover {
+      background: $bg-page;
+      color: $text-dark;
+    }
   }
 
   &__body {
@@ -679,7 +847,10 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     color: $text-dark;
     word-break: break-word;
 
-    &--warn { color: $orange; font-weight: 600; }
+    &--warn {
+      color: $orange;
+      font-weight: 600;
+    }
   }
 }
 
@@ -716,7 +887,10 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     line-height: 1.6;
     margin: 0;
     max-width: 320px;
-    strong { color: $text-dark; }
+
+    strong {
+      color: $text-dark;
+    }
   }
 
   &__username {
@@ -744,7 +918,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   border-radius: $radius-md;
   font-size: .875rem;
   font-weight: 500;
-  box-shadow: 0 8px 28px rgba(0,0,0,.12);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .12);
   z-index: 2000;
   max-width: 380px;
   animation: slideToast .2s ease;
@@ -763,10 +937,47 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
 }
 
 // ── Spin (bouton refresh) ─────────────────────────────────────────────────────
-.spin { animation: spin .7s linear infinite; }
+.spin {
+  animation: spin .7s linear infinite;
+}
 
 // ── Animations ────────────────────────────────────────────────────────────────
-@keyframes spin       { to { transform: rotate(360deg); } }
-@keyframes fadeIn     { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp    { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideToast { from { opacity: 0; transform: translateY(8px);  } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideToast {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

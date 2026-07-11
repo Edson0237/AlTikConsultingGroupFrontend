@@ -73,4 +73,15 @@ export class DossierDetailService {
   getConseillers(): Observable<Conseiller[]> {
     return this.http.get<Conseiller[]>(`${environment.apiUrl}auth/conseillers/`);
   }
+
+  /**
+   * POST /api/dossiers/admin/{id}/lancer-analyse/
+   * Lancer l'analyse IA des relevés du dossier
+   */
+  lancerAnalyse(id: number): Observable<{ success: boolean; message: string; analyse_en_cours: boolean }> {
+    return this.http.post<{ success: boolean; message: string; analyse_en_cours: boolean }>(
+      `${this.BASE}admin/${id}/lancer-analyse/`,
+      {}
+    );
+  }
 }

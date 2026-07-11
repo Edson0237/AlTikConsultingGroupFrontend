@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { NotificationAdminService, NotificationItem, Conseiller } from '../../services/notification-admin/notification-admin.service';
+import { NotificationAdminService, NotificationItem, Conseiller, NotificationUser } from '../../services/notification-admin/notification-admin.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { NotificationCounterService } from '../../services/notification/notification-counter.service';
 
@@ -31,8 +31,11 @@ export class NotificationComponent implements OnInit {
 
   // ── Modal admin ─────────────────────────────────────────────────
   showModal = signal(false);
+  recipientMode = signal<'conseillers' | 'candidats'>('conseillers');
   conseillers = signal<Conseiller[]>([]);
+  users = signal<NotificationUser[]>([]);
   selectedConseillers = signal<number[]>([]);
+  selectedUsers = signal<number[]>([]);
   newNotifTitle = signal('');
   newNotifMessage = signal('');
   newNotifType = signal<NotificationType>('info');
@@ -40,6 +43,7 @@ export class NotificationComponent implements OnInit {
   sendSuccess = signal(false);
   sendError = signal('');
   searchConseiller = signal('');
+  searchUser = signal('');
 
   // ── Permissions ─────────────────────────────────────────────────
   get isAdmin(): boolean {
@@ -130,6 +134,7 @@ export class NotificationComponent implements OnInit {
     this.showModal.set(true);
     this.resetModal();
     this.loadConseillers();
+    this.loadUsers();
   }
 
   closeModal(): void {
@@ -138,13 +143,16 @@ export class NotificationComponent implements OnInit {
   }
 
   resetModal(): void {
+    this.recipientMode.set('conseillers');
     this.selectedConseillers.set([]);
+    this.selectedUsers.set([]);
     this.newNotifTitle.set('');
     this.newNotifMessage.set('');
     this.newNotifType.set('info');
     this.sendSuccess.set(false);
     this.sendError.set('');
     this.searchConseiller.set('');
+    this.searchUser.set('');
   }
 
   // ── Modal admin : chargement conseillers ────────────────────────
@@ -159,6 +167,17 @@ export class NotificationComponent implements OnInit {
     });
   }
 
+  loadUsers(): void {
+    this.notificationService.getUsers().subscribe({
+      next: (res) => {
+        this.users.set(res.results || []);
+      },
+      error: (err) => {
+        console.error('Erreur chargement candidats:', err);
+      }
+    });
+  }
+
   get filteredConseillers(): Conseiller[] {
     const query = this.searchConseiller().toLowerCase().trim();
     if (!query) return this.conseillers();
@@ -166,6 +185,16 @@ export class NotificationComponent implements OnInit {
     return this.conseillers().filter(c =>
       c.full_name.toLowerCase().includes(query) ||
       c.email.toLowerCase().includes(query)
+    );
+  }
+
+  get filteredUsers(): NotificationUser[] {
+    const query = this.searchUser().toLowerCase().trim();
+    if (!query) return this.users();
+
+    return this.users().filter(u =>
+      u.full_name.toLowerCase().includes(query) ||
+      u.email.toLowerCase().includes(query)
     );
   }
 
@@ -182,22 +211,49 @@ export class NotificationComponent implements OnInit {
     this.selectedConseillers.set(current);
   }
 
+  toggleUser(id: number): void {
+    const current = [...this.selectedUsers()];
+    const index = current.indexOf(id);
+
+    if (index >= 0) {
+      current.splice(index, 1);
+    } else {
+      current.push(id);
+    }
+
+    this.selectedUsers.set(current);
+  }
+
   isSelected(id: number): boolean {
-    return this.selectedConseillers().includes(id);
+    if (this.recipientMode() === 'conseillers') {
+      return this.selectedConseillers().includes(id);
+    }
+    return this.selectedUsers().includes(id);
   }
 
   selectAll(): void {
-    const allIds = this.conseillers().map(c => c.id);
-    this.selectedConseillers.set(allIds);
+    if (this.recipientMode() === 'conseillers') {
+      this.selectedConseillers.set(this.conseillers().map(c => c.id));
+    } else {
+      this.selectedUsers.set(this.users().map(u => u.id));
+    }
   }
 
   deselectAll(): void {
-    this.selectedConseillers.set([]);
+    if (this.recipientMode() === 'conseillers') {
+      this.selectedConseillers.set([]);
+    } else {
+      this.selectedUsers.set([]);
+    }
   }
 
   // ── Modal admin : envoi notification ────────────────────────────
   sendNotification(): void {
-    if (this.selectedConseillers().length === 0) {
+    const selectedIds = this.recipientMode() === 'conseillers'
+      ? this.selectedConseillers()
+      : this.selectedUsers();
+
+    if (selectedIds.length === 0) {
       this.sendError.set(this.translate.instant('NOTIFICATION.ERROR_SELECT_RECIPIENT'));
       return;
     }
@@ -216,7 +272,7 @@ export class NotificationComponent implements OnInit {
     this.sendError.set('');
 
     const payload = {
-      recipient_ids: this.selectedConseillers(),
+      recipient_ids: selectedIds,
       title: this.newNotifTitle(),
       message: this.newNotifMessage(),
       notification_type: this.newNotifType(),

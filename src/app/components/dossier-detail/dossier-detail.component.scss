@@ -120,11 +120,22 @@ $radius-lg: 16px;
         border-radius: 50%;
         animation: spin 0.7s linear infinite;
     }
+}
 
-    p {
-        font-size: 16px;
-        margin: 0;
-    }
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid #DBEAFE;
+    border-top-color: $blue;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+.spinner--small {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    border-width: 2px;
 }
 
 .error-state {

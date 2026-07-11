@@ -1,132 +1,352 @@
 <div class="reports">
 
-    <!-- Page Header -->
-    <div class="reports__header">
-        <div>
-            <h1 class="reports__title">{{ 'RAPPORT_ANALYTIC.TITLE' | translate }}</h1>
-            <p class="reports__subtitle">{{ 'RAPPORT_ANALYTIC.SUBTITLE' | translate }}</p>
-        </div>
-        <div class="reports__export-actions">
-            <button class="btn btn--outline" (click)="exportPDF()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    aria-hidden="true">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                {{ 'RAPPORT_ANALYTIC.EXPORT_PDF' | translate }}
-            </button>
-            <button class="btn btn--green" (click)="exportExcel()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    aria-hidden="true">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                </svg>
-                {{ 'RAPPORT_ANALYTIC.EXPORT_EXCEL' | translate }}
-            </button>
-        </div>
+  <!-- ── Header ──────────────────────────────────────────────────────── -->
+  <div class="reports__header">
+    <div>
+      <h1 class="reports__title">Analyses IA — Résultats</h1>
+      <p class="reports__subtitle">Données réelles extraites par l'intelligence artificielle</p>
     </div>
+    <div class="reports__export-actions">
+      <button class="btn btn--outline" (click)="loadRapports()">
+        <span class="material-icons" style="font-size:15px">refresh</span>
+        Actualiser
+      </button>
+    </div>
+  </div>
 
-    <!-- KPI Cards -->
+  <!-- ── KPI Cards (données réelles) ─────────────────────────────────── -->
+  @if (stats(); as s) {
     <div class="kpi-grid">
-        <div class="kpi-card" *ngFor="let kpi of kpiCards">
-            <p class="kpi-card__label">{{ kpi.label | translate }}</p>
-            <p class="kpi-card__value">{{ kpi.value }}</p>
-            <p class="kpi-card__trend" [ngClass]="kpi.trendUp ? 'kpi-card__trend--up' : 'kpi-card__trend--down'">
-                {{ kpi.trend }}
-            </p>
-        </div>
+      <div class="kpi-card">
+        <p class="kpi-card__label">Total analyses</p>
+        <p class="kpi-card__value">{{ s.total_analyses }}</p>
+        <p class="kpi-card__trend kpi-card__trend--up">Rapports IA générés</p>
+      </div>
+      <div class="kpi-card">
+        <p class="kpi-card__label">Analyses réussies</p>
+        <p class="kpi-card__value">{{ s.analyses_reussies }}</p>
+        <p class="kpi-card__trend kpi-card__trend--up">Avec moyenne extraite</p>
+      </div>
+      <div class="kpi-card">
+        <p class="kpi-card__label">Score moyen IA</p>
+        <p class="kpi-card__value">{{ s.score_moyen_ia | number:'1.2-2' }}/20</p>
+        <p class="kpi-card__trend" [class.kpi-card__trend--up]="s.score_moyen_ia >= 12"
+          [class.kpi-card__trend--down]="s.score_moyen_ia < 12">
+          Combiné probatoire + bac
+        </p>
+      </div>
+      <div class="kpi-card">
+        <p class="kpi-card__label">Niveau excellent</p>
+        <p class="kpi-card__value">{{ s.repartition_niveaux['excellent'] ?? 0 }}</p>
+        <p class="kpi-card__trend kpi-card__trend--up">Score ≥ 16/20</p>
+      </div>
     </div>
+  }
 
-    <!-- Revenue Trend Chart -->
-    <div class="chart-card">
-        <div class="chart-card__header">
-            <h2 class="chart-card__title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="chart-card__title-icon" aria-hidden="true">
-                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                    <polyline points="17 6 23 6 23 12" />
-                </svg>
-                {{ 'RAPPORT_ANALYTIC.REVENUE_TREND' | translate }}
-            </h2>
-            <select class="chart-card__select" [(ngModel)]="selectedPeriod">
-                <option value="6">{{ 'RAPPORT_ANALYTIC.PERIOD_6_MONTHS' | translate }}</option>
-                <option value="12">{{ 'RAPPORT_ANALYTIC.PERIOD_12_MONTHS' | translate }}</option>
-                <option value="year">{{ 'RAPPORT_ANALYTIC.PERIOD_THIS_YEAR' | translate }}</option>
-            </select>
-        </div>
-        <canvas id="lineChart" class="chart-canvas"></canvas>
+  <!-- ── Filtres ──────────────────────────────────────────────────────── -->
+  <div class="ra-filters">
+    <input class="ra-search" type="text" placeholder="Rechercher un candidat ou établissement…"
+      (input)="onSearchChange($any($event.target).value)" />
+    <select class="ra-select" (change)="onNiveauChange($any($event.target).value)">
+      @for (n of niveaux; track n.value) {
+        <option [value]="n.value">{{ n.label }}</option>
+      }
+    </select>
+    <span class="ra-count">{{ filteredList().length }} résultat(s)</span>
+  </div>
+
+  <!-- ── Chargement ──────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="ra-loading">
+      <div class="spinner"></div>
+      <span>Chargement des analyses…</span>
     </div>
+  }
 
-    <!-- Secondary Charts -->
-    <div class="charts-row">
-
-        <!-- Pie: Cases by Status -->
-        <div class="chart-card">
-            <h2 class="chart-card__title">{{ 'RAPPORT_ANALYTIC.CASES_BY_STATUS' | translate }}</h2>
-            <canvas id="pieChart" class="chart-canvas chart-canvas--sm"></canvas>
-            <div class="pie-legend">
-                <div class="pie-legend__item" *ngFor="let s of statusData; let i = index">
-                    <span class="pie-legend__dot" [style.background]="chartColors[i]"></span>
-                    <span class="pie-legend__label">{{ s.status | translate }} ({{ s.count }})</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bar: Service Performance -->
-        <div class="chart-card">
-            <h2 class="chart-card__title">{{ 'RAPPORT_ANALYTIC.PERFORMANCE_BY_SERVICE' | translate }}</h2>
-            <canvas id="barChart" class="chart-canvas chart-canvas--sm"></canvas>
-        </div>
-
-    </div>
-
-    <!-- Performance Table -->
-    <div class="chart-card">
-        <h2 class="chart-card__title">{{ 'RAPPORT_ANALYTIC.PERFORMANCE_TABLE_TITLE' | translate }}</h2>
+  <!-- ── Tableau des rapports ─────────────────────────────────────────── -->
+  @if (!loading()) {
+    @if (filteredList().length === 0) {
+      <div class="ra-empty">
+        <span class="material-icons" style="font-size:48px;color:#cbd5e1">description</span>
+        <p>Aucune analyse IA disponible</p>
+      </div>
+    } @else {
+      <div class="chart-card">
+        <h2 class="chart-card__title">Résultats des analyses IA</h2>
         <div class="table-wrap">
-            <table class="perf-table" aria-label="{{ 'RAPPORT_ANALYTIC.PERFORMANCE_TABLE_ARIA' | translate }}">
-                <thead class="perf-table__head">
-                    <tr>
-                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_SERVICE' | translate }}</th>
-                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_ACTIVE_CASES' | translate }}</th>
-                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_MONTHLY_REVENUE' | translate }}</th>
-                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_AVG_TIME' | translate }}</th>
-                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_SUCCESS_RATE' | translate }}</th>
-                        <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.TABLE_GROWTH' | translate }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="perf-table__row" *ngFor="let svc of servicePerformance; let i = index">
-                        <td class="perf-table__td perf-table__td--name">{{ svc.service | translate }}</td>
-                        <td class="perf-table__td">{{ svc.cases }}</td>
-                        <td class="perf-table__td">{{ svc.revenue | currency:'USD':'symbol':'1.0-0' }}</td>
-                        <td class="perf-table__td">{{ svc.avgTime }}</td>
-                        <td class="perf-table__td"><span class="trend-up">92%</span></td>
-                        <td class="perf-table__td"><span class="trend-up">↑ {{ 12 + i * 3 }}%</span></td>
-                    </tr>
-                </tbody>
-            </table>
+          <table class="perf-table">
+            <thead class="perf-table__head">
+              <tr>
+                <th class="perf-table__th">Candidat</th>
+                <th class="perf-table__th">Document</th>
+                <th class="perf-table__th">Établissement</th>
+                <th class="perf-table__th">Score combiné</th>
+                <th class="perf-table__th">Probatoire</th>
+                <th class="perf-table__th">Bac</th>
+                <th class="perf-table__th">Niveau</th>
+                <th class="perf-table__th">Matières</th>
+                <th class="perf-table__th">Confiance</th>
+                <th class="perf-table__th">Détails</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of filteredList(); track r.id) {
+                <tr class="perf-table__row">
+                  <td class="perf-table__td perf-table__td--name">{{ r.nom_complet || '—' }}</td>
+                  <td class="perf-table__td">{{ r.type_document_display }}</td>
+                  <td class="perf-table__td">{{ r.etablissement || '—' }}</td>
+                  <td class="perf-table__td">
+                    @if (r.score_combine !== null) {
+                      <span class="score-pill" [style.background]="getNiveauColor(r.niveau_performance) + '20'"
+                        [style.color]="getNiveauColor(r.niveau_performance)">
+                        {{ r.score_combine | number:'1.2-2' }}/20
+                      </span>
+                    } @else { <span class="text-muted">—</span> }
+                  </td>
+                  <td class="perf-table__td">
+                    @if (r.moyenne_probatoire !== null) {
+                      <span [style.color]="getNoteColor(r.moyenne_probatoire)">
+                        {{ r.moyenne_probatoire | number:'1.2-2' }}
+                      </span>
+                    } @else { <span class="text-muted">—</span> }
+                  </td>
+                  <td class="perf-table__td">
+                    @if (r.moyenne_bac !== null) {
+                      <span [style.color]="getNoteColor(r.moyenne_bac)">
+                        {{ r.moyenne_bac | number:'1.2-2' }}
+                      </span>
+                    } @else { <span class="text-muted">—</span> }
+                  </td>
+                  <td class="perf-table__td">
+                    <span class="niveau-badge"
+                      [style.background]="getNiveauColor(r.niveau_performance) + '18'"
+                      [style.color]="getNiveauColor(r.niveau_performance)">
+                      {{ getNiveauLabel(r.niveau_performance) }}
+                    </span>
+                  </td>
+                  <td class="perf-table__td ra-center">
+                    <span class="matieres-info">
+                      <span class="text-success">{{ r.matieres_validees }}✓</span>
+                      <span class="text-muted"> / </span>
+                      <span class="text-danger">{{ r.matieres_echouees }}✗</span>
+                    </span>
+                  </td>
+                  <td class="perf-table__td">
+                    <div class="confidence-bar">
+                      <div class="confidence-bar__fill"
+                        [style.width.%]="r.score_confiance_extraction * 100"
+                        [style.background]="getNoteColor(r.score_confiance_extraction * 20)">
+                      </div>
+                      <span class="confidence-bar__label">{{ (r.score_confiance_extraction * 100) | number:'1.0-0' }}%</span>
+                    </div>
+                  </td>
+                  <td class="perf-table__td">
+                    <button class="btn-eye" title="Voir le détail" (click)="openModal(r)">
+                      <span class="material-icons" style="font-size:16px">visibility</span>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
-    </div>
+      </div>
+    }
 
-    <!-- Predictive Analytics -->
-    <div class="predictive">
-        <h2 class="predictive__title">📊 {{ 'RAPPORT_ANALYTIC.PREDICTIVE_TITLE' | translate }}</h2>
-        <div class="predictive__grid">
-            <div class="predictive__card" *ngFor="let pred of predictions">
-                <p class="predictive__card-label">{{ pred.label | translate }}</p>
-                <p class="predictive__card-value" [ngClass]="pred.colorClass">{{ pred.value }}</p>
-                <p class="predictive__card-note" [ngClass]="pred.noteUp ? 'trend-up' : 'text-muted'">
-                    {{ pred.note }}
-                </p>
-            </div>
+    <!-- ── Graphiques ─────────────────────────────────────────────────── -->
+    @if (rapports().length > 0) {
+      <div class="charts-row">
+        <div class="chart-card">
+          <h2 class="chart-card__title">Répartition par niveau</h2>
+          <canvas id="pieChart" class="chart-canvas chart-canvas--sm"></canvas>
+          <div class="pie-legend">
+            @for (label of ['Excellent','Très bon','Bon','Moyen','Faible']; track label; let i = $index) {
+              <div class="pie-legend__item">
+                <span class="pie-legend__dot" [style.background]="chartColors[i]"></span>
+                <span class="pie-legend__label">{{ label }}</span>
+              </div>
+            }
+          </div>
         </div>
-    </div>
+        <div class="chart-card">
+          <h2 class="chart-card__title">Distribution des niveaux</h2>
+          <canvas id="barChart" class="chart-canvas chart-canvas--sm"></canvas>
+        </div>
+      </div>
+    }
+  }
 
 </div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     MODAL DÉTAIL ANALYSE
+══════════════════════════════════════════════════════════════════ -->
+@if (showModal() && selectedRapport(); as r) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-detail" (click)="$event.stopPropagation()">
+
+      <!-- Header -->
+      <div class="modal-detail__header">
+        <div>
+          <h2 class="modal-detail__title">{{ r.nom_complet || 'Analyse IA' }}</h2>
+          <p class="modal-detail__sub">{{ r.type_document_display }} · {{ r.etablissement || 'Établissement non renseigné' }}</p>
+        </div>
+        <button class="modal-close" (click)="closeModal()">
+          <span class="material-icons" style="font-size:18px">close</span>
+        </button>
+      </div>
+
+      <div class="modal-detail__body">
+
+        <!-- Scores principaux -->
+        <div class="modal-scores">
+          <div class="modal-score-card" [style.border-color]="getNiveauColor(r.niveau_performance)">
+            <span class="modal-score-card__val" [style.color]="getNiveauColor(r.niveau_performance)">
+              {{ r.score_combine !== null ? (r.score_combine | number:'1.2-2') : '—' }}
+            </span>
+            <span class="modal-score-card__label">Score combiné /20</span>
+          </div>
+          @if (r.moyenne_probatoire !== null) {
+            <div class="modal-score-card">
+              <span class="modal-score-card__val" [style.color]="getNoteColor(r.moyenne_probatoire)">
+                {{ r.moyenne_probatoire | number:'1.2-2' }}
+              </span>
+              <span class="modal-score-card__label">Probatoire /20</span>
+            </div>
+          }
+          @if (r.moyenne_bac !== null) {
+            <div class="modal-score-card">
+              <span class="modal-score-card__val" [style.color]="getNoteColor(r.moyenne_bac)">
+                {{ r.moyenne_bac | number:'1.2-2' }}
+              </span>
+              <span class="modal-score-card__label">Baccalauréat /20</span>
+            </div>
+          }
+          <div class="modal-score-card">
+            <span class="modal-score-card__val">
+              <span class="niveau-badge"
+                [style.background]="getNiveauColor(r.niveau_performance) + '20'"
+                [style.color]="getNiveauColor(r.niveau_performance)">
+                {{ getNiveauLabel(r.niveau_performance) }}
+              </span>
+            </span>
+            <span class="modal-score-card__label">Niveau performance</span>
+          </div>
+        </div>
+
+        <!-- Stats matières -->
+        <div class="modal-stats-row">
+          <div class="modal-stat">
+            <span class="modal-stat__val">{{ r.total_matieres }}</span>
+            <span class="modal-stat__label">Matières</span>
+          </div>
+          <div class="modal-stat modal-stat--success">
+            <span class="modal-stat__val">{{ r.matieres_validees }}</span>
+            <span class="modal-stat__label">Validées ≥10</span>
+          </div>
+          <div class="modal-stat modal-stat--danger">
+            <span class="modal-stat__val">{{ r.matieres_echouees }}</span>
+            <span class="modal-stat__label">Échecs &lt;10</span>
+          </div>
+          <div class="modal-stat">
+            <span class="modal-stat__val">{{ (r.score_confiance_extraction * 100) | number:'1.0-0' }}%</span>
+            <span class="modal-stat__label">Confiance IA</span>
+          </div>
+        </div>
+
+        <!-- Distribution -->
+        @if (r.distribution_notes && getDistributionItems(r.distribution_notes).length > 0) {
+          <div class="modal-section">
+            <h3 class="modal-section__title">Distribution des notes</h3>
+            @for (item of getDistributionItems(r.distribution_notes); track item.label) {
+              <div class="dist-row">
+                <span class="dist-label" [style.color]="item.color">{{ item.label }}</span>
+                <div class="dist-bar-wrap">
+                  <div class="dist-bar" [style.width.%]="item.percent" [style.background]="item.color"></div>
+                </div>
+                <span class="dist-count">{{ item.count }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Points forts / faibles -->
+        <div class="modal-qualitative">
+          @if (r.points_forts.length > 0) {
+            <div class="qual-block qual-block--success">
+              <h4 class="qual-block__title"><span class="material-icons" style="font-size:16px;vertical-align:middle">thumb_up</span> Points forts</h4>
+              @for (p of r.points_forts; track p) {
+                <div class="qual-item">{{ p }}</div>
+              }
+            </div>
+          }
+          @if (r.points_faibles.length > 0) {
+            <div class="qual-block qual-block--warning">
+              <h4 class="qual-block__title"><span class="material-icons" style="font-size:16px;vertical-align:middle">warning</span> Points à améliorer</h4>
+              @for (p of r.points_faibles; track p) {
+                <div class="qual-item">{{ p }}</div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Recommandations -->
+        @if (r.recommandations.length > 0) {
+          <div class="modal-section">
+            <h3 class="modal-section__title"><span class="material-icons" style="font-size:16px;vertical-align:middle">lightbulb</span> Recommandations</h3>
+            @for (rec of r.recommandations; track rec; let i = $index) {
+              <div class="rec-item">
+                <span class="rec-num">{{ i + 1 }}</span>
+                <span>{{ rec }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Matières détaillées -->
+        @if (r.matieres.length > 0) {
+          <div class="modal-section">
+            <h3 class="modal-section__title">Détail des matières</h3>
+            <div class="matieres-table-wrap">
+              <table class="matieres-table">
+                <thead>
+                  <tr>
+                    <th>Matière</th>
+                    <th>Note</th>
+                    <th>Sur</th>
+                    <th>/20</th>
+                    <th>Coeff.</th>
+                    <th>Semestre</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (m of r.matieres; track m.id) {
+                    <tr [class.mat-fail]="m.note_sur_20 !== null && m.note_sur_20 < 10">
+                      <td>{{ m.nom_matiere }}</td>
+                      <td>{{ m.note ?? '—' }}</td>
+                      <td>{{ m.note_sur }}</td>
+                      <td [style.color]="getNoteColor(m.note_sur_20)">
+                        {{ m.note_sur_20 !== null ? (m.note_sur_20 | number:'1.2-2') : '—' }}
+                      </td>
+                      <td>{{ m.coefficient }}</td>
+                      <td>{{ m.semestre || '—' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+      </div><!-- /body -->
+
+      <div class="modal-detail__footer">
+        <button class="btn btn--outline" (click)="closeModal()">Fermer</button>
+        <a class="btn btn--primary" [routerLink]="['/dashboard-admin/rapports', r.id]">
+          Voir la page complète
+        </a>
+      </div>
+
+    </div>
+  </div>
+}

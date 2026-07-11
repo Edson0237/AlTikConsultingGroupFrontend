@@ -7,7 +7,6 @@ import {
   ElementRef,
   inject,
   signal,
-  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -17,15 +16,6 @@ import { RapportAnalyseService, RapportAnalyse, StatsRapports } from '../../serv
 
 Chart.register(...registerables);
 
-interface KpiCard {
-  icon: string;
-  value: string;
-  label: string;
-  color: string;
-  bgColor: string;
-  trend?: string;
-}
-
 @Component({
   selector: 'app-analytics',
   templateUrl: './analytics.component.html',
@@ -34,16 +24,12 @@ interface KpiCard {
   imports: [CommonModule, TranslatePipe],
 })
 export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('lineChartRef') lineChartRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('pieChartRef') pieChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('niveauChartRef') niveauChartRef!: ElementRef<HTMLCanvasElement>;
 
   private rapportService = inject(RapportAnalyseService);
   private router = inject(Router);
   private translate = inject(TranslateService);
 
-  private lineChart!: Chart;
-  private pieChart!: Chart;
   private niveauChart!: Chart;
 
   // ── State ─────────────────────────────────────────────────────
@@ -51,84 +37,17 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
   stats = signal<StatsRapports | null>(null);
   loading = signal(true);
   error = signal('');
+  selectedRapport = signal<RapportAnalyse | null>(null);
 
-  // ── KPI Cards (dynamiques) ────────────────────────────────────
-  kpiCards = computed<KpiCard[]>(() => {
-    const s = this.stats();
-    const rapportsList = this.rapports();
-    const t = this.translate;
 
-    return [
-      {
-        icon: 'group',
-        value: '1 247',
-        label: t.instant('ANALYTICS.KPI_TOTAL_APPLICATIONS'),
-        color: '#3B82F6',
-        bgColor: 'rgba(59,130,246,0.10)',
-      },
-      {
-        icon: 'auto_awesome',
-        value: s ? s.total_analyses.toString() : '—',
-        label: t.instant('ANALYTICS.KPI_AI_ANALYSES'),
-        color: '#8B5CF6',
-        bgColor: 'rgba(139,92,246,0.10)',
-        trend: s ? t.instant('ANALYTICS.KPI_SUCCESSFUL', { count: s.analyses_reussies }) : undefined,
-      },
-      {
-        icon: 'trending_up',
-        value: s ? `${s.score_moyen_ia}/20` : '—',
-        label: t.instant('ANALYTICS.KPI_AVERAGE_SCORE'),
-        color: '#22C55E',
-        bgColor: 'rgba(34,197,94,0.10)',
-      },
-      {
-        icon: 'emoji_events',
-        value: s ? `${s.repartition_niveaux['excellent'] || 0}` : '—',
-        label: t.instant('ANALYTICS.KPI_EXCELLENT_LEVEL'),
-        color: '#F59E0B',
-        bgColor: 'rgba(245,158,11,0.10)',
-      },
-      {
-        icon: 'public',
-        value: '45',
-        label: t.instant('ANALYTICS.KPI_DESTINATIONS'),
-        color: '#06B6D4',
-        bgColor: 'rgba(6,182,212,0.10)',
-      },
-    ];
-  });
-
-  // ── Données graphiques ────────────────────────────────────────
-  private monthlyData = [
-    { monthKey: 'ANALYTICS.MONTH_JAN', applications: 45, accepted: 38 },
-    { monthKey: 'ANALYTICS.MONTH_FEB', applications: 52, accepted: 44 },
-    { monthKey: 'ANALYTICS.MONTH_MAR', applications: 48, accepted: 40 },
-    { monthKey: 'ANALYTICS.MONTH_APR', applications: 61, accepted: 53 },
-    { monthKey: 'ANALYTICS.MONTH_MAY', applications: 55, accepted: 48 },
-  ];
-
-  private countryData = [
-    { name: 'Chine', value: 35 },
-    { name: 'Dubaï', value: 28 },
-    { name: 'Turquie', value: 20 },
-    { name: 'Canada', value: 12 },
-    { name: 'N-Z', value: 5 },
-  ];
-
-  private colors = ['#3B82F6', '#06B6D4', '#22C55E', '#F59E0B', '#8B5CF6'];
 
   ngOnInit(): void {
     this.loadRapports();
   }
 
-  ngAfterViewInit(): void {
-    this.buildLineChart();
-    this.buildPieChart();
-  }
+  ngAfterViewInit(): void {}
 
   ngOnDestroy(): void {
-    this.lineChart?.destroy();
-    this.pieChart?.destroy();
     this.niveauChart?.destroy();
   }
 
@@ -154,8 +73,19 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ── Navigation ────────────────────────────────────────────────
+  // ── Navigation & Modal ────────────────────────────────────────
+  openDetail(rapport: RapportAnalyse): void {
+    this.selectedRapport.set(rapport);
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeDetail(): void {
+    this.selectedRapport.set(null);
+    document.body.style.overflow = '';
+  }
+
   viewRapport(rapport: RapportAnalyse): void {
+    this.closeDetail();
     this.router.navigate(['/analytics/rapports', rapport.id]);
   }
 
@@ -169,6 +99,15 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
       'faible': '#EF4444',
     };
     return colors[niveau] || '#6B7280';
+  }
+
+  getNoteColor(note: number | null): string {
+    if (note === null) return '#6B7280';
+    if (note >= 16) return '#22C55E';
+    if (note >= 14) return '#3B82F6';
+    if (note >= 12) return '#06B6D4';
+    if (note >= 10) return '#F59E0B';
+    return '#EF4444';
   }
 
   getNiveauLabel(niveau: string): string {
@@ -213,93 +152,6 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // ── Charts ────────────────────────────────────────────────────
-  private buildLineChart(): void {
-    const ctx = this.lineChartRef.nativeElement.getContext('2d')!;
-    this.lineChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: this.monthlyData.map(d => this.translate.instant(d.monthKey)),
-        datasets: [
-          {
-            label: this.translate.instant('ANALYTICS.CHART_CANDIDATURES'),
-            data: this.monthlyData.map(d => d.applications),
-            borderColor: '#3B82F6',
-            backgroundColor: 'rgba(59,130,246,0.10)',
-            borderWidth: 3,
-            pointRadius: 5,
-            pointBackgroundColor: '#3B82F6',
-            tension: 0.4,
-            fill: true,
-          },
-          {
-            label: this.translate.instant('ANALYTICS.CHART_ACCEPTED'),
-            data: this.monthlyData.map(d => d.accepted),
-            borderColor: '#22C55E',
-            backgroundColor: 'rgba(34,197,94,0.10)',
-            borderWidth: 3,
-            pointRadius: 5,
-            pointBackgroundColor: '#22C55E',
-            tension: 0.4,
-            fill: true,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#6B7280', font: { size: 12 } } },
-          tooltip: {
-            backgroundColor: '#ffffff',
-            borderColor: '#E5E7EB',
-            borderWidth: 1,
-            titleColor: '#111827',
-            bodyColor: '#374151',
-          },
-        },
-        scales: {
-          x: { ticks: { color: '#6B7280' }, grid: { color: '#F3F4F6' } },
-          y: { ticks: { color: '#6B7280' }, grid: { color: '#F3F4F6' } },
-        },
-      },
-    });
-  }
-
-  private buildPieChart(): void {
-    const ctx = this.pieChartRef.nativeElement.getContext('2d')!;
-    this.pieChart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: this.countryData.map(d => d.name),
-        datasets: [{
-          data: this.countryData.map(d => d.value),
-          backgroundColor: this.colors,
-          borderColor: '#ffffff',
-          borderWidth: 3,
-          hoverOffset: 8,
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { color: '#6B7280', font: { size: 12 }, padding: 16, usePointStyle: true },
-          },
-          tooltip: {
-            backgroundColor: '#ffffff',
-            borderColor: '#E5E7EB',
-            borderWidth: 1,
-            titleColor: '#111827',
-            bodyColor: '#374151',
-            callbacks: { label: (ctx) => ` ${ctx.label} : ${ctx.parsed}%` },
-          },
-        },
-      },
-    });
-  }
-
   private buildNiveauChart(): void {
     if (!this.niveauChartRef) return;
     

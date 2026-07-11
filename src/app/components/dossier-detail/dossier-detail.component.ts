@@ -46,6 +46,10 @@ export class DossierDetailComponent implements OnInit {
   // ── Notifications ─────────────────────────────────────────────
   notifications = signal<any[]>([]);
 
+  // ── Analyse IA ────────────────────────────────────────────────
+  analyseEnCours = signal<boolean>(false);
+  analyseLoading = signal<boolean>(false);
+
   // ── Status options ────────────────────────────────────────────
   readonly statusOptions = [
     { value: 'brouillon', label: 'Brouillon', color: '#94A3B8' },
@@ -73,6 +77,13 @@ export class DossierDetailComponent implements OnInit {
 
   // ── Data loading ──────────────────────────────────────────────
 
+  refreshDossier(): void {
+    const id = this.dossier()?.id;
+    if (id) {
+      this.loadDossier(id);
+    }
+  }
+
   loadDossier(id: number): void {
     this.isLoading.set(true);
     this.error.set('');
@@ -96,6 +107,7 @@ export class DossierDetailComponent implements OnInit {
         this.newStatus = dossier.status;
         this.notesInternes = dossier.notes_internes || '';
         this.conseillerAssigne = dossier.conseiller_assigne;
+        this.analyseEnCours.set(dossier.analyse_en_cours ?? false);
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -163,6 +175,35 @@ export class DossierDetailComponent implements OnInit {
       error: (err) => {
         console.error(err);
         this.showNotification(this.translate.instant('DOSSIER_DETAIL.UPDATE_ERROR'), 'error');
+      }
+    });
+  }
+
+  // ── Analyse IA ────────────────────────────────────────────────
+
+  lancerAnalyse(): void {
+    if (!this.dossier() || this.analyseEnCours() || this.analyseLoading()) return;
+
+    const releves = this.dossier()!.documents.filter(d =>
+      d.type_document === 'releve_probatoire' || d.type_document === 'releve_bac'
+    );
+    if (releves.length === 0) {
+      this.showNotification('Aucun relevé de notes à analyser.', 'error');
+      return;
+    }
+
+    this.analyseLoading.set(true);
+    this.dossierDetailService.lancerAnalyse(this.dossier()!.id).subscribe({
+      next: (res) => {
+        this.analyseEnCours.set(true);
+        this.analyseLoading.set(false);
+        this.showNotification(res.message || 'Analyse IA lancée.', 'success');
+        this.router.navigate(['/rapports']);
+      },
+      error: (err) => {
+        this.analyseLoading.set(false);
+        const msg = err?.error?.detail || "Impossible de lancer l'analyse";
+        this.showNotification(msg, 'error');
       }
     });
   }

@@ -91,6 +91,12 @@ export const routes: Routes = [
             .then(m => m.RapportAnalyticComponent)
       },
       {
+        path: 'dossiers-traites',
+        loadComponent: () =>
+          import('./components/dossiers-traites/dossiers-traites.component')
+            .then(m => m.DossiersTraitesComponent)
+      },
+      {
         path: 'rapports/:id',
         loadComponent: () =>
           import('./components/rapport-detail/rapport-detail.component')

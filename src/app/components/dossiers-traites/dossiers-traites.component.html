@@ -1,0 +1,336 @@
+<div class="dt-page">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <div class="dt-page__header">
+    <div class="dt-page__title-wrap">
+      <div class="dt-page__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <polyline points="16 13 12 17 8 13"/>
+          <line x1="12" y1="17" x2="12" y2="9"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="dt-page__title">Dossiers Traités</h1>
+        <p class="dt-page__subtitle">Documents finalisés envoyés par les conseillers à l'administration</p>
+      </div>
+    </div>
+    <button class="btn btn--primary" (click)="openCreateModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Nouveau dossier traité
+    </button>
+  </div>
+
+  <!-- ── Filtres ──────────────────────────────────────────────────── -->
+  <div class="dt-page__filters">
+    <select class="dt-select" (change)="onFilterChange($any($event.target).value)">
+      <option value="">Tous les statuts</option>
+      @for (s of statuts; track s.value) {
+        <option [value]="s.value">{{ s.label }}</option>
+      }
+    </select>
+    <span class="dt-count">{{ filteredList().length }} dossier(s)</span>
+  </div>
+
+  <!-- ── Tableau ──────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="dt-loading">
+      <div class="spinner"></div>
+      <span>Chargement…</span>
+    </div>
+  } @else if (filteredList().length === 0) {
+    <div class="dt-empty">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+        stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <p>Aucun dossier traité trouvé</p>
+    </div>
+  } @else {
+    <div class="dt-table-wrap">
+      <table class="dt-table">
+        <thead>
+          <tr>
+            <th>Candidat</th>
+            <th>Titre</th>
+            <th>Conseiller</th>
+            <th>Établissement cible</th>
+            <th>Pièces</th>
+            <th>Statut</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (dt of filteredList(); track dt.id) {
+            <tr>
+              <td>
+                <div class="dt-candidate">
+                  <span class="dt-candidate__name">{{ dt.candidat_nom }}</span>
+                  <span class="dt-candidate__type">{{ dt.candidat_type }}</span>
+                </div>
+              </td>
+              <td class="dt-titre">{{ dt.titre }}</td>
+              <td>{{ dt.conseiller_nom || '—' }}</td>
+              <td>{{ dt.etablissement_cible || '—' }}</td>
+              <td class="dt-center">
+                <span class="dt-pieces-badge">{{ dt.nombre_pieces }}</span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="getBadgeClass(dt.statut)">
+                  {{ dt.statut_display }}
+                </span>
+              </td>
+              <td class="dt-date">{{ dt.date_creation | date:'dd/MM/yy' }}</td>
+              <td>
+                <div class="dt-actions">
+                  <button class="btn-icon btn-icon--view" title="Voir / Uploader" (click)="openDetail(dt)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </button>
+                  <button class="btn-icon btn-icon--edit" title="Changer statut" (click)="openStatusModal(dt)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="btn-icon btn-icon--delete" title="Supprimer" (click)="deleteDT(dt)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+                      <path d="M10 11v6"/><path d="M14 11v6"/>
+                      <path d="M9 6V4h6v2"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     MODAL CRÉATION
+══════════════════════════════════════════════════════════════════ -->
+@if (showCreateModal()) {
+  <div class="modal-overlay" (click)="closeCreateModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2>Créer un dossier traité</h2>
+        <button class="modal__close" (click)="closeCreateModal()">✕</button>
+      </div>
+      <div class="modal__body">
+        @if (createError()) {
+          <div class="alert alert--error">{{ createError() }}</div>
+        }
+
+        <label class="form-label">Dossier candidat (complet / validé) *</label>
+        <select class="form-input" [(ngModel)]="createForm.dossier_candidat">
+          <option value="0" disabled>-- Sélectionner un dossier --</option>
+          @for (c of candidatsEligibles(); track c.id) {
+            <option [value]="c.id">
+              {{ c.prenom }} {{ c.nom }} — {{ c.type_dossier_display }} ({{ c.status_display }})
+            </option>
+          }
+        </select>
+
+        <label class="form-label">Titre *</label>
+        <input class="form-input" type="text" [(ngModel)]="createForm.titre"
+          placeholder="ex: Dossier complet bourse Chine 2025" />
+
+        <label class="form-label">Établissement cible</label>
+        <input class="form-input" type="text" [(ngModel)]="createForm.etablissement_cible"
+          placeholder="ex: Université de Pékin" />
+
+        <label class="form-label">Description / Notes</label>
+        <textarea class="form-input form-textarea" [(ngModel)]="createForm.description"
+          placeholder="Notes ou contexte sur ce dossier traité…"></textarea>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--outline" (click)="closeCreateModal()">Annuler</button>
+        <button class="btn btn--primary" (click)="submitCreate()" [disabled]="createLoading()">
+          @if (createLoading()) { <span class="spinner-sm"></span> } Créer
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════════════
+     MODAL DÉTAIL / UPLOAD PIÈCES
+══════════════════════════════════════════════════════════════════ -->
+@if (showDetailModal() && selectedDT(); as dt) {
+  <div class="modal-overlay" (click)="closeDetailModal()">
+    <div class="modal modal--large" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <div>
+          <h2>{{ dt.titre }}</h2>
+          <p class="modal__subtitle">{{ dt.candidat_nom }} — {{ dt.candidat_type }}</p>
+        </div>
+        <button class="modal__close" (click)="closeDetailModal()">✕</button>
+      </div>
+
+      <div class="modal__body">
+
+        <!-- Infos -->
+        <div class="dt-info-grid">
+          <div class="dt-info-item">
+            <span class="dt-info-label">Statut</span>
+            <span class="badge" [ngClass]="getBadgeClass(dt.statut)">{{ dt.statut_display }}</span>
+          </div>
+          <div class="dt-info-item">
+            <span class="dt-info-label">Conseiller</span>
+            <span>{{ dt.conseiller_nom || '—' }}</span>
+          </div>
+          <div class="dt-info-item">
+            <span class="dt-info-label">Établissement cible</span>
+            <span>{{ dt.etablissement_cible || '—' }}</span>
+          </div>
+          <div class="dt-info-item">
+            <span class="dt-info-label">Créé le</span>
+            <span>{{ dt.date_creation | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          @if (dt.notes_admin) {
+            <div class="dt-info-item dt-info-item--full">
+              <span class="dt-info-label">Notes admin</span>
+              <span>{{ dt.notes_admin }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Pièces jointes existantes -->
+        <h3 class="dt-section-title">
+          Documents joints
+          <span class="dt-pieces-badge">{{ dt.pieces_jointes.length }}</span>
+        </h3>
+
+        @if (dt.pieces_jointes.length === 0) {
+          <p class="dt-empty-pieces">Aucune pièce jointe pour le moment.</p>
+        } @else {
+          <div class="dt-pieces-list">
+            @for (piece of dt.pieces_jointes; track piece.id) {
+              <div class="dt-piece-item">
+                <div class="dt-piece-icon">
+                  @if (piece.is_pdf) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                  } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  }
+                </div>
+                <div class="dt-piece-info">
+                  <span class="dt-piece-libelle">{{ piece.libelle }}</span>
+                  <span class="dt-piece-meta">{{ piece.nom_fichier }} · {{ formatSize(piece.taille_fichier) }}</span>
+                </div>
+                <div class="dt-piece-actions">
+                  @if (piece.url_fichier) {
+                    <a [href]="piece.url_fichier" target="_blank" class="btn-icon btn-icon--view" title="Ouvrir">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                      </svg>
+                    </a>
+                  }
+                  <button class="btn-icon btn-icon--delete" title="Supprimer" (click)="deletePiece(piece.id)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Upload nouvelle pièce -->
+        <h3 class="dt-section-title" style="margin-top: 20px;">Ajouter un document</h3>
+        @if (uploadError()) {
+          <div class="alert alert--error">{{ uploadError() }}</div>
+        }
+        <div class="dt-upload-form">
+          <input class="form-input" type="text" [(ngModel)]="uploadLibelle"
+            placeholder="Libellé (ex: Diplôme traduit, Lettre de motivation…)" />
+          <label class="dt-file-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 16 12 12 8 16"/>
+              <line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+            </svg>
+            {{ uploadFile ? uploadFile.name : 'Choisir un fichier' }}
+            <input type="file" class="dt-file-input" (change)="onFileSelected($event)"
+              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+          </label>
+          <button class="btn btn--primary" (click)="uploadPiece()" [disabled]="uploadLoading()">
+            @if (uploadLoading()) { <span class="spinner-sm"></span> } Uploader
+          </button>
+        </div>
+
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--outline" (click)="closeDetailModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════════════
+     MODAL STATUT ADMIN
+══════════════════════════════════════════════════════════════════ -->
+@if (showStatusModal()) {
+  <div class="modal-overlay" (click)="closeStatusModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2>Mettre à jour le statut</h2>
+        <button class="modal__close" (click)="closeStatusModal()">✕</button>
+      </div>
+      <div class="modal__body">
+        <label class="form-label">Statut</label>
+        <select class="form-input" [(ngModel)]="statusForm.statut">
+          @for (s of statuts; track s.value) {
+            <option [value]="s.value">{{ s.label }}</option>
+          }
+        </select>
+
+        <label class="form-label">Établissement cible</label>
+        <input class="form-input" type="text" [(ngModel)]="statusForm.etablissement_cible"
+          placeholder="Établissement destinataire…" />
+
+        <label class="form-label">Notes administrateur</label>
+        <textarea class="form-input form-textarea" [(ngModel)]="statusForm.notes_admin"
+          placeholder="Commentaire interne, instructions de transfert…"></textarea>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--outline" (click)="closeStatusModal()">Annuler</button>
+        <button class="btn btn--primary" (click)="submitStatus()" [disabled]="statusLoading()">
+          @if (statusLoading()) { <span class="spinner-sm"></span> } Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+}

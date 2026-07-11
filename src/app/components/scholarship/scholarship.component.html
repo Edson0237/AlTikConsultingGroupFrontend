@@ -7,11 +7,7 @@
             (click)="dismissNotification(notification.id)">
             <span class="notification-message">{{ notification.message }}</span>
             <button class="notification-close" aria-label="{{ 'DOSSIER_DETAIL.CLOSE' | translate }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+                <span class="material-icons" style="font-size:18px">close</span>
             </button>
         </div>
     </div>
@@ -21,11 +17,7 @@
         <div class="scholarship__header-top">
             <div class="scholarship__title-wrap">
                 <div class="scholarship__title-icon" aria-hidden="true">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                    </svg>
+                    <span class="material-icons">school</span>
                 </div>
                 <div>
                     <h1 class="scholarship__title">{{ 'SCHOLARSHIP.TITLE' | translate }}</h1>
@@ -36,23 +28,14 @@
             </div>
 
             <button class="scholarship__filter-btn" (click)="openFilterModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    aria-hidden="true">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                </svg>
+                <span class="material-icons" style="font-size:16px">tune</span>
                 {{ 'SCHOLARSHIP.FILTERS' | translate }}
             </button>
         </div>
 
         <!-- Search -->
         <div class="scholarship__search">
-            <svg class="scholarship__search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            <span class="material-icons scholarship__search-icon" style="font-size:16px">search</span>
             <input type="text" class="scholarship__search-input" placeholder="{{ 'SCHOLARSHIP.SEARCH_PLACEHOLDER' | translate }}"
                 [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" (ngModelChange)="onSearch()"
                 aria-label="{{ 'SCHOLARSHIP.SEARCH_PLACEHOLDER' | translate }}" />
@@ -93,12 +76,7 @@
 
                     <!-- Overlay "Voir détails" au survol -->
                     <div class="kanban-card__overlay">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                            <polyline points="15 3 21 3 21 9"></polyline>
-                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
+                        <span class="material-icons" style="font-size:14px">open_in_new</span>
                         <span>{{ 'SCHOLARSHIP.VIEW_DOSSIER' | translate }}</span>
                     </div>
 
@@ -144,12 +122,7 @@
                     <!-- Footer: documents count + date -->
                     <div class="kanban-card__footer">
                         <div class="kanban-card__docs">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="kanban-card__doc-icon" aria-hidden="true">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <polyline points="14 2 14 8 20 8" />
-                            </svg>
+                            <span class="material-icons kanban-card__doc-icon" style="font-size:12px">description</span>
                             <span>{{ dossier.nombre_documents }} {{ 'SCHOLARSHIP.DOCUMENTS' | translate }}</span>
                         </div>
                         <span class="kanban-card__date">{{ formatDate(dossier.date_creation) }}</span>
@@ -178,10 +151,7 @@
             <div class="modal__header">
                 <div class="modal__header-left">
                     <div class="modal__icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                        </svg>
+                        <span class="material-icons">tune</span>
                     </div>
                     <div>
                         <h2 class="modal__title">{{ 'SCHOLARSHIP.FILTER_MODAL_TITLE' | translate }}</h2>
@@ -189,11 +159,7 @@
                     </div>
                 </div>
                 <button class="modal__close" (click)="closeFilterModal()" aria-label="{{ 'DOSSIER_DETAIL.CLOSE' | translate }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                    <span class="material-icons" style="font-size:18px">close</span>
                 </button>
             </div>
 

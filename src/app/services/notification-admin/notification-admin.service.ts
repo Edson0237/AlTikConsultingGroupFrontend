@@ -25,6 +25,14 @@ export interface Conseiller {
   full_name: string;
 }
 
+export interface NotificationUser {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class NotificationAdminService {
   private http = inject(HttpClient);
@@ -63,6 +71,10 @@ export class NotificationAdminService {
 
   getConseillers(): Observable<{ success: boolean; count: number; results: Conseiller[] }> {
     return this.http.get<any>(`${this.BASE_URL}conseillers/`, this.getHeaders());
+  }
+
+  getUsers(): Observable<{ success: boolean; count: number; results: NotificationUser[] }> {
+    return this.http.get<any>(`${this.BASE_URL}staff/users/`, this.getHeaders());
   }
 
   sendNotification(payload: { recipient_ids: number[]; title: string; message: string; notification_type: string }): Observable<any> {

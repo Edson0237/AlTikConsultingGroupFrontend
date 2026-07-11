@@ -18,50 +18,6 @@
       </button>
     </div>
 
-    <!-- ── KPI Cards ──────────────────────────────── -->
-    <div class="kpi-grid">
-      @for (card of kpiCards(); track card.label) {
-        <div class="kpi-card">
-          <div class="kpi-icon" [style.background]="card.bgColor">
-            <span class="material-icons" [style.color]="card.color">{{ card.icon }}</span>
-          </div>
-          <div class="kpi-content">
-            <p class="kpi-value">{{ card.value }}</p>
-            <p class="kpi-label">{{ card.label }}</p>
-            @if (card.trend) {
-              <p class="kpi-trend">
-                <span class="material-icons">arrow_upward</span>
-                {{ card.trend }}
-              </p>
-            }
-          </div>
-        </div>
-      }
-    </div>
-
-    <!-- ── Graphiques ─────────────────────────────── -->
-    <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-card-header">
-          <h3 class="chart-title">{{ 'ANALYTICS.CHART_MONTHLY_APPLICATIONS' | translate }}</h3>
-          <span class="chart-badge chart-badge--blue">{{ 'ANALYTICS.BADGE_LAST_5_MONTHS' | translate }}</span>
-        </div>
-        <div class="chart-container">
-          <canvas #lineChartRef></canvas>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <div class="chart-card-header">
-          <h3 class="chart-title">{{ 'ANALYTICS.CHART_TOP_DESTINATIONS' | translate }}</h3>
-          <span class="chart-badge chart-badge--purple">{{ 'ANALYTICS.BADGE_DISTRIBUTION' | translate }}</span>
-        </div>
-        <div class="chart-container">
-          <canvas #pieChartRef></canvas>
-        </div>
-      </div>
-    </div>
-
     <!-- ════════════════════════════════════════════════
          SECTION : Analyses IA
     ════════════════════════════════════════════════════ -->
@@ -75,28 +31,51 @@
             {{ 'ANALYTICS.AI_POWERED_BY' | translate }}
           </div>
           <h2 class="section-title">{{ 'ANALYTICS.AI_SECTION_TITLE' | translate }}</h2>
-          <p class="section-subtitle">
-            {{ 'ANALYTICS.AI_SECTION_SUBTITLE' | translate }}
-          </p>
+          <p class="section-subtitle">{{ 'ANALYTICS.AI_SECTION_SUBTITLE' | translate }}</p>
         </div>
-
-        @if (stats(); as s) {
-          <div class="section-stats">
-            <div class="mini-stat">
-              <span class="mini-stat-value">{{ s.total_analyses }}</span>
-              <span class="mini-stat-label">{{ 'ANALYTICS.MINI_STAT_TOTAL' | translate }}</span>
-            </div>
-            <div class="mini-stat mini-stat--success">
-              <span class="mini-stat-value">{{ s.analyses_reussies }}</span>
-              <span class="mini-stat-label">{{ 'ANALYTICS.MINI_STAT_SUCCESS' | translate }}</span>
-            </div>
-            <div class="mini-stat mini-stat--accent">
-              <span class="mini-stat-value">{{ s.score_moyen_ia }}</span>
-              <span class="mini-stat-label">{{ 'ANALYTICS.MINI_STAT_AVERAGE' | translate }}</span>
-            </div>
-          </div>
-        }
       </div>
+
+      <!-- ── KPI IA ── -->
+      @if (stats(); as s) {
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(139,92,246,.10)">
+            <span class="material-icons" style="color:#8B5CF6">auto_awesome</span>
+          </div>
+          <div class="kpi-content">
+            <p class="kpi-value">{{ s.total_analyses }}</p>
+            <p class="kpi-label">{{ 'ANALYTICS.MINI_STAT_TOTAL' | translate }}</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(34,197,94,.10)">
+            <span class="material-icons" style="color:#22C55E">check_circle</span>
+          </div>
+          <div class="kpi-content">
+            <p class="kpi-value">{{ s.analyses_reussies }}</p>
+            <p class="kpi-label">{{ 'ANALYTICS.MINI_STAT_SUCCESS' | translate }}</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(59,130,246,.10)">
+            <span class="material-icons" style="color:#3B82F6">trending_up</span>
+          </div>
+          <div class="kpi-content">
+            <p class="kpi-value">{{ s.score_moyen_ia }}/20</p>
+            <p class="kpi-label">{{ 'ANALYTICS.MINI_STAT_AVERAGE' | translate }}</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(245,158,11,.10)">
+            <span class="material-icons" style="color:#F59E0B">emoji_events</span>
+          </div>
+          <div class="kpi-content">
+            <p class="kpi-value">{{ s.repartition_niveaux['excellent'] || 0 }}</p>
+            <p class="kpi-label">{{ 'ANALYTICS.KPI_EXCELLENT_LEVEL' | translate }}</p>
+          </div>
+        </div>
+      </div>
+      }
 
       <!-- Graphiques IA -->
       <div class="charts-grid">
@@ -117,84 +96,89 @@
             <h3 class="chart-title">{{ 'ANALYTICS.CHART_STUDENT_DISTRIBUTION' | translate }}</h3>
           </div>
           @if (stats(); as s) {
-            <div class="summary-list">
+          <div class="summary-list">
 
-              <div class="summary-item">
-                <div class="summary-bar-wrap">
-                  <div class="summary-row">
-                    <span class="summary-dot" style="background:#22C55E"></span>
-                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_EXCELLENT' | translate }} <span class="summary-range">(≥16)</span></span>
-                    <span class="summary-value">{{ s.repartition_niveaux['excellent'] || 0 }}</span>
-                  </div>
-                  <div class="summary-bar">
-                    <div class="summary-bar-fill" style="background:#22C55E"
-                         [style.width.%]="(s.repartition_niveaux['excellent'] || 0) / (s.total_analyses || 1) * 100">
-                    </div>
+            <div class="summary-item">
+              <div class="summary-bar-wrap">
+                <div class="summary-row">
+                  <span class="summary-dot" style="background:#22C55E"></span>
+                  <span class="summary-label">{{ 'ANALYTICS.LEVEL_EXCELLENT' | translate }} <span
+                      class="summary-range">(≥16)</span></span>
+                  <span class="summary-value">{{ s.repartition_niveaux['excellent'] || 0 }}</span>
+                </div>
+                <div class="summary-bar">
+                  <div class="summary-bar-fill" style="background:#22C55E"
+                    [style.width.%]="(s.repartition_niveaux['excellent'] || 0) / (s.total_analyses || 1) * 100">
                   </div>
                 </div>
               </div>
-
-              <div class="summary-item">
-                <div class="summary-bar-wrap">
-                  <div class="summary-row">
-                    <span class="summary-dot" style="background:#3B82F6"></span>
-                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_TRES_BON' | translate }} <span class="summary-range">(14-16)</span></span>
-                    <span class="summary-value">{{ s.repartition_niveaux['tres_bon'] || 0 }}</span>
-                  </div>
-                  <div class="summary-bar">
-                    <div class="summary-bar-fill" style="background:#3B82F6"
-                         [style.width.%]="(s.repartition_niveaux['tres_bon'] || 0) / (s.total_analyses || 1) * 100">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="summary-item">
-                <div class="summary-bar-wrap">
-                  <div class="summary-row">
-                    <span class="summary-dot" style="background:#06B6D4"></span>
-                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_BON' | translate }} <span class="summary-range">(12-14)</span></span>
-                    <span class="summary-value">{{ s.repartition_niveaux['bon'] || 0 }}</span>
-                  </div>
-                  <div class="summary-bar">
-                    <div class="summary-bar-fill" style="background:#06B6D4"
-                         [style.width.%]="(s.repartition_niveaux['bon'] || 0) / (s.total_analyses || 1) * 100">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="summary-item">
-                <div class="summary-bar-wrap">
-                  <div class="summary-row">
-                    <span class="summary-dot" style="background:#F59E0B"></span>
-                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_MOYEN' | translate }} <span class="summary-range">(10-12)</span></span>
-                    <span class="summary-value">{{ s.repartition_niveaux['moyen'] || 0 }}</span>
-                  </div>
-                  <div class="summary-bar">
-                    <div class="summary-bar-fill" style="background:#F59E0B"
-                         [style.width.%]="(s.repartition_niveaux['moyen'] || 0) / (s.total_analyses || 1) * 100">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="summary-item">
-                <div class="summary-bar-wrap">
-                  <div class="summary-row">
-                    <span class="summary-dot" style="background:#EF4444"></span>
-                    <span class="summary-label">{{ 'ANALYTICS.LEVEL_FAIBLE' | translate }} <span class="summary-range">(&lt;10)</span></span>
-                    <span class="summary-value">{{ s.repartition_niveaux['faible'] || 0 }}</span>
-                  </div>
-                  <div class="summary-bar">
-                    <div class="summary-bar-fill" style="background:#EF4444"
-                         [style.width.%]="(s.repartition_niveaux['faible'] || 0) / (s.total_analyses || 1) * 100">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
+
+            <div class="summary-item">
+              <div class="summary-bar-wrap">
+                <div class="summary-row">
+                  <span class="summary-dot" style="background:#3B82F6"></span>
+                  <span class="summary-label">{{ 'ANALYTICS.LEVEL_TRES_BON' | translate }} <span
+                      class="summary-range">(14-16)</span></span>
+                  <span class="summary-value">{{ s.repartition_niveaux['tres_bon'] || 0 }}</span>
+                </div>
+                <div class="summary-bar">
+                  <div class="summary-bar-fill" style="background:#3B82F6"
+                    [style.width.%]="(s.repartition_niveaux['tres_bon'] || 0) / (s.total_analyses || 1) * 100">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-bar-wrap">
+                <div class="summary-row">
+                  <span class="summary-dot" style="background:#06B6D4"></span>
+                  <span class="summary-label">{{ 'ANALYTICS.LEVEL_BON' | translate }} <span
+                      class="summary-range">(12-14)</span></span>
+                  <span class="summary-value">{{ s.repartition_niveaux['bon'] || 0 }}</span>
+                </div>
+                <div class="summary-bar">
+                  <div class="summary-bar-fill" style="background:#06B6D4"
+                    [style.width.%]="(s.repartition_niveaux['bon'] || 0) / (s.total_analyses || 1) * 100">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-bar-wrap">
+                <div class="summary-row">
+                  <span class="summary-dot" style="background:#F59E0B"></span>
+                  <span class="summary-label">{{ 'ANALYTICS.LEVEL_MOYEN' | translate }} <span
+                      class="summary-range">(10-12)</span></span>
+                  <span class="summary-value">{{ s.repartition_niveaux['moyen'] || 0 }}</span>
+                </div>
+                <div class="summary-bar">
+                  <div class="summary-bar-fill" style="background:#F59E0B"
+                    [style.width.%]="(s.repartition_niveaux['moyen'] || 0) / (s.total_analyses || 1) * 100">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-bar-wrap">
+                <div class="summary-row">
+                  <span class="summary-dot" style="background:#EF4444"></span>
+                  <span class="summary-label">{{ 'ANALYTICS.LEVEL_FAIBLE' | translate }} <span
+                      class="summary-range">(&lt;10)</span></span>
+                  <span class="summary-value">{{ s.repartition_niveaux['faible'] || 0 }}</span>
+                </div>
+                <div class="summary-bar">
+                  <div class="summary-bar-fill" style="background:#EF4444"
+                    [style.width.%]="(s.repartition_niveaux['faible'] || 0) / (s.total_analyses || 1) * 100">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
           }
         </div>
       </div>
@@ -208,102 +192,102 @@
             <h3 class="chart-title">{{ 'ANALYTICS.RECENT_REPORTS' | translate }}</h3>
           </div>
           @if (rapports().length > 0) {
-            <span class="rapports-count">{{ rapports().length }} {{ rapports().length > 1 ? ('ANALYTICS.REPORTS_PLURAL' | translate) : ('ANALYTICS.REPORT_SINGULAR' | translate) }}</span>
+          <span class="rapports-count">{{ rapports().length }} {{ rapports().length > 1 ? ('ANALYTICS.REPORTS_PLURAL' |
+            translate) : ('ANALYTICS.REPORT_SINGULAR' | translate) }}</span>
           }
         </div>
 
         <!-- Loading -->
         @if (loading()) {
-          <div class="feedback-state">
-            <div class="spinner"></div>
-            <p class="feedback-title">{{ 'ANALYTICS.LOADING_REPORTS' | translate }}</p>
-            <p class="feedback-sub">{{ 'ANALYTICS.PLEASE_WAIT' | translate }}</p>
-          </div>
+        <div class="feedback-state">
+          <div class="spinner"></div>
+          <p class="feedback-title">{{ 'ANALYTICS.LOADING_REPORTS' | translate }}</p>
+          <p class="feedback-sub">{{ 'ANALYTICS.PLEASE_WAIT' | translate }}</p>
+        </div>
         }
 
         <!-- Erreur -->
         @else if (error()) {
-          <div class="feedback-state feedback-state--error">
-            <span class="material-icons feedback-icon">error_outline</span>
-            <p class="feedback-title">{{ 'ANALYTICS.ERROR_OCCURRED' | translate }}</p>
-            <p class="feedback-sub">{{ error() }}</p>
-            <button class="retry-btn" (click)="loadRapports()">
-              <span class="material-icons">refresh</span>
-              {{ 'ANALYTICS.RETRY' | translate }}
-            </button>
-          </div>
+        <div class="feedback-state feedback-state--error">
+          <span class="material-icons feedback-icon">error_outline</span>
+          <p class="feedback-title">{{ 'ANALYTICS.ERROR_OCCURRED' | translate }}</p>
+          <p class="feedback-sub">{{ error() }}</p>
+          <button class="retry-btn" (click)="loadRapports()">
+            <span class="material-icons">refresh</span>
+            {{ 'ANALYTICS.RETRY' | translate }}
+          </button>
+        </div>
         }
 
         <!-- Vide -->
         @else if (rapports().length === 0) {
-          <div class="feedback-state feedback-state--empty">
-            <div class="empty-illus">
-              <span class="material-icons">auto_awesome</span>
-            </div>
-            <p class="feedback-title">{{ 'ANALYTICS.NO_REPORTS' | translate }}</p>
-            <p class="feedback-sub">
-              {{ 'ANALYTICS.NO_REPORTS_SUBTITLE' | translate }}
-            </p>
+        <div class="feedback-state feedback-state--empty">
+          <div class="empty-illus">
+            <span class="material-icons">auto_awesome</span>
           </div>
+          <p class="feedback-title">{{ 'ANALYTICS.NO_REPORTS' | translate }}</p>
+          <p class="feedback-sub">
+            {{ 'ANALYTICS.NO_REPORTS_SUBTITLE' | translate }}
+          </p>
+        </div>
         }
 
         <!-- Liste -->
         @else {
-          <div class="rapports-list">
-            @for (rapport of rapports().slice(0, 10); track rapport.id) {
-              <div class="rapport-item" (click)="viewRapport(rapport)">
+        <div class="rapports-list">
+          @for (rapport of rapports().slice(0, 10); track rapport.id) {
+          <div class="rapport-item" (click)="openDetail(rapport)">
 
-                <!-- Icône type document -->
-                <div class="rapport-icon" [style.background]="getNiveauColor(rapport.niveau_performance) + '18'">
-                  <span class="material-icons" [style.color]="getNiveauColor(rapport.niveau_performance)">
-                    {{ getTypeDocumentIcon(rapport.type_document) }}
-                  </span>
-                </div>
+            <!-- Icône type document -->
+            <div class="rapport-icon" [style.background]="getNiveauColor(rapport.niveau_performance) + '18'">
+              <span class="material-icons" [style.color]="getNiveauColor(rapport.niveau_performance)">
+                {{ getTypeDocumentIcon(rapport.type_document) }}
+              </span>
+            </div>
 
-                <!-- Infos -->
-                <div class="rapport-info">
-                  <div class="rapport-top">
-                    <h4 class="rapport-name">{{ rapport.nom_complet || ('ANALYTICS.STUDENT_FALLBACK' | translate) }}</h4>
-                    <span class="rapport-niveau"
-                          [style.background]="getNiveauColor(rapport.niveau_performance) + '18'"
-                          [style.color]="getNiveauColor(rapport.niveau_performance)">
-                      {{ getNiveauLabel(rapport.niveau_performance) }}
-                    </span>
-                  </div>
-                  <div class="rapport-meta">
-                    <span class="rapport-meta-item">
-                      <span class="material-icons">school</span>
-                      {{ rapport.etablissement || '—' }}
-                    </span>
-                    <span class="rapport-meta-sep">·</span>
-                    <span class="rapport-meta-item">
-                      <span class="material-icons">schedule</span>
-                      {{ formatRelativeTime(rapport.date_generation) }}
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Score -->
-                <div class="rapport-score">
-                  <span class="score-value" [style.color]="getNiveauColor(rapport.niveau_performance)">
-                    {{ rapport.score_combine !== null
-                        ? (rapport.score_combine | number:'1.1-1')
-                        : (rapport.moyenne_generale !== null
-                            ? (rapport.moyenne_generale | number:'1.1-1')
-                            : '—') }}
-                  </span>
-                  <span class="score-denom">/20</span>
-                </div>
-
-                <!-- Action -->
-                <button class="rapport-action" (click)="viewRapport(rapport); $event.stopPropagation()"
-                        aria-label="{{ 'ANALYTICS.VIEW_REPORT' | translate }}">
-                  <span class="material-icons">chevron_right</span>
-                </button>
-
+            <!-- Infos -->
+            <div class="rapport-info">
+              <div class="rapport-top">
+                <h4 class="rapport-name">{{ rapport.nom_complet || ('ANALYTICS.STUDENT_FALLBACK' | translate) }}</h4>
+                <span class="rapport-niveau" [style.background]="getNiveauColor(rapport.niveau_performance) + '18'"
+                  [style.color]="getNiveauColor(rapport.niveau_performance)">
+                  {{ getNiveauLabel(rapport.niveau_performance) }}
+                </span>
               </div>
-            }
+              <div class="rapport-meta">
+                <span class="rapport-meta-item">
+                  <span class="material-icons">school</span>
+                  {{ rapport.etablissement || '—' }}
+                </span>
+                <span class="rapport-meta-sep">·</span>
+                <span class="rapport-meta-item">
+                  <span class="material-icons">schedule</span>
+                  {{ formatRelativeTime(rapport.date_generation) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Score -->
+            <div class="rapport-score">
+              <span class="score-value" [style.color]="getNiveauColor(rapport.niveau_performance)">
+                {{ rapport.score_combine !== null
+                ? (rapport.score_combine | number:'1.1-1')
+                : (rapport.moyenne_generale !== null
+                ? (rapport.moyenne_generale | number:'1.1-1')
+                : '—') }}
+              </span>
+              <span class="score-denom">/20</span>
+            </div>
+
+            <!-- Action -->
+            <button class="rapport-action" (click)="openDetail(rapport); $event.stopPropagation()"
+              aria-label="Voir le détail">
+              <span class="material-icons">visibility</span>
+            </button>
+
           </div>
+          }
+        </div>
         }
 
       </div>
@@ -311,3 +295,218 @@
 
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL DÉTAIL RAPPORT IA
+══════════════════════════════════════════════════════════ -->
+@if (selectedRapport()) {
+<div class="modal-overlay" (click)="closeDetail()">
+  <div class="modal-panel" (click)="$event.stopPropagation()">
+
+    <!-- Header modal -->
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-avatar" [style.background]="getNiveauColor(selectedRapport()!.niveau_performance) + '18'">
+          <span class="material-icons" [style.color]="getNiveauColor(selectedRapport()!.niveau_performance)">
+            {{ getTypeDocumentIcon(selectedRapport()!.type_document) }}
+          </span>
+        </div>
+        <div>
+          <h2 class="modal-name">{{ selectedRapport()!.nom_complet || 'Étudiant' }}</h2>
+          <p class="modal-meta">{{ selectedRapport()!.etablissement || '—' }} · {{ selectedRapport()!.filiere || '—' }}
+          </p>
+        </div>
+      </div>
+      <div class="modal-header-right">
+        <span class="modal-niveau-badge"
+          [style.background]="getNiveauColor(selectedRapport()!.niveau_performance) + '18'"
+          [style.color]="getNiveauColor(selectedRapport()!.niveau_performance)">
+          {{ getNiveauLabel(selectedRapport()!.niveau_performance) }}
+        </span>
+        <button class="modal-close" (click)="closeDetail()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable body -->
+    <div class="modal-body">
+
+      <!-- Scores -->
+      <div class="detail-scores">
+        <div class="detail-score-card">
+          <p class="detail-score-val" [style.color]="getNiveauColor(selectedRapport()!.niveau_performance)">
+            {{ selectedRapport()!.score_combine !== null
+            ? (selectedRapport()!.score_combine | number:'1.1-1')
+            : (selectedRapport()!.moyenne_generale !== null
+            ? (selectedRapport()!.moyenne_generale | number:'1.1-1')
+            : '—') }}<span class="detail-score-denom">/20</span>
+          </p>
+          <p class="detail-score-label">Score combiné</p>
+        </div>
+        @if (selectedRapport()!.moyenne_probatoire !== null) {
+        <div class="detail-score-card">
+          <p class="detail-score-val">{{ selectedRapport()!.moyenne_probatoire | number:'1.1-1' }}<span
+              class="detail-score-denom">/20</span></p>
+          <p class="detail-score-label">Moy. Probatoire</p>
+        </div>
+        }
+        @if (selectedRapport()!.moyenne_bac !== null) {
+        <div class="detail-score-card">
+          <p class="detail-score-val">{{ selectedRapport()!.moyenne_bac | number:'1.1-1' }}<span
+              class="detail-score-denom">/20</span></p>
+          <p class="detail-score-label">Moy. Bac</p>
+        </div>
+        }
+        <div class="detail-score-card">
+          <p class="detail-score-val">{{ selectedRapport()!.matieres_validees }}/{{ selectedRapport()!.total_matieres }}
+          </p>
+          <p class="detail-score-label">Matières validées</p>
+        </div>
+        <div class="detail-score-card">
+          <p class="detail-score-val">{{ (selectedRapport()!.score_confiance_extraction * 100) | number:'1.0-0' }}%</p>
+          <p class="detail-score-label">Confiance IA</p>
+        </div>
+      </div>
+
+      <!-- Barre confiance -->
+      <div class="detail-confidence">
+        <div class="detail-confidence-label">
+          <span class="material-icons">auto_awesome</span>
+          Confiance d'extraction IA
+          <strong>{{ (selectedRapport()!.score_confiance_extraction * 100) | number:'1.0-0' }}%</strong>
+        </div>
+        <div class="confidence-bar">
+          <div class="confidence-fill" [style.width.%]="selectedRapport()!.score_confiance_extraction * 100"
+            [style.background]="getNiveauColor(selectedRapport()!.niveau_performance)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Points forts / Points faibles -->
+      <div class="detail-two-cols">
+        @if (selectedRapport()!.points_forts?.length) {
+        <div class="detail-section detail-section--green">
+          <div class="detail-section-title">
+            <span class="material-icons">thumb_up</span>
+            Points forts
+          </div>
+          <ul class="detail-list">
+            @for (pt of selectedRapport()!.points_forts; track pt) {
+            <li>{{ pt }}</li>
+            }
+          </ul>
+        </div>
+        }
+        @if (selectedRapport()!.points_faibles?.length) {
+        <div class="detail-section detail-section--red">
+          <div class="detail-section-title">
+            <span class="material-icons">thumb_down</span>
+            Points faibles
+          </div>
+          <ul class="detail-list">
+            @for (pt of selectedRapport()!.points_faibles; track pt) {
+            <li>{{ pt }}</li>
+            }
+          </ul>
+        </div>
+        }
+      </div>
+
+      <!-- Recommandations -->
+      @if (selectedRapport()!.recommandations?.length) {
+      <div class="detail-section detail-section--purple">
+        <div class="detail-section-title">
+          <span class="material-icons">lightbulb</span>
+          Recommandations IA
+        </div>
+        <ul class="detail-list">
+          @for (rec of selectedRapport()!.recommandations; track rec) {
+          <li>{{ rec }}</li>
+          }
+        </ul>
+      </div>
+      }
+
+      <!-- Matières -->
+      @if (selectedRapport()!.matieres?.length) {
+      <div class="detail-matieres">
+        <div class="detail-section-title">
+          <span class="material-icons">menu_book</span>
+          Matières ({{ selectedRapport()!.matieres.length }})
+        </div>
+        <div class="matieres-table-wrap">
+          <table class="matieres-table">
+            <thead>
+              <tr>
+                <th>Matière</th>
+                <th>Note</th>
+                <th>Note/20</th>
+                <th>Coeff.</th>
+                <th>Mention</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of selectedRapport()!.matieres; track m.id) {
+              <tr [class.row-fail]="m.note_sur_20 !== null && m.note_sur_20 < 10">
+                <td class="matiere-nom">{{ m.nom_matiere }}</td>
+                <td>{{ m.note !== null ? (m.note | number:'1.1-1') + '/' + m.note_sur : '—' }}</td>
+                <td>
+                  <span class="note-pill" [style.background]="getNoteColor(m.note_sur_20) + '18'"
+                    [style.color]="getNoteColor(m.note_sur_20)">
+                    {{ m.note_sur_20 !== null ? (m.note_sur_20 | number:'1.1-1') : '—' }}
+                  </span>
+                </td>
+                <td>{{ m.coefficient }}</td>
+                <td>{{ m.mention || '—' }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      }
+
+      <!-- Filières suggérées -->
+      @if (selectedRapport()!.filieres_suggerees?.length) {
+      <div class="detail-filieres">
+        <div class="detail-section-title">
+          <span class="material-icons">school</span>
+          Filières suggérées par l'IA ({{ selectedRapport()!.filieres_suggerees.length }})
+        </div>
+        <div class="filieres-grid">
+          @for (f of selectedRapport()!.filieres_suggerees; track f.id) {
+          <div class="filiere-card">
+            <div class="filiere-top">
+              <span class="filiere-nom">{{ f.nom }}</span>
+              <span class="filiere-ecart" [class.ecart-pos]="f.ecart_score >= 0" [class.ecart-neg]="f.ecart_score < 0">
+                {{ f.ecart_score >= 0 ? '+' : '' }}{{ f.ecart_score | number:'1.1-1' }}
+              </span>
+            </div>
+            <p class="filiere-domaine">{{ f.domaine }} · {{ f.duree }} an(s)</p>
+            @if (f.etablissement) {
+            <p class="filiere-etab">{{ f.etablissement.nom }} — {{ f.etablissement.pays }}</p>
+            }
+            <p class="filiere-score-min">Score min : {{ f.score_minimum | number:'1.1-1' }}/20</p>
+          </div>
+          }
+        </div>
+      </div>
+      }
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <span class="modal-date">
+          <span class="material-icons">schedule</span>
+          Généré {{ formatRelativeTime(selectedRapport()!.date_generation) }}
+        </span>
+        <button class="modal-view-full" (click)="viewRapport(selectedRapport()!)">
+          <span class="material-icons">open_in_new</span>
+          Ouvrir le rapport complet
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+}

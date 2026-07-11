@@ -61,6 +61,10 @@ export interface DossierAdmin {
   nombre_documents: number;
   est_bourse: boolean;
   documents: DocumentDossier[];
+  score_calcule: number | null;
+  score_source: string | null;
+  analyse_en_cours: boolean;
+  analyse_erreur: string | null;
 }
 
 export interface DossierList {

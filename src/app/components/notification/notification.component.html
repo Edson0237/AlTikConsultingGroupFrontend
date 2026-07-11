@@ -221,14 +221,30 @@
             <div class="modal__form-group">
                 <label class="modal__label">
                     {{ 'NOTIFICATION.RECIPIENTS_LABEL' | translate }} <span class="modal__required">*</span>
-                    <span class="modal__count">({{ selectedConseillers().length }} {{ 'NOTIFICATION.SELECTED_COUNT' | translate }})</span>
+                    <span class="modal__count">
+                        ({{ recipientMode() === 'conseillers' ? selectedConseillers().length : selectedUsers().length }} {{ 'NOTIFICATION.SELECTED_COUNT' | translate }})
+                    </span>
                 </label>
+
+                <div class="modal__recipient-toggle">
+                    <button type="button" class="modal__toggle-btn"
+                        [class.active]="recipientMode() === 'conseillers'"
+                        (click)="recipientMode.set('conseillers')">
+                        {{ 'NOTIFICATION.TAB_COUNSELORS' | translate }}
+                    </button>
+                    <button type="button" class="modal__toggle-btn"
+                        [class.active]="recipientMode() === 'candidats'"
+                        (click)="recipientMode.set('candidats')">
+                        {{ 'NOTIFICATION.TAB_CANDIDATES' | translate }}
+                    </button>
+                </div>
 
                 <div class="modal__conseillers-actions">
                     <button type="button" class="modal__btn-link" (click)="selectAll()">{{ 'NOTIFICATION.SELECT_ALL' | translate }}</button>
                     <button type="button" class="modal__btn-link" (click)="deselectAll()">{{ 'NOTIFICATION.DESELECT_ALL' | translate }}</button>
                 </div>
 
+                @if (recipientMode() === 'conseillers') {
                 <input type="text" class="modal__input" placeholder="{{ 'NOTIFICATION.SEARCH_COUNSELOR' | translate }}"
                     [(ngModel)]="searchConseiller" />
 
@@ -252,6 +268,33 @@
                     </div>
                     }
                 </div>
+                }
+
+                @if (recipientMode() === 'candidats') {
+                <input type="text" class="modal__input" placeholder="{{ 'NOTIFICATION.SEARCH_CANDIDATE' | translate }}"
+                    [(ngModel)]="searchUser" />
+
+                <div class="modal__conseillers-list">
+                    @for (user of filteredUsers; track user.id) {
+                    <div class="modal__conseiller-item" [class.selected]="isSelected(user.id)"
+                        (click)="toggleUser(user.id)">
+                        <div class="modal__conseiller-checkbox">
+                            <input type="checkbox" [checked]="isSelected(user.id)" />
+                        </div>
+                        <div class="modal__conseiller-info">
+                            <div class="modal__conseiller-name">{{ user.full_name }}</div>
+                            <div class="modal__conseiller-email">{{ user.email }}</div>
+                        </div>
+                    </div>
+                    }
+
+                    @if (filteredUsers.length === 0) {
+                    <div class="modal__conseillers-empty">
+                        {{ 'NOTIFICATION.NO_CANDIDATES' | translate }}
+                    </div>
+                    }
+                </div>
+                }
             </div>
 
             <div class="modal__form-group">

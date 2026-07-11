@@ -60,6 +60,12 @@
                 <span class="status-badge" [style.background]="getStatusColor(dossier()!.status)">
                     {{ dossier()!.status_display }}
                 </span>
+
+                <button class="btn btn--outline" (click)="lancerAnalyse()" [disabled]="analyseEnCours() || analyseLoading()">
+                    <span *ngIf="!analyseLoading()">{{ analyseEnCours() ? 'Analyse en cours…' : 'Lancer l\'analyse IA' }}</span>
+                    <span *ngIf="analyseLoading()" class="spinner spinner--small"></span>
+                </button>
+
                 <button class="btn btn--primary" (click)="openStatusModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -237,6 +243,12 @@
                             </svg>
                             {{ 'DOSSIER_DETAIL.DOCUMENTS' | translate }} ({{ dossier()!.nombre_documents }})
                         </h3>
+                        <button class="btn btn--small btn--outline" (click)="refreshDossier()" title="Rafraîchir">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+                            </svg>
+                        </button>
                     </div>
 
                     <div class="documents-list" *ngIf="dossier()!.documents.length > 0">
