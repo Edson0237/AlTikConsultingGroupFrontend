@@ -108,6 +108,12 @@ export const routes: Routes = [
           import('./components/parametres/parametres.component')
             .then(m => m.ParametresComponent)
       },
+      {
+        path: 'activite',
+        loadComponent: () =>
+          import('./components/system-logs/system-logs.component')
+            .then(m => m.SystemLogsComponent)
+      },
       // Import-Export
       // {
       //   path: 'import-export',

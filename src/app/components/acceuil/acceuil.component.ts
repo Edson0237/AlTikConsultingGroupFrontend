@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, OnDestroy, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
+import { filter, interval, Subscription } from 'rxjs';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 import { DashboardService, DashboardStats } from '../../services/dashboard/dashboard.service';
@@ -22,7 +24,7 @@ export interface Activity {
 @Component({
   selector: 'app-acceuil',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, RouterLink],
   templateUrl: './acceuil.component.html',
   styleUrl: './acceuil.component.scss',
 })
@@ -30,6 +32,10 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
 
   private dashboardService = inject(DashboardService);
   private translate = inject(TranslateService);
+  private router = inject(Router);
+  private routerSub?: Subscription;
+  private autoRefreshSub?: Subscription;
+  private readonly AUTO_REFRESH_INTERVAL_MS = 30000; // 30s
 
   private lineChart?: Chart;
   private pieChart?: Chart;
@@ -73,6 +79,18 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
 
   ngOnInit(): void {
     this.loadStats();
+    this.routerSub = this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.loadStats();
+    });
+
+    // Rafraîchissement automatique toutes les 30s pour refléter les choix de filières, etc.
+    this.autoRefreshSub = interval(this.AUTO_REFRESH_INTERVAL_MS).subscribe(() => {
+      if (!this.loading()) {
+        this.loadStats();
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -83,6 +101,8 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
     this.lineChart?.destroy();
     this.pieChart?.destroy();
     this.barChart?.destroy();
+    this.routerSub?.unsubscribe();
+    this.autoRefreshSub?.unsubscribe();
   }
 
   // ═══════════════════════════════════════════════════════════════
@@ -211,17 +231,29 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
     const data = this.stats()!;
     const repartition = data.charts.repartition_dossiers;
 
+    // Regrouper : toutes les bourses ensemble, visa séparé
+    const totalBourses = repartition
+      .filter((r: { type_dossier: string; count: number }) => r.type_dossier.startsWith('bourse'))
+      .reduce((sum: number, r: { type_dossier: string; count: number }) => sum + r.count, 0);
+    const totalVisa = repartition
+      .filter((r: { type_dossier: string; count: number }) => r.type_dossier === 'visa_affaires')
+      .reduce((sum: number, r: { type_dossier: string; count: number }) => sum + r.count, 0);
+
+    const groupedLabels = ["Bourses d'études", "Visa d'affaires"];
+    const groupedData = [totalBourses, totalVisa];
+    const groupedColors = ['#2563EB', '#6366F1'];
+
     this.pieChart?.destroy();
     this.pieChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: repartition.map((r: { type_dossier: string; count: number }) => this.translate.instant(this.TYPE_LABELS[r.type_dossier]) || r.type_dossier),
+        labels: groupedLabels,
         datasets: [{
-          data: repartition.map((r: { type_dossier: string; count: number }) => r.count),
-          backgroundColor: repartition.map((r: { type_dossier: string; count: number }) => this.TYPE_COLORS[r.type_dossier] || '#94A3B8'),
+          data: groupedData,
+          backgroundColor: groupedColors,
           borderWidth: 2,
           borderColor: '#fff',
-          hoverOffset: 6,
+          hoverOffset: 8,
         }],
       },
       options: {
@@ -333,5 +365,17 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
     const key = `ACCEUIL.DOC_${type.toUpperCase()}`;
     const translated = this.translate.instant(key);
     return translated !== key ? translated : type;
+  }
+
+  getTotalBourses(repartition: Array<{ type_dossier: string; count: number }>): number {
+    return repartition
+      .filter(r => r.type_dossier.startsWith('bourse'))
+      .reduce((sum, r) => sum + r.count, 0);
+  }
+
+  getTotalVisa(repartition: Array<{ type_dossier: string; count: number }>): number {
+    return repartition
+      .filter(r => r.type_dossier === 'visa_affaires')
+      .reduce((sum, r) => sum + r.count, 0);
   }
 }

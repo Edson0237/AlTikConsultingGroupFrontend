@@ -19,12 +19,12 @@ export interface VisaNotification {
 }
 
 const STATUS_OPTIONS: { value: DossierStatus | ''; label: string }[] = [
-  { value: '',          label: 'Tous les statuts' },
-  { value: 'brouillon', label: 'Brouillon' },
-  { value: 'en_cours',  label: 'En cours' },
-  { value: 'complete',  label: 'Complet' },
-  { value: 'valide',    label: 'Validé' },
-  { value: 'rejete',    label: 'Rejeté' },
+  { value: '',          label: 'BUSINESS_VISA.STATUS_ALL' },
+  { value: 'en_attente_de_traitement', label: 'BUSINESS_VISA.STATUS_EN_ATTENTE_DE_TRAITEMENT' },
+  { value: 'en_cours',  label: 'BUSINESS_VISA.STATUS_EN_COURS' },
+  { value: 'complete',  label: 'BUSINESS_VISA.STATUS_COMPLETE' },
+  { value: 'valide',    label: 'BUSINESS_VISA.STATUS_VALIDE' },
+  { value: 'rejete',    label: 'BUSINESS_VISA.STATUS_REJETE' },
 ];
 
 @Component({
@@ -52,11 +52,11 @@ export class BussinessVisaComponent implements OnInit {
   draggedDossier: DossierAdmin | null = null;
 
   readonly columns: KanbanColumn[] = [
-    { id: 'brouillon', label: 'Brouillon', color: '#94A3B8' },
-    { id: 'en_cours',  label: 'En cours',  color: '#6366F1' },
-    { id: 'complete',  label: 'Complet',   color: '#0EA5E9' },
-    { id: 'valide',    label: 'Validé',    color: '#10B981' },
-    { id: 'rejete',    label: 'Rejeté',    color: '#EF4444' },
+    { id: 'en_attente_de_traitement', label: 'BUSINESS_VISA.STATUS_EN_ATTENTE_DE_TRAITEMENT', color: '#94A3B8' },
+    { id: 'en_cours',  label: 'BUSINESS_VISA.STATUS_EN_COURS',  color: '#6366F1' },
+    { id: 'complete',  label: 'BUSINESS_VISA.STATUS_COMPLETE',   color: '#0EA5E9' },
+    { id: 'valide',    label: 'BUSINESS_VISA.STATUS_VALIDE',    color: '#10B981' },
+    { id: 'rejete',    label: 'BUSINESS_VISA.STATUS_REJETE',    color: '#EF4444' },
   ];
 
   readonly statusOptions = STATUS_OPTIONS;
@@ -88,9 +88,9 @@ export class BussinessVisaComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (err) => {
-        console.error('Erreur chargement dossiers visa:', err);
+        console.error(this.translate.instant('BUSINESS_VISA.LOAD_ERROR'), err);
         this.isLoading.set(false);
-        this.showNotification('Erreur lors du chargement des dossiers visa', 'error');
+        this.showNotification(this.translate.instant('BUSINESS_VISA.LOAD_ERROR'), 'error');
       }
     });
   }
@@ -128,14 +128,15 @@ export class BussinessVisaComponent implements OnInit {
     }
     const dossier = this.draggedDossier;
     this.draggedDossier = null;
-    const col = this.columns.find(c => c.id === targetStatus)?.label || targetStatus;
-    if (window.confirm(`Changer le statut de ${dossier.prenom} ${dossier.nom} vers "${col}" ?`)) {
+    const colKey = this.columns.find(c => c.id === targetStatus)?.label || targetStatus;
+    const col = this.translate.instant(colKey);
+    if (window.confirm(this.translate.instant('BUSINESS_VISA.CONFIRM_STATUS_CHANGE', { name: `${dossier.prenom} ${dossier.nom}`, status: col }))) {
       this.dossierService.updateStatus(dossier.id, { status: targetStatus }).subscribe({
         next: (updated) => {
           this.dossiers.update(list => list.map(d => d.id === updated.id ? updated : d));
-          this.showNotification('Statut mis à jour avec succès', 'success');
+          this.showNotification(this.translate.instant('BUSINESS_VISA.STATUS_UPDATED_SUCCESS'), 'success');
         },
-        error: () => this.showNotification('Erreur lors de la mise à jour du statut', 'error'),
+        error: () => this.showNotification(this.translate.instant('BUSINESS_VISA.STATUS_UPDATE_ERROR'), 'error'),
       });
     }
   }
@@ -150,7 +151,7 @@ export class BussinessVisaComponent implements OnInit {
   applyFilters(): void {
     this.loadDossiers();
     this.closeFilterModal();
-    this.showNotification('Filtres appliqués', 'success');
+    this.showNotification(this.translate.instant('BUSINESS_VISA.FILTERS_APPLIED'), 'success');
   }
 
   resetFilters(): void {
@@ -176,7 +177,8 @@ export class BussinessVisaComponent implements OnInit {
 
   formatDate(ds: string): string {
     if (!ds) return '';
-    return new Date(ds).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+    const localeMap: Record<string, string> = { fr: 'fr-FR', en: 'en-US', zh: 'zh-CN' };
+    return new Date(ds).toLocaleDateString(localeMap[this.translate.currentLang] ?? 'fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   private _buildFilterForm(): void {

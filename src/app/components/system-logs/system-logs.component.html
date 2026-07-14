@@ -1,0 +1,147 @@
+<div class="logs-page">
+
+  <!-- En-tête -->
+  <header class="logs-header">
+    <div class="logs-header__left">
+      <div class="logs-header__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="logs-title">{{ 'SYSTEM_LOGS.TITLE' | translate }}</h1>
+        <p class="logs-subtitle">{{ 'SYSTEM_LOGS.SUBTITLE' | translate }}</p>
+      </div>
+    </div>
+    <button class="btn-refresh" (click)="loadLogs()" [disabled]="loading()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" [class.spinning]="loading()">
+        <polyline points="23 4 23 10 17 10"/>
+        <polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+      {{ 'SYSTEM_LOGS.REFRESH' | translate }}
+    </button>
+  </header>
+
+  <!-- Filtres rapides -->
+  @if (!loading() && !error()) {
+  <div class="logs-filters">
+    <button class="filter-btn" [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">
+      {{ 'SYSTEM_LOGS.FILTER_ALL' | translate }} ({{ logs().length }})
+    </button>
+    <button class="filter-btn filter-btn--blue" [class.active]="activeFilter() === 'blue'" (click)="setFilter('blue')">
+      <span class="filter-dot filter-dot--blue"></span> {{ 'SYSTEM_LOGS.FILTER_CREATIONS' | translate }}
+    </button>
+    <button class="filter-btn filter-btn--green" [class.active]="activeFilter() === 'green'" (click)="setFilter('green')">
+      <span class="filter-dot filter-dot--green"></span> {{ 'SYSTEM_LOGS.FILTER_VALIDATIONS' | translate }}
+    </button>
+    <button class="filter-btn filter-btn--red" [class.active]="activeFilter() === 'red'" (click)="setFilter('red')">
+      <span class="filter-dot filter-dot--red"></span> {{ 'SYSTEM_LOGS.FILTER_ERRORS' | translate }}
+    </button>
+    <button class="filter-btn filter-btn--orange" [class.active]="activeFilter() === 'orange'" (click)="setFilter('orange')">
+      <span class="filter-dot filter-dot--orange"></span> {{ 'SYSTEM_LOGS.FILTER_MODIFICATIONS' | translate }}
+    </button>
+    <button class="filter-btn filter-btn--purple" [class.active]="activeFilter() === 'purple'" (click)="setFilter('purple')">
+      <span class="filter-dot filter-dot--purple"></span> {{ 'SYSTEM_LOGS.FILTER_MESSAGES' | translate }}
+    </button>
+  </div>
+  <div class="logs-count">
+    {{ 'SYSTEM_LOGS.EVENTS_COUNT' | translate: { count: filteredLogs().length } }}
+  </div>
+  }
+
+  <!-- Chargement -->
+  @if (loading()) {
+  <div class="logs-loading">
+    <div class="spinner"></div>
+    <p>{{ 'SYSTEM_LOGS.LOADING' | translate }}</p>
+  </div>
+  }
+
+  <!-- Erreur -->
+  @if (error()) {
+  <div class="logs-error">
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+      stroke="#ef4444" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p>{{ error() }}</p>
+    <button class="btn-retry" (click)="loadLogs()">{{ 'SYSTEM_LOGS.RETRY' | translate }}</button>
+  </div>
+  }
+
+  <!-- Liste -->
+  @if (!loading() && !error()) {
+  <div class="logs-list">
+    @for (log of filteredLogs(); track trackByLog($index, log)) {
+    <div class="log-item" [class]="'log-item--' + getActionColor(log.action)">
+
+      <!-- Icône action -->
+      <div class="log-icon" [class]="'log-icon--' + getActionColor(log.action)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2"
+          [innerHTML]="getActionSvgPath(log.action)">
+        </svg>
+      </div>
+
+      <!-- Corps -->
+      <div class="log-body">
+        <div class="log-meta">
+          <span class="log-action-badge" [class]="'log-action-badge--' + getActionColor(log.action)">
+            {{ log.action_display }}
+          </span>
+          @if (log.target_type && log.target_id) {
+          <span class="log-target-pill">
+            {{ log.target_type }} #{{ log.target_id }}
+          </span>
+          }
+        </div>
+        <p class="log-message">{{ log.message }}</p>
+        <div class="log-footer">
+          <span class="log-user">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            @if (log.utilisateur_nom) {
+              {{ log.utilisateur_nom }}
+            } @else if (log.utilisateur_email) {
+              {{ log.utilisateur_email }}
+            } @else {
+              {{ 'SYSTEM_LOGS.SYSTEM_USER' | translate }}
+            }
+          </span>
+          <span class="log-date">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            {{ formatDate(log.date_creation) }}
+          </span>
+        </div>
+      </div>
+    </div>
+    } @empty {
+    <div class="logs-empty">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+        fill="none" stroke="#d1d5db" stroke-width="1.5">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <p>{{ 'SYSTEM_LOGS.EMPTY' | translate }}</p>
+    </div>
+    }
+  </div>
+  }
+
+</div>

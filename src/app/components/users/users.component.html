@@ -172,7 +172,7 @@
             <div class="action-group">
 
               <!-- Voir les détails (icône œil) -->
-              <button class="icon-btn icon-btn--view" title="Voir les détails" (click)="openDetails(user)">
+              <button class="icon-btn icon-btn--view" title="{{ 'USERS_EXTRA.VIEW_DETAILS_TITLE' | translate }}" (click)="openDetails(user)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -203,7 +203,7 @@
 
               <!-- Archiver / Désarchiver (admin only) -->
               <button *ngIf="canArchive(user)" class="icon-btn" [class.icon-btn--archive]="!user.est_archive"
-                [class.icon-btn--unarchive]="user.est_archive" [title]="user.est_archive ? 'Désarchiver' : 'Archiver'"
+                [class.icon-btn--unarchive]="user.est_archive" [title]="user.est_archive ? ('USERS_EXTRA.UNARCHIVE_BUTTON' | translate) : ('USERS_EXTRA.ARCHIVE_BUTTON' | translate)"
                 (click)="confirmArchive(user)" [disabled]="archivingId === user.id">
                 <span class="btn-spinner" *ngIf="archivingId === user.id"></span>
                 <ng-container *ngIf="archivingId !== user.id">
@@ -259,7 +259,7 @@
 <!-- ══════════════════════════════════════════════════════════════
      MODAL : Confirmer archivage / désarchivage
 ═══════════════════════════════════════════════════════════════════ -->
-<div class="modal-overlay" *ngIf="showArchiveConfirm" (click)="cancelArchive()" role="dialog" aria-modal="true">
+<div class="modal-overlay" *ngIf="showArchiveConfirm" (click)="cancelArchive()" role="dialog" aria-modal="true" [attr.aria-label]="archiveTarget?.est_archive ? ('USERS_EXTRA.UNARCHIVE_TITLE' | translate) : ('USERS_EXTRA.ARCHIVE_TITLE' | translate)">
   <div class="modal modal--sm" (click)="$event.stopPropagation()">
     <div class="delete-confirm">
 
@@ -274,27 +274,26 @@
       </div>
 
       <h3 class="delete-confirm__title">
-        {{ archiveTarget?.est_archive ? 'Désarchiver ce compte ?' : 'Archiver ce compte ?' }}
+        {{ archiveTarget?.est_archive ? ('USERS_EXTRA.UNARCHIVE_TITLE' | translate) : ('USERS_EXTRA.ARCHIVE_TITLE' | translate) }}
       </h3>
       <p class="delete-confirm__text">
         <ng-container *ngIf="!archiveTarget?.est_archive">
-          Le compte de <strong>{{ getFullName(archiveTarget!) }}</strong> sera désactivé et marqué comme archivé.
-          L'utilisateur ne pourra plus se connecter.
+          {{ 'USERS_EXTRA.ARCHIVE_TEXT' | translate: { name: getFullName(archiveTarget!) } }}
         </ng-container>
         <ng-container *ngIf="archiveTarget?.est_archive">
-          Le compte de <strong>{{ getFullName(archiveTarget!) }}</strong> sera réactivé et restauré.
+          {{ 'USERS_EXTRA.UNARCHIVE_TEXT' | translate: { name: getFullName(archiveTarget!) } }}
         </ng-container>
       </p>
 
       <div class="delete-confirm__actions">
         <button class="btn btn--outline" (click)="cancelArchive()" [disabled]="archiveLoading">
-          Annuler
+          {{ 'USERS_EXTRA.CANCEL' | translate }}
         </button>
         <button class="btn" [class.btn--warning]="!archiveTarget?.est_archive"
           [class.btn--primary]="archiveTarget?.est_archive" (click)="doArchive()" [disabled]="archiveLoading">
           <span class="btn-spinner btn-spinner--white" *ngIf="archiveLoading"></span>
           <ng-container *ngIf="!archiveLoading">
-            {{ archiveTarget?.est_archive ? 'Désarchiver' : 'Archiver' }}
+            {{ archiveTarget?.est_archive ? ('USERS_EXTRA.UNARCHIVE_BUTTON' | translate) : ('USERS_EXTRA.ARCHIVE_BUTTON' | translate) }}
           </ng-container>
         </button>
       </div>
@@ -307,7 +306,7 @@
      MODAL : Détails utilisateur
 ═══════════════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetails()" role="dialog" aria-modal="true"
-  aria-label="Détails utilisateur">
+  aria-label="{{ 'USERS_EXTRA.DETAILS_ARIA' | translate }}">
   <div class="modal modal--details" (click)="$event.stopPropagation()">
 
     <div class="modal-details" *ngIf="detailsTarget">
@@ -331,11 +330,11 @@
               [class.status-badge--active]="detailsTarget.is_active && !detailsTarget.est_archive"
               [class.status-badge--inactive]="!detailsTarget.is_active || detailsTarget.est_archive">
               <span class="status-badge__dot"></span>
-              {{ detailsTarget.est_archive ? 'Archivé' : (detailsTarget.is_active ? 'Actif' : 'Inactif') }}
+              {{ detailsTarget.est_archive ? ('USERS_EXTRA.STATUS_ARCHIVED' | translate) : (detailsTarget.is_active ? ('USERS_EXTRA.STATUS_ACTIVE' | translate) : ('USERS_EXTRA.STATUS_INACTIVE' | translate)) }}
             </span>
           </div>
         </div>
-        <button class="modal-details__close" (click)="closeDetails()" aria-label="Fermer">
+        <button class="modal-details__close" (click)="closeDetails()" aria-label="{{ 'USERS_EXTRA.CLOSE_ARIA' | translate }}">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" />
@@ -347,23 +346,23 @@
       <!-- Infos -->
       <div class="modal-details__body">
         <div class="detail-row">
-          <span class="detail-label">Email</span>
+          <span class="detail-label">{{ 'USERS_EXTRA.DETAIL_EMAIL' | translate }}</span>
           <span class="detail-value">{{ detailsTarget.email }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Téléphone</span>
+          <span class="detail-label">{{ 'USERS_EXTRA.DETAIL_PHONE' | translate }}</span>
           <span class="detail-value">{{ detailsTarget.telephone || '—' }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Adresse</span>
+          <span class="detail-label">{{ 'USERS_EXTRA.DETAIL_ADDRESS' | translate }}</span>
           <span class="detail-value">{{ detailsTarget.adresse || '—' }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Inscription</span>
+          <span class="detail-label">{{ 'USERS_EXTRA.DETAIL_REGISTRATION' | translate }}</span>
           <span class="detail-value">{{ formatDate(detailsTarget.date_creation) }}</span>
         </div>
         <div class="detail-row" *ngIf="detailsTarget.est_archive">
-          <span class="detail-label">Archivé le</span>
+          <span class="detail-label">{{ 'USERS_EXTRA.DETAIL_ARCHIVED_ON' | translate }}</span>
           <span class="detail-value detail-value--warn">{{ formatDate(detailsTarget.date_archivage) }}</span>
         </div>
       </div>
@@ -371,11 +370,11 @@
       <!-- Actions -->
       <div class="modal-details__footer" *ngIf="isConseiller">
         <button class="btn btn--outline btn--sm" (click)="toggleActive(detailsTarget); closeDetails()">
-          {{ detailsTarget.is_active ? 'Désactiver' : 'Activer' }}
+          {{ detailsTarget.is_active ? ('USERS_EXTRA.DEACTIVATE' | translate) : ('USERS_EXTRA.ACTIVATE' | translate) }}
         </button>
         <button *ngIf="canArchive(detailsTarget)" class="btn btn--sm" [class.btn--warning]="!detailsTarget.est_archive"
           [class.btn--primary]="detailsTarget.est_archive" (click)="confirmArchive(detailsTarget); closeDetails()">
-          {{ detailsTarget.est_archive ? 'Désarchiver' : 'Archiver' }}
+          {{ detailsTarget.est_archive ? ('USERS_EXTRA.UNARCHIVE_BUTTON' | translate) : ('USERS_EXTRA.ARCHIVE_BUTTON' | translate) }}
         </button>
       </div>
     </div>

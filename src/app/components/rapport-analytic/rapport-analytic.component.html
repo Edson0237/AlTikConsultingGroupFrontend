@@ -3,13 +3,13 @@
   <!-- ── Header ──────────────────────────────────────────────────────── -->
   <div class="reports__header">
     <div>
-      <h1 class="reports__title">Analyses IA — Résultats</h1>
-      <p class="reports__subtitle">Données réelles extraites par l'intelligence artificielle</p>
+      <h1 class="reports__title">{{ 'RAPPORT_ANALYTIC.TITLE' | translate }}</h1>
+      <p class="reports__subtitle">{{ 'RAPPORT_ANALYTIC.SUBTITLE' | translate }}</p>
     </div>
     <div class="reports__export-actions">
       <button class="btn btn--outline" (click)="loadRapports()">
         <span class="material-icons" style="font-size:15px">refresh</span>
-        Actualiser
+        {{ 'RAPPORT_ANALYTIC.REFRESH' | translate }}
       </button>
     </div>
   </div>
@@ -18,48 +18,48 @@
   @if (stats(); as s) {
     <div class="kpi-grid">
       <div class="kpi-card">
-        <p class="kpi-card__label">Total analyses</p>
+        <p class="kpi-card__label">{{ 'RAPPORT_ANALYTIC.KPI_TOTAL' | translate }}</p>
         <p class="kpi-card__value">{{ s.total_analyses }}</p>
-        <p class="kpi-card__trend kpi-card__trend--up">Rapports IA générés</p>
+        <p class="kpi-card__trend kpi-card__trend--up">{{ 'RAPPORT_ANALYTIC.KPI_TOTAL_TREND' | translate }}</p>
       </div>
       <div class="kpi-card">
-        <p class="kpi-card__label">Analyses réussies</p>
+        <p class="kpi-card__label">{{ 'RAPPORT_ANALYTIC.KPI_SUCCESS' | translate }}</p>
         <p class="kpi-card__value">{{ s.analyses_reussies }}</p>
-        <p class="kpi-card__trend kpi-card__trend--up">Avec moyenne extraite</p>
+        <p class="kpi-card__trend kpi-card__trend--up">{{ 'RAPPORT_ANALYTIC.KPI_SUCCESS_TREND' | translate }}</p>
       </div>
       <div class="kpi-card">
-        <p class="kpi-card__label">Score moyen IA</p>
+        <p class="kpi-card__label">{{ 'RAPPORT_ANALYTIC.KPI_SCORE_MOYEN' | translate }}</p>
         <p class="kpi-card__value">{{ s.score_moyen_ia | number:'1.2-2' }}/20</p>
         <p class="kpi-card__trend" [class.kpi-card__trend--up]="s.score_moyen_ia >= 12"
           [class.kpi-card__trend--down]="s.score_moyen_ia < 12">
-          Combiné probatoire + bac
+          {{ 'RAPPORT_ANALYTIC.KPI_SCORE_TREND' | translate }}
         </p>
       </div>
       <div class="kpi-card">
-        <p class="kpi-card__label">Niveau excellent</p>
-        <p class="kpi-card__value">{{ s.repartition_niveaux['excellent'] ?? 0 }}</p>
-        <p class="kpi-card__trend kpi-card__trend--up">Score ≥ 16/20</p>
+        <p class="kpi-card__label">{{ 'RAPPORT_ANALYTIC.KPI_EXCELLENT' | translate }}</p>
+        <p class="kpi-card__value">{{ s.repartition_niveaux['excellent'] }}</p>
+        <p class="kpi-card__trend kpi-card__trend--up">{{ 'RAPPORT_ANALYTIC.KPI_EXCELLENT_TREND' | translate }}</p>
       </div>
     </div>
   }
 
   <!-- ── Filtres ──────────────────────────────────────────────────────── -->
   <div class="ra-filters">
-    <input class="ra-search" type="text" placeholder="Rechercher un candidat ou établissement…"
+    <input class="ra-search" type="text" placeholder="{{ 'RAPPORT_ANALYTIC.SEARCH_PLACEHOLDER' | translate }}"
       (input)="onSearchChange($any($event.target).value)" />
     <select class="ra-select" (change)="onNiveauChange($any($event.target).value)">
       @for (n of niveaux; track n.value) {
-        <option [value]="n.value">{{ n.label }}</option>
+        <option [value]="n.value">{{ n.label | translate }}</option>
       }
     </select>
-    <span class="ra-count">{{ filteredList().length }} résultat(s)</span>
+    <span class="ra-count">{{ filteredList().length }} {{ 'RAPPORT_ANALYTIC.RESULTS_COUNT' | translate }}</span>
   </div>
 
   <!-- ── Chargement ──────────────────────────────────────────────────── -->
   @if (loading()) {
     <div class="ra-loading">
       <div class="spinner"></div>
-      <span>Chargement des analyses…</span>
+      <span>{{ 'RAPPORT_ANALYTIC.LOADING' | translate }}</span>
     </div>
   }
 
@@ -68,25 +68,25 @@
     @if (filteredList().length === 0) {
       <div class="ra-empty">
         <span class="material-icons" style="font-size:48px;color:#cbd5e1">description</span>
-        <p>Aucune analyse IA disponible</p>
+        <p>{{ 'RAPPORT_ANALYTIC.EMPTY' | translate }}</p>
       </div>
     } @else {
       <div class="chart-card">
-        <h2 class="chart-card__title">Résultats des analyses IA</h2>
+        <h2 class="chart-card__title">{{ 'RAPPORT_ANALYTIC.TABLE_TITLE' | translate }}</h2>
         <div class="table-wrap">
           <table class="perf-table">
             <thead class="perf-table__head">
               <tr>
-                <th class="perf-table__th">Candidat</th>
-                <th class="perf-table__th">Document</th>
-                <th class="perf-table__th">Établissement</th>
-                <th class="perf-table__th">Score combiné</th>
-                <th class="perf-table__th">Probatoire</th>
-                <th class="perf-table__th">Bac</th>
-                <th class="perf-table__th">Niveau</th>
-                <th class="perf-table__th">Matières</th>
-                <th class="perf-table__th">Confiance</th>
-                <th class="perf-table__th">Détails</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_CANDIDATE' | translate }}</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_DOCUMENT' | translate }}</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_INSTITUTION' | translate }}</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_COMBINED_SCORE' | translate }}</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_PROBATOIRE' | translate }}</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_BAC' | translate }}</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_LEVEL' | translate }}</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_SUBJECTS' | translate }}</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_CONFIDENCE' | translate }}</th>
+                <th class="perf-table__th">{{ 'RAPPORT_ANALYTIC.COL_DETAILS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -141,7 +141,7 @@
                     </div>
                   </td>
                   <td class="perf-table__td">
-                    <button class="btn-eye" title="Voir le détail" (click)="openModal(r)">
+                    <button class="btn-eye" title="{{ 'RAPPORT_ANALYTIC.VIEW_DETAIL_TITLE' | translate }}" (click)="openModal(r)">
                       <span class="material-icons" style="font-size:16px">visibility</span>
                     </button>
                   </td>
@@ -157,10 +157,10 @@
     @if (rapports().length > 0) {
       <div class="charts-row">
         <div class="chart-card">
-          <h2 class="chart-card__title">Répartition par niveau</h2>
+          <h2 class="chart-card__title">{{ 'RAPPORT_ANALYTIC.CHART_LEVEL_DIST' | translate }}</h2>
           <canvas id="pieChart" class="chart-canvas chart-canvas--sm"></canvas>
           <div class="pie-legend">
-            @for (label of ['Excellent','Très bon','Bon','Moyen','Faible']; track label; let i = $index) {
+            @for (label of [('RAPPORT_ANALYTIC.LEGEND_EXCELLENT' | translate),('RAPPORT_ANALYTIC.LEGEND_TRES_BON' | translate),('RAPPORT_ANALYTIC.LEGEND_BON' | translate),('RAPPORT_ANALYTIC.LEGEND_MOYEN' | translate),('RAPPORT_ANALYTIC.LEGEND_FAIBLE' | translate)]; track label; let i = $index) {
               <div class="pie-legend__item">
                 <span class="pie-legend__dot" [style.background]="chartColors[i]"></span>
                 <span class="pie-legend__label">{{ label }}</span>
@@ -169,7 +169,7 @@
           </div>
         </div>
         <div class="chart-card">
-          <h2 class="chart-card__title">Distribution des niveaux</h2>
+          <h2 class="chart-card__title">{{ 'RAPPORT_ANALYTIC.CHART_LEVEL_DIST2' | translate }}</h2>
           <canvas id="barChart" class="chart-canvas chart-canvas--sm"></canvas>
         </div>
       </div>
@@ -188,8 +188,8 @@
       <!-- Header -->
       <div class="modal-detail__header">
         <div>
-          <h2 class="modal-detail__title">{{ r.nom_complet || 'Analyse IA' }}</h2>
-          <p class="modal-detail__sub">{{ r.type_document_display }} · {{ r.etablissement || 'Établissement non renseigné' }}</p>
+          <h2 class="modal-detail__title">{{ r.nom_complet || ('RAPPORT_ANALYTIC.MODAL_DEFAULT_TITLE' | translate) }}</h2>
+          <p class="modal-detail__sub">{{ r.type_document_display }} · {{ r.etablissement || ('RAPPORT_ANALYTIC.MODAL_INSTITUTION_UNKNOWN' | translate) }}</p>
         </div>
         <button class="modal-close" (click)="closeModal()">
           <span class="material-icons" style="font-size:18px">close</span>
@@ -204,14 +204,14 @@
             <span class="modal-score-card__val" [style.color]="getNiveauColor(r.niveau_performance)">
               {{ r.score_combine !== null ? (r.score_combine | number:'1.2-2') : '—' }}
             </span>
-            <span class="modal-score-card__label">Score combiné /20</span>
+            <span class="modal-score-card__label">{{ 'RAPPORT_ANALYTIC.MODAL_COMBINED_SCORE_LABEL' | translate }}</span>
           </div>
           @if (r.moyenne_probatoire !== null) {
             <div class="modal-score-card">
               <span class="modal-score-card__val" [style.color]="getNoteColor(r.moyenne_probatoire)">
                 {{ r.moyenne_probatoire | number:'1.2-2' }}
               </span>
-              <span class="modal-score-card__label">Probatoire /20</span>
+              <span class="modal-score-card__label">{{ 'RAPPORT_ANALYTIC.MODAL_PROBATOIRE_LABEL' | translate }}</span>
             </div>
           }
           @if (r.moyenne_bac !== null) {
@@ -219,7 +219,7 @@
               <span class="modal-score-card__val" [style.color]="getNoteColor(r.moyenne_bac)">
                 {{ r.moyenne_bac | number:'1.2-2' }}
               </span>
-              <span class="modal-score-card__label">Baccalauréat /20</span>
+              <span class="modal-score-card__label">{{ 'RAPPORT_ANALYTIC.MODAL_BAC_LABEL' | translate }}</span>
             </div>
           }
           <div class="modal-score-card">
@@ -230,7 +230,7 @@
                 {{ getNiveauLabel(r.niveau_performance) }}
               </span>
             </span>
-            <span class="modal-score-card__label">Niveau performance</span>
+            <span class="modal-score-card__label">{{ 'RAPPORT_ANALYTIC.MODAL_LEVEL_LABEL' | translate }}</span>
           </div>
         </div>
 
@@ -238,26 +238,26 @@
         <div class="modal-stats-row">
           <div class="modal-stat">
             <span class="modal-stat__val">{{ r.total_matieres }}</span>
-            <span class="modal-stat__label">Matières</span>
+            <span class="modal-stat__label">{{ 'RAPPORT_ANALYTIC.MODAL_SUBJECTS_LABEL' | translate }}</span>
           </div>
           <div class="modal-stat modal-stat--success">
             <span class="modal-stat__val">{{ r.matieres_validees }}</span>
-            <span class="modal-stat__label">Validées ≥10</span>
+            <span class="modal-stat__label">{{ 'RAPPORT_ANALYTIC.MODAL_PASSED_LABEL' | translate }}</span>
           </div>
           <div class="modal-stat modal-stat--danger">
             <span class="modal-stat__val">{{ r.matieres_echouees }}</span>
-            <span class="modal-stat__label">Échecs &lt;10</span>
+            <span class="modal-stat__label">{{ 'RAPPORT_ANALYTIC.MODAL_FAILED_LABEL' | translate }}</span>
           </div>
           <div class="modal-stat">
             <span class="modal-stat__val">{{ (r.score_confiance_extraction * 100) | number:'1.0-0' }}%</span>
-            <span class="modal-stat__label">Confiance IA</span>
+            <span class="modal-stat__label">{{ 'RAPPORT_ANALYTIC.MODAL_CONFIDENCE_LABEL' | translate }}</span>
           </div>
         </div>
 
         <!-- Distribution -->
         @if (r.distribution_notes && getDistributionItems(r.distribution_notes).length > 0) {
           <div class="modal-section">
-            <h3 class="modal-section__title">Distribution des notes</h3>
+            <h3 class="modal-section__title">{{ 'RAPPORT_ANALYTIC.MODAL_DIST_TITLE' | translate }}</h3>
             @for (item of getDistributionItems(r.distribution_notes); track item.label) {
               <div class="dist-row">
                 <span class="dist-label" [style.color]="item.color">{{ item.label }}</span>
@@ -274,7 +274,7 @@
         <div class="modal-qualitative">
           @if (r.points_forts.length > 0) {
             <div class="qual-block qual-block--success">
-              <h4 class="qual-block__title"><span class="material-icons" style="font-size:16px;vertical-align:middle">thumb_up</span> Points forts</h4>
+              <h4 class="qual-block__title"><span class="material-icons" style="font-size:16px;vertical-align:middle">thumb_up</span> {{ 'RAPPORT_ANALYTIC.MODAL_STRENGTHS_TITLE' | translate }}</h4>
               @for (p of r.points_forts; track p) {
                 <div class="qual-item">{{ p }}</div>
               }
@@ -282,7 +282,7 @@
           }
           @if (r.points_faibles.length > 0) {
             <div class="qual-block qual-block--warning">
-              <h4 class="qual-block__title"><span class="material-icons" style="font-size:16px;vertical-align:middle">warning</span> Points à améliorer</h4>
+              <h4 class="qual-block__title"><span class="material-icons" style="font-size:16px;vertical-align:middle">warning</span> {{ 'RAPPORT_ANALYTIC.MODAL_WEAKNESSES_TITLE' | translate }}</h4>
               @for (p of r.points_faibles; track p) {
                 <div class="qual-item">{{ p }}</div>
               }
@@ -293,7 +293,7 @@
         <!-- Recommandations -->
         @if (r.recommandations.length > 0) {
           <div class="modal-section">
-            <h3 class="modal-section__title"><span class="material-icons" style="font-size:16px;vertical-align:middle">lightbulb</span> Recommandations</h3>
+            <h3 class="modal-section__title"><span class="material-icons" style="font-size:16px;vertical-align:middle">lightbulb</span> {{ 'RAPPORT_ANALYTIC.MODAL_RECO_TITLE' | translate }}</h3>
             @for (rec of r.recommandations; track rec; let i = $index) {
               <div class="rec-item">
                 <span class="rec-num">{{ i + 1 }}</span>
@@ -306,17 +306,17 @@
         <!-- Matières détaillées -->
         @if (r.matieres.length > 0) {
           <div class="modal-section">
-            <h3 class="modal-section__title">Détail des matières</h3>
+            <h3 class="modal-section__title">{{ 'RAPPORT_ANALYTIC.MODAL_SUBJECTS_DETAIL_TITLE' | translate }}</h3>
             <div class="matieres-table-wrap">
               <table class="matieres-table">
                 <thead>
                   <tr>
-                    <th>Matière</th>
-                    <th>Note</th>
-                    <th>Sur</th>
+                    <th>{{ 'RAPPORT_ANALYTIC.MODAL_COL_SUBJECT' | translate }}</th>
+                    <th>{{ 'RAPPORT_ANALYTIC.MODAL_COL_NOTE' | translate }}</th>
+                    <th>{{ 'RAPPORT_ANALYTIC.MODAL_COL_SUR' | translate }}</th>
                     <th>/20</th>
-                    <th>Coeff.</th>
-                    <th>Semestre</th>
+                    <th>{{ 'RAPPORT_ANALYTIC.MODAL_COL_COEF' | translate }}</th>
+                    <th>{{ 'RAPPORT_ANALYTIC.MODAL_COL_SEMESTER' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -341,9 +341,9 @@
       </div><!-- /body -->
 
       <div class="modal-detail__footer">
-        <button class="btn btn--outline" (click)="closeModal()">Fermer</button>
+        <button class="btn btn--outline" (click)="closeModal()">{{ 'RAPPORT_ANALYTIC.MODAL_CLOSE' | translate }}</button>
         <a class="btn btn--primary" [routerLink]="['/dashboard-admin/rapports', r.id]">
-          Voir la page complète
+          {{ 'RAPPORT_ANALYTIC.MODAL_VIEW_FULL' | translate }}
         </a>
       </div>
 

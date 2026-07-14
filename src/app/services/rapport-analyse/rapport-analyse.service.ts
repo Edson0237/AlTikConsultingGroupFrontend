@@ -53,8 +53,16 @@ export interface RapportAnalyse {
   date_generation: string;
   // Matières détaillées
   matieres: Matiere[];
+  // Tableau comparatif probatoire / baccalauréat
+  matieres_combinees: MatiereCombinee[];
   // Filières suggérées par l'IA (score ±2)
   filieres_suggerees: FiliereSuggeree[];
+}
+
+export interface MatiereCombinee {
+  nom_matiere: string;
+  probatoire: Matiere | null;
+  baccalaureat: Matiere | null;
 }
 
 export interface FiliereSuggeree {

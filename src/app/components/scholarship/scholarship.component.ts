@@ -24,7 +24,7 @@ export interface Notification {
 
 export const STATUS_OPTIONS: { value: DossierStatus | ''; label: string }[] = [
   { value: '', label: 'SCHOLARSHIP.ALL_STATUSES' },
-  { value: 'brouillon', label: 'SCHOLARSHIP.COLUMN_BROUILLON' },
+  { value: 'en_attente_de_traitement', label: 'SCHOLARSHIP.COLUMN_EN_ATTENTE_DE_TRAITEMENT' },
   { value: 'en_cours', label: 'SCHOLARSHIP.COLUMN_EN_COURS' },
   { value: 'complete', label: 'SCHOLARSHIP.COLUMN_COMPLETE' },
   { value: 'valide', label: 'SCHOLARSHIP.COLUMN_VALIDE' },
@@ -69,7 +69,7 @@ export class ScholarshipComponent implements OnInit {
 
   // ── Colonnes ──────────────────────────────────────────────────
   readonly columns: KanbanColumn[] = [
-    { id: 'brouillon', label: 'Brouillon', color: '#94A3B8' },
+    { id: 'en_attente_de_traitement', label: 'En attente de traitement', color: '#94A3B8' },
     { id: 'en_cours', label: 'En cours', color: '#3B82F6' },
     { id: 'complete', label: 'Complet', color: '#0EA5E9' },
     { id: 'valide', label: 'Validé', color: '#10B981' },

@@ -112,6 +112,9 @@
           <div class="filiere-card__badges">
             <span class="badge-level">{{ ef.filiere_detail.niveau_display }}</span>
             <span class="badge-domain">{{ ef.filiere_detail.domaine_display }}</span>
+            <span class="badge-type" [class.badge-type--chinese]="ef.filiere_detail.type_choix === 'chinese_language'">
+              {{ ef.filiere_detail.type_choix_display }}
+            </span>
             <span class="badge-bourse-count" *ngIf="ef.bourses.length > 0">
               {{ ef.bourses.length }} {{ ef.bourses.length > 1 ? ('FILIERE_BOURSE_MANAGER.BOURSES' | translate) : ('FILIERE_BOURSE_MANAGER.BOURSE' | translate) }}
             </span>
@@ -388,7 +391,7 @@
             <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'nom')">{{ 'FILIERE_BOURSE_MANAGER.NAME_REQUIRED' | translate }}</span>
           </div>
 
-          <!-- Domaine + Niveau -->
+          <!-- Domaine + Niveau + Type de choix -->
           <div class="form__row">
             <div class="form__group">
               <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.DOMAINE_LABEL' | translate }} <span class="req">*</span></label>
@@ -411,6 +414,16 @@
                 </select>
               </div>
               <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'niveau')">{{ 'FILIERE_BOURSE_MANAGER.NIVEAU_REQUIRED' | translate }}</span>
+            </div>
+            <div class="form__group">
+              <label class="form__label">{{ 'FILIERE_BOURSE_MANAGER.TYPE_CHOIX_LABEL' | translate }} <span class="req">*</span></label>
+              <div class="form__select-wrap">
+                <select class="form__input form__select" formControlName="type_choix"
+                  [class.form__input--error]="isInvalid(createFiliereForm, 'type_choix')">
+                  <option *ngFor="let t of typeChoixOptionsWithLabels" [value]="t.value">{{ t.label }}</option>
+                </select>
+              </div>
+              <span class="form__error" *ngIf="isInvalid(createFiliereForm, 'type_choix')">{{ 'FILIERE_BOURSE_MANAGER.TYPE_CHOIX_REQUIRED' | translate }}</span>
             </div>
           </div>
 
@@ -936,7 +949,7 @@
         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="20 6 9 17 4 12"/>
       </svg>
-      Opération réussie !
+      {{ 'FILIERE_BOURSE_MANAGER.SUCCESS_MESSAGE' | translate }}
     </div>
     <div class="form__feedback form__feedback--error" *ngIf="modalError()">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"

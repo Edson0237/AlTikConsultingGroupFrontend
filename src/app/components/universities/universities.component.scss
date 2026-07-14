@@ -1,4 +1,6 @@
 // ── Tokens (harmonisés avec le reste de l'app) ───────────────────────────────
+@use 'sass:color';
+
 $blue:        #2563EB;
 $blue-light:  #EFF6FF;
 $blue-mid:    #DBEAFE;
@@ -173,7 +175,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     background: $blue;
     color: #fff;
     &:hover:not(:disabled) {
-      background: darken($blue, 6%);
+      background: color.adjust($blue, $lightness: -6%);
       box-shadow: 0 4px 14px rgba($blue, .4);
     }
   }
@@ -189,7 +191,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     background: $red;
     color: #fff;
     &:hover:not(:disabled) {
-      background: darken($red, 8%);
+      background: color.adjust($red, $lightness: -8%);
       box-shadow: 0 4px 14px rgba($red, .35);
     }
   }
@@ -449,7 +451,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   &--delete {
     background: $bg-card;
     color: $red;
-    &:hover { background: $red-light; border-color: lighten($red, 25%); transform: scale(1.08); }
+    &:hover { background: $red-light; border-color: color.adjust($red, $lightness: 25%); transform: scale(1.08); }
   }
 }
 
@@ -464,9 +466,9 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   letter-spacing: .03em;
   text-transform: uppercase;
 
-  &--actif    { background: $green-light;  color: darken($green, 10%);  }
+  &--actif    { background: $green-light;  color: color.adjust($green, $lightness: -10%);  }
   &--inactif  { background: #F3F4F6;       color: $text-muted;          }
-  &--suspendu { background: $orange-light; color: darken($orange, 15%); }
+  &--suspendu { background: $orange-light; color: color.adjust($orange, $lightness: -15%); }
 }
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
@@ -669,8 +671,8 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     font-weight: 500;
     margin-top: 0.25rem;
 
-    &--success { background: $green-light; color: darken($green, 12%); }
-    &--error   { background: $red-light;   color: darken($red, 10%);   }
+    &--success { background: $green-light; color: color.adjust($green, $lightness: -12%); }
+    &--error   { background: $red-light;   color: color.adjust($red, $lightness: -10%);   }
   }
 }
 
@@ -737,7 +739,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   animation: slideToast .25s ease;
   max-width: 380px;
 
-  &--success { background: darken($green, 2%); color: #fff; }
+  &--success { background: color.adjust($green, $lightness: -2%); color: #fff; }
   &--error   { background: $red;              color: #fff; }
 
   svg { flex-shrink: 0; }

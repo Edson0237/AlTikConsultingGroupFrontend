@@ -49,9 +49,13 @@
             [class.archived]="conv.is_archived"
             (click)="selectConversation(conv)"
           >
-            <div class="conv-avatar">
-              {{ getInitial(conv.other_user_name) }}
-            </div>
+            @if (conv.other_user_avatar) {
+              <img [src]="conv.other_user_avatar" class="conv-avatar conv-avatar--img" alt="" />
+            } @else {
+              <div class="conv-avatar">
+                {{ getInitial(conv.other_user_name) }}
+              </div>
+            }
             <div class="conv-info">
               <div class="conv-top-row">
                 <span class="conv-name">{{ conv.other_user_name }}</span>
@@ -97,7 +101,11 @@
             <path d="M19 12H5M12 19l-7-7 7-7"/>
           </svg>
         </button>
-        <div class="chat-header-avatar">{{ getInitial(conv.user_name) }}</div>
+        @if (conv.user_avatar) {
+          <img [src]="conv.user_avatar" class="chat-header-avatar chat-header-avatar--img" alt="" />
+        } @else {
+          <div class="chat-header-avatar">{{ getInitial(conv.user_name) }}</div>
+        }
         <div class="chat-header-info">
           <h3>{{ conv.user_name }}</h3>
           <p>{{ conv.user_email }}</p>
@@ -134,7 +142,11 @@
           @for (msg of messages(); track msg.id) {
             <div class="msg-row" [class.own]="isOwnMessage(msg)">
               @if (!isOwnMessage(msg)) {
-                <div class="msg-avatar">{{ getInitial(msg.sender_name) }}</div>
+                @if (msg.sender_avatar) {
+                  <img [src]="msg.sender_avatar" class="msg-avatar msg-avatar--img" alt="" />
+                } @else {
+                  <div class="msg-avatar">{{ getInitial(msg.sender_name) }}</div>
+                }
               }
               <div class="msg-bubble" [class.own]="isOwnMessage(msg)">
                 <p class="msg-text">{{ msg.content }}</p>
@@ -209,7 +221,11 @@
             <label>{{ 'MESSAGING.RECIPIENT_LABEL' | translate }}</label>
             @if (selectedUser(); as user) {
               <div class="selected-user">
-                <div class="selected-user-avatar">{{ getInitial(user.full_name) }}</div>
+                @if (user.avatar_url) {
+                  <img [src]="user.avatar_url" class="selected-user-avatar selected-user-avatar--img" alt="" />
+                } @else {
+                  <div class="selected-user-avatar">{{ getInitial(user.full_name) }}</div>
+                }
                 <div class="selected-user-info">
                   <strong>{{ user.full_name }}</strong>
                   <span>{{ user.email }}</span>
@@ -235,7 +251,11 @@
                 } @else {
                   @for (user of usersList(); track user.id) {
                     <div class="user-item" (click)="selectUser(user)">
-                      <div class="user-avatar">{{ getInitial(user.full_name) }}</div>
+                      @if (user.avatar_url) {
+                        <img [src]="user.avatar_url" class="user-avatar user-avatar--img" alt="" />
+                      } @else {
+                        <div class="user-avatar">{{ getInitial(user.full_name) }}</div>
+                      }
                       <div class="user-info">
                         <strong>{{ user.full_name }}</strong>
                         <span>{{ user.email }}</span>

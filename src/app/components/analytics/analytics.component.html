@@ -281,7 +281,7 @@
 
             <!-- Action -->
             <button class="rapport-action" (click)="openDetail(rapport); $event.stopPropagation()"
-              aria-label="Voir le détail">
+              aria-label="{{ 'ANALYTICS_EXTRA.VIEW_DETAIL_ARIA' | translate }}">
               <span class="material-icons">visibility</span>
             </button>
 
@@ -312,7 +312,7 @@
           </span>
         </div>
         <div>
-          <h2 class="modal-name">{{ selectedRapport()!.nom_complet || 'Étudiant' }}</h2>
+          <h2 class="modal-name">{{ selectedRapport()!.nom_complet || ('ANALYTICS_EXTRA.STUDENT_FALLBACK' | translate) }}</h2>
           <p class="modal-meta">{{ selectedRapport()!.etablissement || '—' }} · {{ selectedRapport()!.filiere || '—' }}
           </p>
         </div>
@@ -342,30 +342,30 @@
             ? (selectedRapport()!.moyenne_generale | number:'1.1-1')
             : '—') }}<span class="detail-score-denom">/20</span>
           </p>
-          <p class="detail-score-label">Score combiné</p>
+          <p class="detail-score-label">{{ 'ANALYTICS_EXTRA.MODAL_SCORE_COMBINE' | translate }}</p>
         </div>
         @if (selectedRapport()!.moyenne_probatoire !== null) {
         <div class="detail-score-card">
           <p class="detail-score-val">{{ selectedRapport()!.moyenne_probatoire | number:'1.1-1' }}<span
               class="detail-score-denom">/20</span></p>
-          <p class="detail-score-label">Moy. Probatoire</p>
+          <p class="detail-score-label">{{ 'ANALYTICS_EXTRA.MODAL_MOY_PROBATOIRE' | translate }}</p>
         </div>
         }
         @if (selectedRapport()!.moyenne_bac !== null) {
         <div class="detail-score-card">
           <p class="detail-score-val">{{ selectedRapport()!.moyenne_bac | number:'1.1-1' }}<span
               class="detail-score-denom">/20</span></p>
-          <p class="detail-score-label">Moy. Bac</p>
+          <p class="detail-score-label">{{ 'ANALYTICS_EXTRA.MODAL_MOY_BAC' | translate }}</p>
         </div>
         }
         <div class="detail-score-card">
           <p class="detail-score-val">{{ selectedRapport()!.matieres_validees }}/{{ selectedRapport()!.total_matieres }}
           </p>
-          <p class="detail-score-label">Matières validées</p>
+          <p class="detail-score-label">{{ 'ANALYTICS_EXTRA.MODAL_MATIERES_VALIDEES' | translate }}</p>
         </div>
         <div class="detail-score-card">
           <p class="detail-score-val">{{ (selectedRapport()!.score_confiance_extraction * 100) | number:'1.0-0' }}%</p>
-          <p class="detail-score-label">Confiance IA</p>
+          <p class="detail-score-label">{{ 'ANALYTICS_EXTRA.MODAL_CONFIANCE_IA' | translate }}</p>
         </div>
       </div>
 
@@ -373,7 +373,7 @@
       <div class="detail-confidence">
         <div class="detail-confidence-label">
           <span class="material-icons">auto_awesome</span>
-          Confiance d'extraction IA
+          {{ 'ANALYTICS_EXTRA.MODAL_CONFIANCE_EXTRACTION' | translate }}
           <strong>{{ (selectedRapport()!.score_confiance_extraction * 100) | number:'1.0-0' }}%</strong>
         </div>
         <div class="confidence-bar">
@@ -385,11 +385,11 @@
 
       <!-- Points forts / Points faibles -->
       <div class="detail-two-cols">
-        @if (selectedRapport()!.points_forts?.length) {
+        @if (selectedRapport()!.points_forts.length) {
         <div class="detail-section detail-section--green">
           <div class="detail-section-title">
             <span class="material-icons">thumb_up</span>
-            Points forts
+            {{ 'ANALYTICS_EXTRA.MODAL_STRENGTHS' | translate }}
           </div>
           <ul class="detail-list">
             @for (pt of selectedRapport()!.points_forts; track pt) {
@@ -398,11 +398,11 @@
           </ul>
         </div>
         }
-        @if (selectedRapport()!.points_faibles?.length) {
+        @if (selectedRapport()!.points_faibles.length) {
         <div class="detail-section detail-section--red">
           <div class="detail-section-title">
             <span class="material-icons">thumb_down</span>
-            Points faibles
+            {{ 'ANALYTICS_EXTRA.MODAL_WEAKNESSES' | translate }}
           </div>
           <ul class="detail-list">
             @for (pt of selectedRapport()!.points_faibles; track pt) {
@@ -414,11 +414,11 @@
       </div>
 
       <!-- Recommandations -->
-      @if (selectedRapport()!.recommandations?.length) {
+      @if (selectedRapport()!.recommandations.length) {
       <div class="detail-section detail-section--purple">
         <div class="detail-section-title">
           <span class="material-icons">lightbulb</span>
-          Recommandations IA
+          {{ 'ANALYTICS_EXTRA.MODAL_RECO' | translate }}
         </div>
         <ul class="detail-list">
           @for (rec of selectedRapport()!.recommandations; track rec) {
@@ -429,21 +429,21 @@
       }
 
       <!-- Matières -->
-      @if (selectedRapport()!.matieres?.length) {
+      @if (selectedRapport()!.matieres.length) {
       <div class="detail-matieres">
         <div class="detail-section-title">
           <span class="material-icons">menu_book</span>
-          Matières ({{ selectedRapport()!.matieres.length }})
+          {{ 'ANALYTICS_EXTRA.MODAL_MATIERES' | translate }} ({{ selectedRapport()!.matieres.length }})
         </div>
         <div class="matieres-table-wrap">
           <table class="matieres-table">
             <thead>
               <tr>
-                <th>Matière</th>
-                <th>Note</th>
-                <th>Note/20</th>
-                <th>Coeff.</th>
-                <th>Mention</th>
+                <th>{{ 'ANALYTICS_EXTRA.MODAL_COL_MATIERE' | translate }}</th>
+                <th>{{ 'ANALYTICS_EXTRA.MODAL_COL_NOTE' | translate }}</th>
+                <th>{{ 'ANALYTICS_EXTRA.MODAL_COL_NOTE20' | translate }}</th>
+                <th>{{ 'ANALYTICS_EXTRA.MODAL_COL_COEF' | translate }}</th>
+                <th>{{ 'ANALYTICS_EXTRA.MODAL_COL_MENTION' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -468,11 +468,11 @@
       }
 
       <!-- Filières suggérées -->
-      @if (selectedRapport()!.filieres_suggerees?.length) {
+      @if (selectedRapport()!.filieres_suggerees.length) {
       <div class="detail-filieres">
         <div class="detail-section-title">
           <span class="material-icons">school</span>
-          Filières suggérées par l'IA ({{ selectedRapport()!.filieres_suggerees.length }})
+          {{ 'ANALYTICS_EXTRA.MODAL_FILIERES' | translate }} ({{ selectedRapport()!.filieres_suggerees.length }})
         </div>
         <div class="filieres-grid">
           @for (f of selectedRapport()!.filieres_suggerees; track f.id) {
@@ -483,11 +483,11 @@
                 {{ f.ecart_score >= 0 ? '+' : '' }}{{ f.ecart_score | number:'1.1-1' }}
               </span>
             </div>
-            <p class="filiere-domaine">{{ f.domaine }} · {{ f.duree }} an(s)</p>
+            <p class="filiere-domaine">{{ f.domaine }} · {{ f.duree }} {{ 'ANALYTICS_EXTRA.MODAL_YEARS' | translate }}</p>
             @if (f.etablissement) {
             <p class="filiere-etab">{{ f.etablissement.nom }} — {{ f.etablissement.pays }}</p>
             }
-            <p class="filiere-score-min">Score min : {{ f.score_minimum | number:'1.1-1' }}/20</p>
+            <p class="filiere-score-min">{{ 'ANALYTICS_EXTRA.MODAL_SCORE_MIN' | translate }} {{ f.score_minimum | number:'1.1-1' }}/20</p>
           </div>
           }
         </div>
@@ -498,11 +498,11 @@
       <div class="modal-footer">
         <span class="modal-date">
           <span class="material-icons">schedule</span>
-          Généré {{ formatRelativeTime(selectedRapport()!.date_generation) }}
+          {{ 'ANALYTICS_EXTRA.MODAL_GENERATED' | translate }} {{ formatRelativeTime(selectedRapport()!.date_generation) }}
         </span>
         <button class="modal-view-full" (click)="viewRapport(selectedRapport()!)">
           <span class="material-icons">open_in_new</span>
-          Ouvrir le rapport complet
+          {{ 'ANALYTICS_EXTRA.MODAL_OPEN_FULL' | translate }}
         </button>
       </div>
 

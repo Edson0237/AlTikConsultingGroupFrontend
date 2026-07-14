@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
 
-export type DossierStatus = 'brouillon' | 'en_cours' | 'complete' | 'valide' | 'rejete';
+export type DossierStatus = 'en_attente_de_traitement' | 'en_cours' | 'complete' | 'valide' | 'rejete';
 export type TypeDossier = 'bourse_chine' | 'bourse_allemagne' | 'bourse_canada' | 'visa_affaires';
 
 export interface DocumentDossier {
@@ -26,6 +26,18 @@ export interface DocumentDossier {
   is_image: boolean;
   preview_url: string;
   download_url: string;
+}
+
+export interface ChoixFiliereAdmin {
+  id: number;
+  ordre_choix: number;
+  filiere: number;
+  filiere_nom: string;
+  filiere_domaine: string;
+  filiere_niveau: string;
+  etablissement_nom: string | null;
+  etablissement_pays: string | null;
+  date_creation: string;
 }
 
 export interface DossierAdmin {
@@ -61,6 +73,7 @@ export interface DossierAdmin {
   nombre_documents: number;
   est_bourse: boolean;
   documents: DocumentDossier[];
+  choix_filieres: ChoixFiliereAdmin[];
   score_calcule: number | null;
   score_source: string | null;
   analyse_en_cours: boolean;

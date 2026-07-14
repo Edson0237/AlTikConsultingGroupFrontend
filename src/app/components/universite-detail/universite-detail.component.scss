@@ -1,4 +1,6 @@
 // ── Tokens ────────────────────────────────────────────────────────────────────
+@use 'sass:color';
+
 $blue:        #2563EB;
 $blue-light:  #EFF6FF;
 $blue-mid:    #DBEAFE;
@@ -270,9 +272,9 @@ $shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
   letter-spacing: .03em;
   text-transform: uppercase;
 
-  &--actif    { background: $green-light;  color: darken($green, 10%);  }
+  &--actif    { background: $green-light;  color: color.adjust($green, $lightness: -10%);  }
   &--inactif  { background: #F3F4F6;       color: $text-muted;          }
-  &--suspendu { background: $orange-light; color: darken($orange, 15%); }
+  &--suspendu { background: $orange-light; color: color.adjust($orange, $lightness: -15%); }
 }
 
 .type-badge {
@@ -482,7 +484,7 @@ $shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
   }
   &__amount {
     background: $green-light;
-    color: darken($green, 8%);
+    color: color.adjust($green, $lightness: -8%);
     font-weight: 700;
     padding: 1px 8px;
     border-radius: 99px;
@@ -491,10 +493,10 @@ $shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
 }
 
 .bourse-badge {
-  &--ouverte  { background: $green-light;  color: darken($green, 12%);  }
+  &--ouverte  { background: $green-light;  color: color.adjust($green, $lightness: -12%);  }
   &--fermee   { background: #F3F4F6;       color: $text-muted;          }
   &--a-venir  { background: $blue-light;   color: $blue;                }
-  &--expiree  { background: $orange-light; color: darken($orange, 15%); }
+  &--expiree  { background: $orange-light; color: color.adjust($orange, $lightness: -15%); }
 }
 
 // ── Empty filieres ────────────────────────────────────────────────────────────

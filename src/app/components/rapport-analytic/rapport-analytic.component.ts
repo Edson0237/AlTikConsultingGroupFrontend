@@ -2,7 +2,7 @@ import { Component, AfterViewInit, OnDestroy, OnInit, inject, signal } from '@an
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 import { RapportAnalyseService, RapportAnalyse, StatsRapports } from '../../services/rapport-analyse/rapport-analyse.service';
 Chart.register(...registerables);
@@ -11,14 +11,14 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-rapport-analytic',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule],
   templateUrl: './rapport-analytic.component.html',
   styleUrl: './rapport-analytic.component.scss',
 })
 export class RapportAnalyticComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private translate      = inject(TranslateService);
   private rapportService = inject(RapportAnalyseService);
+  private translate        = inject(TranslateService);
 
   // ── Chart instances ────────────────────────────────────────────
   private pieChart?: Chart;
@@ -40,12 +40,12 @@ export class RapportAnalyticComponent implements OnInit, AfterViewInit, OnDestro
   readonly chartColors = ['#2563EB', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
 
   readonly niveaux = [
-    { value: '', label: 'Tous les niveaux' },
-    { value: 'excellent', label: 'Excellent' },
-    { value: 'tres_bon',  label: 'Très bon' },
-    { value: 'bon',       label: 'Bon' },
-    { value: 'moyen',     label: 'Moyen' },
-    { value: 'faible',    label: 'Faible' },
+    { value: '', label: 'RAPPORT_ANALYTIC.FILTER_ALL_LEVELS' },
+    { value: 'excellent', label: 'RAPPORT_ANALYTIC.LEVEL_EXCELLENT' },
+    { value: 'tres_bon',  label: 'RAPPORT_ANALYTIC.LEVEL_TRES_BON' },
+    { value: 'bon',       label: 'RAPPORT_ANALYTIC.LEVEL_BON' },
+    { value: 'moyen',     label: 'RAPPORT_ANALYTIC.LEVEL_MOYEN' },
+    { value: 'faible',    label: 'RAPPORT_ANALYTIC.LEVEL_FAIBLE' },
   ];
 
   // ── Lifecycle ──────────────────────────────────────────────────
@@ -119,7 +119,13 @@ export class RapportAnalyticComponent implements OnInit, AfterViewInit, OnDestro
 
     const s = this.stats();
     const rep = s?.repartition_niveaux ?? {};
-    const labels = ['Excellent', 'Très bon', 'Bon', 'Moyen', 'Faible'];
+    const labels = [
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_EXCELLENT'),
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_TRES_BON'),
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_BON'),
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_MOYEN'),
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_FAIBLE'),
+    ];
     const data   = [rep['excellent'] ?? 0, rep['tres_bon'] ?? 0, rep['bon'] ?? 0, rep['moyen'] ?? 0, rep['faible'] ?? 0];
 
     this.pieChart = new Chart(ctx, {
@@ -147,14 +153,20 @@ export class RapportAnalyticComponent implements OnInit, AfterViewInit, OnDestro
 
     const s = this.stats();
     const rep = s?.repartition_niveaux ?? {};
-    const labels = ['Excellent', 'Très bon', 'Bon', 'Moyen', 'Faible'];
+    const labels = [
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_EXCELLENT'),
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_TRES_BON'),
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_BON'),
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_MOYEN'),
+      this.translate.instant('RAPPORT_ANALYTIC.LEVEL_FAIBLE'),
+    ];
     const data   = [rep['excellent'] ?? 0, rep['tres_bon'] ?? 0, rep['bon'] ?? 0, rep['moyen'] ?? 0, rep['faible'] ?? 0];
 
     this.barChart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels,
-        datasets: [{ label: 'Nombre d\'analyses', data, backgroundColor: this.chartColors, borderRadius: 6, borderSkipped: false }],
+        datasets: [{ label: this.translate.instant('RAPPORT_ANALYTIC.CHART_DATA_ANALYSES'), data, backgroundColor: this.chartColors, borderRadius: 6, borderSkipped: false }],
       },
       options: {
         responsive: true,
@@ -175,8 +187,9 @@ export class RapportAnalyticComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getNiveauLabel(niveau: string): string {
-    const l: Record<string,string> = { excellent:'Excellent', tres_bon:'Très bon', bon:'Bon', moyen:'Moyen', faible:'Faible' };
-    return l[niveau] || niveau;
+    const key = `RAPPORT_ANALYTIC.LEVEL_${niveau.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : niveau;
   }
 
   getNoteColor(note: number | null): string {
@@ -189,16 +202,16 @@ export class RapportAnalyticComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getDistributionItems(dist: Record<string,number>): any[] {
-    const map: Record<string, { label: string; color: string }> = {
-      excellent:   { label: 'Excellent (≥16)',   color: '#22C55E' },
-      tres_bon:    { label: 'Très bon (≥14)',     color: '#3B82F6' },
-      bon:         { label: 'Bon (≥12)',           color: '#06B6D4' },
-      moyen:       { label: 'Moyen (≥10)',         color: '#F59E0B' },
-      insuffisant: { label: 'Insuffisant (<10)',   color: '#EF4444' },
+    const map: Record<string, { labelKey: string; color: string }> = {
+      excellent:   { labelKey: 'RAPPORT_DETAIL.DIST_EXCELLENT', color: '#22C55E' },
+      tres_bon:    { labelKey: 'RAPPORT_DETAIL.DIST_TRES_BON',  color: '#3B82F6' },
+      bon:         { labelKey: 'RAPPORT_DETAIL.DIST_BON',       color: '#06B6D4' },
+      moyen:       { labelKey: 'RAPPORT_DETAIL.DIST_MOYEN',       color: '#F59E0B' },
+      insuffisant: { labelKey: 'RAPPORT_DETAIL.DIST_INSUFFISANT', color: '#EF4444' },
     };
     const total = Object.values(dist).reduce((a, b) => a + b, 0);
     return Object.entries(dist).map(([k, count]) => ({
-      label: map[k]?.label || k,
+      label: this.translate.instant(map[k]?.labelKey || k),
       color: map[k]?.color || '#6B7280',
       count,
       percent: total > 0 ? (count / total) * 100 : 0,

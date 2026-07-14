@@ -1,4 +1,6 @@
 // ── Tokens charte graphique ───────────────────────────────────────────────────
+@use 'sass:color';
+
 $blue: #2563EB;
 $blue-light: #EFF6FF;
 $blue-mid: #DBEAFE;
@@ -250,7 +252,7 @@ $shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
     &:hover {
       background: $bg-page;
       color: $red;
-      border-color: lighten($red, 25%);
+      border-color: color.adjust($red, $lightness: 25%);
     }
   }
 }
@@ -433,7 +435,7 @@ $shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
 
   &--admin {
     background: $purple-light;
-    color: darken($purple, 5%);
+    color: color.adjust($purple, $lightness: -5%);
 
     .role-badge__dot {
       background: $purple;
@@ -451,7 +453,7 @@ $shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
 
   &--responsable {
     background: $orange-light;
-    color: darken($orange, 15%);
+    color: color.adjust($orange, $lightness: -15%);
 
     .role-badge__dot {
       background: $orange;
@@ -460,7 +462,7 @@ $shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
 
   &--etudiant {
     background: $green-light;
-    color: darken($green, 12%);
+    color: color.adjust($green, $lightness: -12%);
 
     .role-badge__dot {
       background: $green;
@@ -486,7 +488,7 @@ $shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
 
   &--active {
     background: $green-light;
-    color: darken($green, 12%);
+    color: color.adjust($green, $lightness: -12%);
 
     .status-badge__dot {
       background: $green;
@@ -615,7 +617,7 @@ $shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
     color: #fff;
 
     &:hover:not(:disabled) {
-      background: darken($red, 6%);
+      background: color.adjust($red, $lightness: -6%);
       box-shadow: 0 4px 14px rgba($red, .35);
     }
   }
@@ -625,7 +627,7 @@ $shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
     color: #fff;
 
     &:hover:not(:disabled) {
-      background: darken($orange, 8%);
+      background: color.adjust($orange, $lightness: -8%);
       box-shadow: 0 4px 14px rgba($orange, .35);
     }
   }
@@ -635,7 +637,7 @@ $shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
     color: #fff;
 
     &:hover:not(:disabled) {
-      background: darken($blue, 6%);
+      background: color.adjust($blue, $lightness: -6%);
       box-shadow: 0 4px 14px rgba($blue, .3);
     }
   }
@@ -931,7 +933,7 @@ $shadow-modal: 0 20px 60px rgba(0, 0, 0, .18);
 
   &--error {
     background: $red-light;
-    color: darken($red, 8%);
+    color: color.adjust($red, $lightness: -8%);
     border: 1px solid #fecaca;
   }
 }

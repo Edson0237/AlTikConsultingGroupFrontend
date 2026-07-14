@@ -52,7 +52,7 @@ export class DossierDetailComponent implements OnInit {
 
   // ── Status options ────────────────────────────────────────────
   readonly statusOptions = [
-    { value: 'brouillon', label: 'Brouillon', color: '#94A3B8' },
+    { value: 'en_attente_de_traitement', label: 'En attente de traitement', color: '#94A3B8' },
     { value: 'en_cours', label: 'En cours', color: '#3B82F6' },
     { value: 'complete', label: 'Complet', color: '#0EA5E9' },
     { value: 'valide', label: 'Validé', color: '#10B981' },
@@ -107,7 +107,7 @@ export class DossierDetailComponent implements OnInit {
         this.newStatus = dossier.status;
         this.notesInternes = dossier.notes_internes || '';
         this.conseillerAssigne = dossier.conseiller_assigne;
-        this.analyseEnCours.set(dossier.analyse_en_cours ?? false);
+        this.analyseEnCours.set(dossier.analyse_en_cours);
         this.isLoading.set(false);
       },
       error: (err) => {

@@ -1,4 +1,6 @@
 // ── Tokens charte graphique (mêmes valeurs que parametres.component.scss) ───
+@use 'sass:color';
+
 $blue: #2563EB;
 $blue-light: #EFF6FF;
 $green: #10B981;
@@ -402,7 +404,7 @@ $radius-md: 12px;
     transition: background 0.15s;
 
     &:hover {
-        background: darken($blue, 8%);
+        background: color.adjust($blue, $lightness: -8%);
     }
 
     svg {
@@ -638,14 +640,14 @@ $radius-md: 12px;
 
     &--success {
         background: $green-light;
-        color: darken($green, 12%);
-        border: 1px solid lighten($green, 35%);
+        color: color.adjust($green, $lightness: -12%);
+        border: 1px solid color.adjust($green, $lightness: 35%);
     }
 
     &--error {
         background: $red-light;
-        color: darken($red, 8%);
-        border: 1px solid lighten($red, 25%);
+        color: color.adjust($red, $lightness: -8%);
+        border: 1px solid color.adjust($red, $lightness: 25%);
     }
 }
 
@@ -773,7 +775,7 @@ $radius-md: 12px;
         color: #ffffff;
 
         &:hover:not(:disabled) {
-            background: darken($blue, 8%);
+            background: color.adjust($blue, $lightness: -8%);
         }
 
         &:disabled {

@@ -3,6 +3,8 @@
 // Design system : tokens partagés, UX soignée
 // ================================================================
 
+@use 'sass:color';
+
 // ── Tokens ──────────────────────────────────────────────────────
 $bg-page:       #F4F6FB;
 $bg-card:       #FFFFFF;
@@ -357,7 +359,7 @@ $transition:    0.18s ease;
 
 .summary-bar {
   height: 5px;
-  background: darken($bg-page, 2%);
+  background: color.adjust($bg-page, $lightness: -2%);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -508,7 +510,7 @@ $transition:    0.18s ease;
   &:last-child { border-bottom: none; }
 
   &:hover {
-    background: lighten($bg-page, 2%);
+    background: color.adjust($bg-page, $lightness: 2%);
 
     .rapport-action {
       background: $purple;
@@ -1058,5 +1060,5 @@ $transition:    0.18s ease;
 
   .material-icons { font-size: 16px; }
 
-  &:hover { background: darken($purple, 8%); box-shadow: $shadow-purple; }
+  &:hover { background: color.adjust($purple, $lightness: -8%); box-shadow: $shadow-purple; }
 }

@@ -13,8 +13,8 @@
         </svg>
       </div>
       <div>
-        <h1 class="dt-page__title">Dossiers Traités</h1>
-        <p class="dt-page__subtitle">Documents finalisés envoyés par les conseillers à l'administration</p>
+        <h1 class="dt-page__title">{{ 'DOSSIERS_TRAITES.TITLE' | translate }}</h1>
+        <p class="dt-page__subtitle">{{ 'DOSSIERS_TRAITES.SUBTITLE' | translate }}</p>
       </div>
     </div>
     <button class="btn btn--primary" (click)="openCreateModal()">
@@ -22,26 +22,26 @@
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
-      Nouveau dossier traité
+      {{ 'DOSSIERS_TRAITES.NEW_BUTTON' | translate }}
     </button>
   </div>
 
   <!-- ── Filtres ──────────────────────────────────────────────────── -->
   <div class="dt-page__filters">
     <select class="dt-select" (change)="onFilterChange($any($event.target).value)">
-      <option value="">Tous les statuts</option>
+      <option value="">{{ 'DOSSIERS_TRAITES.ALL_STATUSES' | translate }}</option>
       @for (s of statuts; track s.value) {
         <option [value]="s.value">{{ s.label }}</option>
       }
     </select>
-    <span class="dt-count">{{ filteredList().length }} dossier(s)</span>
+    <span class="dt-count">{{ filteredList().length }} {{ 'DOSSIERS_TRAITES.COUNT' | translate }}</span>
   </div>
 
   <!-- ── Tableau ──────────────────────────────────────────────────── -->
   @if (loading()) {
     <div class="dt-loading">
       <div class="spinner"></div>
-      <span>Chargement…</span>
+      <span>{{ 'DOSSIERS_TRAITES.LOADING' | translate }}</span>
     </div>
   } @else if (filteredList().length === 0) {
     <div class="dt-empty">
@@ -50,21 +50,21 @@
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
         <polyline points="14 2 14 8 20 8"/>
       </svg>
-      <p>Aucun dossier traité trouvé</p>
+      <p>{{ 'DOSSIERS_TRAITES.EMPTY' | translate }}</p>
     </div>
   } @else {
     <div class="dt-table-wrap">
       <table class="dt-table">
         <thead>
           <tr>
-            <th>Candidat</th>
-            <th>Titre</th>
-            <th>Conseiller</th>
-            <th>Établissement cible</th>
-            <th>Pièces</th>
-            <th>Statut</th>
-            <th>Date</th>
-            <th>Actions</th>
+            <th>{{ 'DOSSIERS_TRAITES.COL_CANDIDATE' | translate }}</th>
+            <th>{{ 'DOSSIERS_TRAITES.COL_TITLE' | translate }}</th>
+            <th>{{ 'DOSSIERS_TRAITES.COL_ADVISOR' | translate }}</th>
+            <th>{{ 'DOSSIERS_TRAITES.COL_INSTITUTION' | translate }}</th>
+            <th>{{ 'DOSSIERS_TRAITES.COL_PIECES' | translate }}</th>
+            <th>{{ 'DOSSIERS_TRAITES.COL_STATUS' | translate }}</th>
+            <th>{{ 'DOSSIERS_TRAITES.COL_DATE' | translate }}</th>
+            <th>{{ 'DOSSIERS_TRAITES.COL_ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -90,21 +90,21 @@
               <td class="dt-date">{{ dt.date_creation | date:'dd/MM/yy' }}</td>
               <td>
                 <div class="dt-actions">
-                  <button class="btn-icon btn-icon--view" title="Voir / Uploader" (click)="openDetail(dt)">
+                  <button class="btn-icon btn-icon--view" title="{{ 'DOSSIERS_TRAITES.VIEW_UPLOAD' | translate }}" (click)="openDetail(dt)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                       <circle cx="12" cy="12" r="3"/>
                     </svg>
                   </button>
-                  <button class="btn-icon btn-icon--edit" title="Changer statut" (click)="openStatusModal(dt)">
+                  <button class="btn-icon btn-icon--edit" title="{{ 'DOSSIERS_TRAITES.CHANGE_STATUS' | translate }}" (click)="openStatusModal(dt)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
                   </button>
-                  <button class="btn-icon btn-icon--delete" title="Supprimer" (click)="deleteDT(dt)">
+                  <button class="btn-icon btn-icon--delete" title="{{ 'DOSSIERS_TRAITES.DELETE' | translate }}" (click)="deleteDT(dt)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
@@ -130,7 +130,7 @@
   <div class="modal-overlay" (click)="closeCreateModal()">
     <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal__header">
-        <h2>Créer un dossier traité</h2>
+        <h2>{{ 'DOSSIERS_TRAITES.MODAL_CREATE_TITLE' | translate }}</h2>
         <button class="modal__close" (click)="closeCreateModal()">✕</button>
       </div>
       <div class="modal__body">
@@ -138,9 +138,9 @@
           <div class="alert alert--error">{{ createError() }}</div>
         }
 
-        <label class="form-label">Dossier candidat (complet / validé) *</label>
+        <label class="form-label">{{ 'DOSSIERS_TRAITES.DOSSIER_LABEL' | translate }}</label>
         <select class="form-input" [(ngModel)]="createForm.dossier_candidat">
-          <option value="0" disabled>-- Sélectionner un dossier --</option>
+          <option value="0" disabled>{{ 'DOSSIERS_TRAITES.SELECT_DOSSIER' | translate }}</option>
           @for (c of candidatsEligibles(); track c.id) {
             <option [value]="c.id">
               {{ c.prenom }} {{ c.nom }} — {{ c.type_dossier_display }} ({{ c.status_display }})
@@ -148,22 +148,22 @@
           }
         </select>
 
-        <label class="form-label">Titre *</label>
+        <label class="form-label">{{ 'DOSSIERS_TRAITES.TITLE_LABEL' | translate }}</label>
         <input class="form-input" type="text" [(ngModel)]="createForm.titre"
-          placeholder="ex: Dossier complet bourse Chine 2025" />
+          placeholder="{{ 'DOSSIERS_TRAITES.TITLE_PLACEHOLDER' | translate }}" />
 
-        <label class="form-label">Établissement cible</label>
+        <label class="form-label">{{ 'DOSSIERS_TRAITES.INSTITUTION_LABEL' | translate }}</label>
         <input class="form-input" type="text" [(ngModel)]="createForm.etablissement_cible"
-          placeholder="ex: Université de Pékin" />
+          placeholder="{{ 'DOSSIERS_TRAITES.INSTITUTION_PLACEHOLDER' | translate }}" />
 
-        <label class="form-label">Description / Notes</label>
+        <label class="form-label">{{ 'DOSSIERS_TRAITES.DESCRIPTION_LABEL' | translate }}</label>
         <textarea class="form-input form-textarea" [(ngModel)]="createForm.description"
-          placeholder="Notes ou contexte sur ce dossier traité…"></textarea>
+          placeholder="{{ 'DOSSIERS_TRAITES.DESCRIPTION_PLACEHOLDER' | translate }}"></textarea>
       </div>
       <div class="modal__footer">
-        <button class="btn btn--outline" (click)="closeCreateModal()">Annuler</button>
+        <button class="btn btn--outline" (click)="closeCreateModal()">{{ 'DOSSIERS_TRAITES.CANCEL' | translate }}</button>
         <button class="btn btn--primary" (click)="submitCreate()" [disabled]="createLoading()">
-          @if (createLoading()) { <span class="spinner-sm"></span> } Créer
+          @if (createLoading()) { <span class="spinner-sm"></span> } {{ 'DOSSIERS_TRAITES.CREATE' | translate }}
         </button>
       </div>
     </div>
@@ -189,24 +189,24 @@
         <!-- Infos -->
         <div class="dt-info-grid">
           <div class="dt-info-item">
-            <span class="dt-info-label">Statut</span>
+            <span class="dt-info-label">{{ 'DOSSIERS_TRAITES.DETAIL_STATUS' | translate }}</span>
             <span class="badge" [ngClass]="getBadgeClass(dt.statut)">{{ dt.statut_display }}</span>
           </div>
           <div class="dt-info-item">
-            <span class="dt-info-label">Conseiller</span>
+            <span class="dt-info-label">{{ 'DOSSIERS_TRAITES.DETAIL_ADVISOR' | translate }}</span>
             <span>{{ dt.conseiller_nom || '—' }}</span>
           </div>
           <div class="dt-info-item">
-            <span class="dt-info-label">Établissement cible</span>
+            <span class="dt-info-label">{{ 'DOSSIERS_TRAITES.DETAIL_INSTITUTION' | translate }}</span>
             <span>{{ dt.etablissement_cible || '—' }}</span>
           </div>
           <div class="dt-info-item">
-            <span class="dt-info-label">Créé le</span>
+            <span class="dt-info-label">{{ 'DOSSIERS_TRAITES.DETAIL_CREATED_ON' | translate }}</span>
             <span>{{ dt.date_creation | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
           @if (dt.notes_admin) {
             <div class="dt-info-item dt-info-item--full">
-              <span class="dt-info-label">Notes admin</span>
+              <span class="dt-info-label">{{ 'DOSSIERS_TRAITES.DETAIL_ADMIN_NOTES' | translate }}</span>
               <span>{{ dt.notes_admin }}</span>
             </div>
           }
@@ -214,12 +214,12 @@
 
         <!-- Pièces jointes existantes -->
         <h3 class="dt-section-title">
-          Documents joints
+          {{ 'DOSSIERS_TRAITES.DOCUMENTS_SECTION' | translate }}
           <span class="dt-pieces-badge">{{ dt.pieces_jointes.length }}</span>
         </h3>
 
         @if (dt.pieces_jointes.length === 0) {
-          <p class="dt-empty-pieces">Aucune pièce jointe pour le moment.</p>
+          <p class="dt-empty-pieces">{{ 'DOSSIERS_TRAITES.NO_PIECES' | translate }}</p>
         } @else {
           <div class="dt-pieces-list">
             @for (piece of dt.pieces_jointes; track piece.id) {
@@ -246,7 +246,7 @@
                 </div>
                 <div class="dt-piece-actions">
                   @if (piece.url_fichier) {
-                    <a [href]="piece.url_fichier" target="_blank" class="btn-icon btn-icon--view" title="Ouvrir">
+                    <a [href]="piece.url_fichier" target="_blank" class="btn-icon btn-icon--view" title="{{ 'DOSSIERS_TRAITES.OPEN' | translate }}">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -255,7 +255,7 @@
                       </svg>
                     </a>
                   }
-                  <button class="btn-icon btn-icon--delete" title="Supprimer" (click)="deletePiece(piece.id)">
+                  <button class="btn-icon btn-icon--delete" title="{{ 'DOSSIERS_TRAITES.DELETE' | translate }}" (click)="deletePiece(piece.id)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
@@ -268,13 +268,13 @@
         }
 
         <!-- Upload nouvelle pièce -->
-        <h3 class="dt-section-title" style="margin-top: 20px;">Ajouter un document</h3>
+        <h3 class="dt-section-title" style="margin-top: 20px;">{{ 'DOSSIERS_TRAITES.ADD_DOCUMENT_TITLE' | translate }}</h3>
         @if (uploadError()) {
           <div class="alert alert--error">{{ uploadError() }}</div>
         }
         <div class="dt-upload-form">
           <input class="form-input" type="text" [(ngModel)]="uploadLibelle"
-            placeholder="Libellé (ex: Diplôme traduit, Lettre de motivation…)" />
+            placeholder="{{ 'DOSSIERS_TRAITES.UPLOAD_LABEL_PLACEHOLDER' | translate }}" />
           <label class="dt-file-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -282,18 +282,18 @@
               <line x1="12" y1="12" x2="12" y2="21"/>
               <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
             </svg>
-            {{ uploadFile ? uploadFile.name : 'Choisir un fichier' }}
+            {{ uploadFile ? uploadFile.name : ('DOSSIERS_TRAITES.CHOOSE_FILE' | translate) }}
             <input type="file" class="dt-file-input" (change)="onFileSelected($event)"
               accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
           </label>
           <button class="btn btn--primary" (click)="uploadPiece()" [disabled]="uploadLoading()">
-            @if (uploadLoading()) { <span class="spinner-sm"></span> } Uploader
+            @if (uploadLoading()) { <span class="spinner-sm"></span> } {{ 'DOSSIERS_TRAITES.UPLOAD' | translate }}
           </button>
         </div>
 
       </div>
       <div class="modal__footer">
-        <button class="btn btn--outline" (click)="closeDetailModal()">Fermer</button>
+        <button class="btn btn--outline" (click)="closeDetailModal()">{{ 'DOSSIERS_TRAITES.CLOSE' | translate }}</button>
       </div>
     </div>
   </div>
@@ -306,29 +306,29 @@
   <div class="modal-overlay" (click)="closeStatusModal()">
     <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal__header">
-        <h2>Mettre à jour le statut</h2>
+        <h2>{{ 'DOSSIERS_TRAITES.STATUS_MODAL_TITLE' | translate }}</h2>
         <button class="modal__close" (click)="closeStatusModal()">✕</button>
       </div>
       <div class="modal__body">
-        <label class="form-label">Statut</label>
+        <label class="form-label">{{ 'DOSSIERS_TRAITES.STATUS_LABEL' | translate }}</label>
         <select class="form-input" [(ngModel)]="statusForm.statut">
           @for (s of statuts; track s.value) {
             <option [value]="s.value">{{ s.label }}</option>
           }
         </select>
 
-        <label class="form-label">Établissement cible</label>
+        <label class="form-label">{{ 'DOSSIERS_TRAITES.STATUS_INSTITUTION_LABEL' | translate }}</label>
         <input class="form-input" type="text" [(ngModel)]="statusForm.etablissement_cible"
-          placeholder="Établissement destinataire…" />
+          placeholder="{{ 'DOSSIERS_TRAITES.STATUS_INSTITUTION_PLACEHOLDER' | translate }}" />
 
-        <label class="form-label">Notes administrateur</label>
+        <label class="form-label">{{ 'DOSSIERS_TRAITES.STATUS_NOTES_LABEL' | translate }}</label>
         <textarea class="form-input form-textarea" [(ngModel)]="statusForm.notes_admin"
-          placeholder="Commentaire interne, instructions de transfert…"></textarea>
+          placeholder="{{ 'DOSSIERS_TRAITES.STATUS_NOTES_PLACEHOLDER' | translate }}"></textarea>
       </div>
       <div class="modal__footer">
-        <button class="btn btn--outline" (click)="closeStatusModal()">Annuler</button>
+        <button class="btn btn--outline" (click)="closeStatusModal()">{{ 'DOSSIERS_TRAITES.CANCEL' | translate }}</button>
         <button class="btn btn--primary" (click)="submitStatus()" [disabled]="statusLoading()">
-          @if (statusLoading()) { <span class="spinner-sm"></span> } Enregistrer
+          @if (statusLoading()) { <span class="spinner-sm"></span> } {{ 'DOSSIERS_TRAITES.SAVE' | translate }}
         </button>
       </div>
     </div>

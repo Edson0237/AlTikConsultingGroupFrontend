@@ -93,9 +93,9 @@ export class RapportDetailComponent implements OnInit {
   }
 
   getEcartLabel(ecart: number): string {
-    if (Math.abs(ecart) < 0.01) return 'Correspond exactement';
-    if (ecart > 0) return `+${ecart.toFixed(1)} pts au-dessus`;
-    return `${ecart.toFixed(1)} pts en-dessous`;
+    if (Math.abs(ecart) < 0.01) return this.translate.instant('RAPPORT_DETAIL_EXTRA.ECART_EXACT');
+    if (ecart > 0) return this.translate.instant('RAPPORT_DETAIL_EXTRA.ECART_ABOVE', { value: `+${ecart.toFixed(1)}` });
+    return this.translate.instant('RAPPORT_DETAIL_EXTRA.ECART_BELOW', { value: ecart.toFixed(1) });
   }
 
   getEcartColor(ecart: number): string {
@@ -107,13 +107,9 @@ export class RapportDetailComponent implements OnInit {
   }
 
   getNiveauDisplay(niveau: string): string {
-    const labels: { [key: string]: string } = {
-      'licence': 'Licence (Bac+3)',
-      'master': 'Master (Bac+5)',
-      'doctorat': 'Doctorat (Bac+8)',
-      'bts': 'BTS / DUT (Bac+2)',
-    };
-    return labels[niveau] || niveau;
+    const key = `RAPPORT_DETAIL_EXTRA.NIVEAU_${niveau.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : niveau;
   }
 
   goBack(): void {

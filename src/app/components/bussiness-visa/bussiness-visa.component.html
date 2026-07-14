@@ -6,7 +6,7 @@
             [class.success]="n.type==='success'" [class.error]="n.type==='error'" [class.info]="n.type==='info'"
             [class.hiding]="!n.show" (click)="dismissNotification(n.id)">
             <span class="notification-message">{{ n.message }}</span>
-            <button class="notification-close" aria-label="Fermer">
+            <button class="notification-close" aria-label="{{ 'BUSINESS_VISA.NOTIFICATION_CLOSE_ARIA' | translate }}">
                 <span class="material-icons" style="font-size:18px">close</span>
             </button>
         </div>
@@ -20,14 +20,14 @@
                     <span class="material-icons">work</span>
                 </div>
                 <div>
-                    <h1 class="scholarship__title">Visa d'affaires</h1>
-                    <p class="scholarship__subtitle">{{ filteredDossiers().length }} dossier(s) trouvé(s)</p>
+                    <h1 class="scholarship__title">{{ 'BUSINESS_VISA.TITLE' | translate }}</h1>
+                    <p class="scholarship__subtitle">{{ filteredDossiers().length }} {{ 'BUSINESS_VISA.SUBTITLE' | translate }}</p>
                 </div>
             </div>
 
             <button class="scholarship__filter-btn" (click)="openFilterModal()">
                 <span class="material-icons" style="font-size:16px">tune</span>
-                Filtres
+                {{ 'BUSINESS_VISA.FILTERS' | translate }}
             </button>
         </div>
 
@@ -35,9 +35,9 @@
         <div class="scholarship__search">
             <span class="material-icons scholarship__search-icon" style="font-size:16px">search</span>
             <input type="text" class="scholarship__search-input"
-                placeholder="Rechercher par nom, email, entreprise..."
+                placeholder="{{ 'BUSINESS_VISA.SEARCH_PLACEHOLDER' | translate }}"
                 [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
-                aria-label="Rechercher" />
+                attr.aria-label="{{ 'BUSINESS_VISA.SEARCH_ARIA' | translate }}" />
         </div>
     </div>
 
@@ -45,7 +45,7 @@
     @if (isLoading()) {
     <div class="loading-container">
         <div class="spinner"></div>
-        <p>Chargement des dossiers...</p>
+        <p>{{ 'BUSINESS_VISA.LOADING' | translate }}</p>
     </div>
     }
 
@@ -60,7 +60,7 @@
             <div class="kanban__col-header">
                 <div class="kanban__col-title">
                     <span class="kanban__col-dot" [style.background]="col.color"></span>
-                    <span class="kanban__col-label">{{ col.label }}</span>
+                    <span class="kanban__col-label">{{ col.label | translate }}</span>
                 </div>
                 <span class="kanban__col-count">{{ getColumnDossiers(col.id).length }}</span>
             </div>
@@ -70,13 +70,13 @@
                 @for (d of getColumnDossiers(col.id); track d.id) {
                 <div class="kanban-card" draggable="true" (dragstart)="onDragStart($event, d)"
                     (click)="openDossierDetail(d)"
-                    [attr.aria-label]="'Voir le dossier de ' + d.prenom + ' ' + d.nom" role="button"
+                    [attr.aria-label]="('BUSINESS_VISA.VIEW_DOSSIER' | translate) + ' ' + d.prenom + ' ' + d.nom" role="button"
                     tabindex="0" (keydown.enter)="openDossierDetail(d)">
 
                     <!-- Overlay "Voir détails" au survol -->
                     <div class="kanban-card__overlay">
                         <span class="material-icons" style="font-size:14px">open_in_new</span>
-                        <span>Voir le dossier</span>
+                        <span>{{ 'BUSINESS_VISA.VIEW_DOSSIER' | translate }}</span>
                     </div>
 
                     <!-- Card top: avatar + name -->
@@ -91,15 +91,15 @@
                     <!-- Details -->
                     <div class="kanban-card__details">
                         <div class="kanban-card__row">
-                            <span class="kanban-card__row-label">Entreprise</span>
+                            <span class="kanban-card__row-label">{{ 'BUSINESS_VISA.COMPANY_LABEL' | translate }}</span>
                             <span class="kanban-card__row-value">{{ d.entreprise || 'N/A' }}</span>
                         </div>
                         <div class="kanban-card__row">
-                            <span class="kanban-card__row-label">Poste</span>
+                            <span class="kanban-card__row-label">{{ 'BUSINESS_VISA.POSITION_LABEL' | translate }}</span>
                             <span class="kanban-card__row-value">{{ d.poste || 'N/A' }}</span>
                         </div>
                         <div class="kanban-card__row">
-                            <span class="kanban-card__row-label">Passeport</span>
+                            <span class="kanban-card__row-label">{{ 'BUSINESS_VISA.PASSPORT_LABEL' | translate }}</span>
                             <span class="kanban-card__row-value">{{ d.numero_passeport || 'N/A' }}</span>
                         </div>
                     </div>
@@ -108,7 +108,7 @@
                     <div class="kanban-card__footer">
                         <div class="kanban-card__docs">
                             <span class="material-icons kanban-card__doc-icon" style="font-size:12px">description</span>
-                            <span>{{ d.nombre_documents }} doc(s)</span>
+                            <span>{{ d.nombre_documents }} {{ 'BUSINESS_VISA.DOCUMENTS' | translate }}</span>
                         </div>
                         <span class="kanban-card__date">{{ formatDate(d.date_creation) }}</span>
                     </div>
@@ -117,7 +117,7 @@
 
                 <!-- Empty column placeholder -->
                 @if (getColumnDossiers(col.id).length === 0) {
-                <div class="kanban__empty">Aucun dossier</div>
+                <div class="kanban__empty">{{ 'BUSINESS_VISA.EMPTY_COLUMN' | translate }}</div>
                 }
             </div>
         </div>
@@ -127,7 +127,7 @@
 
     <!-- Modal Filtres -->
     <div class="modal-overlay" *ngIf="showFilterModal" (click)="closeFilterModal()" role="dialog" aria-modal="true"
-        aria-label="Filtres">
+        attr.aria-label="{{ 'BUSINESS_VISA.FILTERS' | translate }}">
         <div class="modal modal--sm" (click)="$event.stopPropagation()">
 
             <!-- Header -->
@@ -137,11 +137,11 @@
                         <span class="material-icons">tune</span>
                     </div>
                     <div>
-                        <h2 class="modal__title">Filtres</h2>
-                        <p class="modal__subtitle">Filtrer les demandes visa</p>
+                        <h2 class="modal__title">{{ 'BUSINESS_VISA.FILTER_MODAL_TITLE' | translate }}</h2>
+                        <p class="modal__subtitle">{{ 'BUSINESS_VISA.FILTER_MODAL_SUBTITLE' | translate }}</p>
                     </div>
                 </div>
-                <button class="modal__close" (click)="closeFilterModal()" aria-label="Fermer">
+                <button class="modal__close" (click)="closeFilterModal()" aria-label="{{ 'BUSINESS_VISA.CLOSE_ARIA' | translate }}">
                     <span class="material-icons" style="font-size:18px">close</span>
                 </button>
             </div>
@@ -150,10 +150,10 @@
             <div class="modal__body">
                 <form [formGroup]="filterForm">
                     <div class="form__group">
-                        <label class="form__label">Statut</label>
+                        <label class="form__label">{{ 'BUSINESS_VISA.STATUS_LABEL' | translate }}</label>
                         <div class="form__select-wrap">
                             <select class="form__input form__select" formControlName="status">
-                                <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+                                <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label | translate }}</option>
                             </select>
                         </div>
                     </div>
@@ -162,8 +162,8 @@
 
             <!-- Actions -->
             <div class="modal__actions">
-                <button type="button" class="btn btn--outline" (click)="resetFilters()">Réinitialiser</button>
-                <button type="button" class="btn btn--primary" (click)="applyFilters()">Appliquer</button>
+                <button type="button" class="btn btn--outline" (click)="resetFilters()">{{ 'BUSINESS_VISA.RESET' | translate }}</button>
+                <button type="button" class="btn btn--primary" (click)="applyFilters()">{{ 'BUSINESS_VISA.APPLY' | translate }}</button>
             </div>
 
         </div>

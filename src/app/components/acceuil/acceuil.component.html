@@ -134,16 +134,20 @@
             <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_DOSSIER_DISTRIBUTION' | translate }}</h2>
             <canvas id="pieChart" class="chart-canvas chart-canvas--pie"></canvas>
             <div class="pie-legend">
-                @for (item of data.charts.repartition_dossiers; track item.type_dossier) {
                 <div class="pie-legend__item">
-                    <span class="pie-legend__dot" [style.background]="this.TYPE_COLORS[item.type_dossier] || '#94A3B8'">
-                    </span>
+                    <span class="pie-legend__dot" style="background:#2563EB"></span>
                     <span class="pie-legend__label">
-                        {{ (this.TYPE_LABELS[item.type_dossier] | translate) || item.type_dossier }}
-                        ({{ item.count }})
+                        {{ 'ACCEUIL.BOURSES_ETUDES' | translate }}
+                        ({{ getTotalBourses(data.charts.repartition_dossiers) }})
                     </span>
                 </div>
-                }
+                <div class="pie-legend__item">
+                    <span class="pie-legend__dot" style="background:#6366F1"></span>
+                    <span class="pie-legend__label">
+                        {{ 'ACCEUIL.VISA_AFFAIRES' | translate }}
+                        ({{ getTotalVisa(data.charts.repartition_dossiers) }})
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -156,7 +160,17 @@
         </div>
 
         <div class="chart-card">
-            <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_RECENT_ACTIVITIES' | translate }}</h2>
+            <div class="chart-card__header">
+                <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_RECENT_ACTIVITIES' | translate }}</h2>
+                <a routerLink="/dashboard-admin/activite" class="btn-voir-plus">
+                    {{ 'ACCEUIL.VOIR_PLUS' | translate }}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </a>
+            </div>
             <div class="activities">
                 @for (a of data.recent_activities; track $index) {
                 <div class="activity">
@@ -182,7 +196,7 @@
         <div class="chart-card">
             <h2 class="chart-card__title">{{ 'ACCEUIL.CHART_DOSSIER_STATUSES' | translate }}</h2>
             <div class="status-list">
-                @for (status of ['brouillon', 'en_cours', 'complete', 'valide', 'rejete']; track status) {
+                @for (status of ['en_attente_de_traitement', 'en_cours', 'complete', 'valide', 'rejete']; track status) {
                 <div class="status-item">
                     <span class="status-dot" [class]="'status-dot--' + status"></span>
                     <span class="status-label">{{ getStatusLabel(status) }}</span>

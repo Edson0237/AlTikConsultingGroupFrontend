@@ -1,13 +1,14 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DossierTraiteService, DossierTraite, StatutDossierTraite } from '../../services/dossier-traite/dossier-traite.service';
 import { DossierService, DossierAdmin } from '../../services/dossier/dossier.service';
 
 @Component({
   selector: 'app-dossiers-traites',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './dossiers-traites.component.html',
   styleUrls: ['./dossiers-traites.component.scss'],
 })

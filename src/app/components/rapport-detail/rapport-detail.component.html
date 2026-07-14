@@ -194,7 +194,7 @@
                   <td class="matiere-note" [style.color]="getNoteColor(m.note_sur_20)">
                     {{ m.note_sur_20 !== null ? (m.note_sur_20 | number:'1.2-2') : '—' }}
                   </td>
-                  <td>{{ m.coefficient }}</td>
+                  <td>{{ m.coefficient | number:'1.1-2' }}</td>
                   <td>{{ m.semestre || '—' }}</td>
                   <td>
                     @if (m.mention) {
@@ -202,6 +202,48 @@
                     } @else {
                       —
                     }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── Tableau comparatif Probatoire / Baccalauréat ─── -->
+      <section class="report-section" *ngIf="rapport()!.matieres_combinees.length">
+        <h2 class="section-title">
+          <span class="material-icons">compare_arrows</span>
+          {{ 'RAPPORT_DETAIL_EXTRA.COMPARATIVE_TABLE_TITLE' | translate }} ({{ rapport()!.matieres_combinees.length }})
+        </h2>
+        <div class="matieres-table">
+          <table>
+            <thead>
+              <tr>
+                <th>{{ 'RAPPORT_DETAIL_EXTRA.COL_SUBJECT' | translate }}</th>
+                <th>{{ 'RAPPORT_DETAIL_EXTRA.COL_NOTE_PROBATOIRE' | translate }}</th>
+                <th>{{ 'RAPPORT_DETAIL_EXTRA.COL_COEF_PROBATOIRE' | translate }}</th>
+                <th>{{ 'RAPPORT_DETAIL_EXTRA.COL_NOTE_BAC' | translate }}</th>
+                <th>{{ 'RAPPORT_DETAIL_EXTRA.COL_COEF_BAC' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of rapport()!.matieres_combinees; track m.nom_matiere) {
+                <tr>
+                  <td class="matiere-name">{{ m.nom_matiere }}</td>
+                  <td class="matiere-note" [style.color]="getNoteColor(m.probatoire?.note_sur_20 ?? null)">
+                    {{ m.probatoire?.note !== null && m.probatoire?.note !== undefined ? (m.probatoire!.note | number:'1.2-2') : '—' }}
+                    <span *ngIf="m.probatoire?.note_sur && m.probatoire?.note !== null && m.probatoire?.note !== undefined">/{{ m.probatoire!.note_sur }}</span>
+                  </td>
+                  <td>
+                    {{ m.probatoire?.coefficient !== null && m.probatoire?.coefficient !== undefined ? (m.probatoire!.coefficient | number:'1.1-2') : '—' }}
+                  </td>
+                  <td class="matiere-note" [style.color]="getNoteColor(m.baccalaureat?.note_sur_20 ?? null)">
+                    {{ m.baccalaureat?.note !== null && m.baccalaureat?.note !== undefined ? (m.baccalaureat!.note | number:'1.2-2') : '—' }}
+                    <span *ngIf="m.baccalaureat?.note_sur && m.baccalaureat?.note !== null && m.baccalaureat?.note !== undefined">/{{ m.baccalaureat!.note_sur }}</span>
+                  </td>
+                  <td>
+                    {{ m.baccalaureat?.coefficient !== null && m.baccalaureat?.coefficient !== undefined ? (m.baccalaureat!.coefficient | number:'1.1-2') : '—' }}
                   </td>
                 </tr>
               }
@@ -270,18 +312,18 @@
         <section class="report-section">
           <h2 class="section-title">
             <span class="material-icons">school</span>
-            Filières suggérées
-            <span class="section-badge">Score ±2 pts</span>
+            {{ 'RAPPORT_DETAIL_EXTRA.SUGGESTED_FILIERES_TITLE' | translate }}
+            <span class="section-badge">{{ 'RAPPORT_DETAIL_EXTRA.SUGGESTED_FILIERES_BADGE' | translate }}</span>
           </h2>
 
           @if (r.score_combine !== null) {
             <div class="score-intervalle-info">
               <span class="material-icons">analytics</span>
-              Intervalle : <strong>{{ (r.score_combine - 2) | number:'1.1-1' }}/20</strong>
+              {{ 'RAPPORT_DETAIL_EXTRA.INTERVAL_LABEL' | translate }} <strong>{{ (r.score_combine - 2) | number:'1.1-1' }}/20</strong>
               &nbsp;→&nbsp;
               <strong>{{ (r.score_combine + 2) | number:'1.1-1' }}/20</strong>
               &nbsp;|&nbsp;
-              <strong>{{ r.filieres_suggerees.length }}</strong> filière(s) trouvée(s)
+              <strong>{{ r.filieres_suggerees.length }}</strong> {{ 'RAPPORT_DETAIL_EXTRA.FILIERES_FOUND' | translate }}
             </div>
           }
 
@@ -309,7 +351,7 @@
 
                 <div class="filiere-tags-admin">
                   <span class="tag-admin tag-niveau">{{ getNiveauDisplay(f.niveau) }}</span>
-                  <span class="tag-admin tag-duree">{{ f.duree }} an{{ f.duree > 1 ? 's' : '' }}</span>
+                  <span class="tag-admin tag-duree">{{ f.duree }} {{ f.duree > 1 ? ('RAPPORT_DETAIL_EXTRA.YEARS_PLURAL' | translate) : ('RAPPORT_DETAIL_EXTRA.YEARS_SINGULAR' | translate) }}</span>
                   @if (f.domaine) {
                     <span class="tag-admin tag-domaine">{{ f.domaine }}</span>
                   }
@@ -317,7 +359,7 @@
 
                 <div class="filiere-score-row">
                   <span class="material-icons">emoji_events</span>
-                  Score minimum requis : <strong>{{ f.score_minimum | number:'1.1-1' }}/20</strong>
+                  {{ 'RAPPORT_DETAIL_EXTRA.SCORE_MIN_REQUIRED' | translate }} <strong>{{ f.score_minimum | number:'1.1-1' }}/20</strong>
                 </div>
 
                 @if (f.description) {

@@ -6,15 +6,17 @@ import { environment } from '../../environments/environment';
 // ── Interfaces ────────────────────────────────────────────────────────────────
 
 export interface Filiere {
-  id:              number;
-  nom:             string;
-  domaine:         string;
-  domaine_display: string;
-  niveau:          string;
-  niveau_display:  string;
-  duree:           number;
-  description:     string;
-  debouches:       string;
+  id:                  number;
+  nom:                 string;
+  domaine:             string;
+  domaine_display:     string;
+  niveau:              string;
+  niveau_display:      string;
+  type_choix:          'obligatoire' | 'optionnel' | 'chinese_language';
+  type_choix_display:  string;
+  duree:               number;
+  description:         string;
+  debouches:           string;
 }
 
 export interface PeriodeBourse {
@@ -78,6 +80,7 @@ export interface FilierePayload {
   nom:          string;
   domaine:      string;
   niveau:       string;
+  type_choix?:  'obligatoire' | 'optionnel' | 'chinese_language';
   duree:        number;
   description?: string;
   debouches?:   string;

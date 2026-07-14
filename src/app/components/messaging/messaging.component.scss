@@ -148,6 +148,10 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+
+  &--img {
+    object-fit: cover;
+  }
 }
 
 .conv-info {
@@ -298,6 +302,10 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+
+  &--img {
+    object-fit: cover;
+  }
 }
 
 .chat-header-info {
@@ -385,6 +393,10 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+
+  &--img {
+    object-fit: cover;
+  }
 }
 
 .msg-bubble {
@@ -618,6 +630,10 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
+
+  &--img {
+    object-fit: cover;
+  }
 }
 
 .selected-user-info {
@@ -711,6 +727,10 @@
   font-weight: 700;
   font-size: 0.85rem;
   flex-shrink: 0;
+
+  &--img {
+    object-fit: cover;
+  }
 }
 
 .user-info {

@@ -4,7 +4,7 @@
   <div class="parametres__header">
     <div>
       <h1 class="parametres__title">{{ 'PARAMETRES.SYSTEM_TAB' | translate }}</h1>
-      <p class="parametres__subtitle">Gérez vos préférences et la configuration de la plateforme</p>
+      <p class="parametres__subtitle">{{ 'PARAMETRES.PAGE_SUBTITLE' | translate }}</p>
     </div>
     <button class="btn btn--primary" *ngIf="isAdmin" (click)="openAdvisorModal()">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -25,7 +25,7 @@
       <button *ngFor="let tab of tabs" class="tab-nav__item" [class.tab-nav__item--active]="activeTab === tab.id"
         (click)="activeTab = tab.id">
         <span class="tab-nav__icon" [innerHTML]="tab.icon" aria-hidden="true"></span>
-        <span>{{ tab.label }}</span>
+        <span>{{ tab.label | translate }}</span>
       </button>
     </aside>
 
@@ -42,7 +42,7 @@
           <div class="user-banner__info">
             <p class="user-banner__name">{{ userFullName }}</p>
             <p class="user-banner__email">{{ currentUser?.email }}</p>
-            <span class="user-banner__role-badge">{{ currentUser?.role | titlecase }}</span>
+            <span class="user-banner__role-badge">{{ getRoleLabel(currentUser?.role) }}</span>
           </div>
         </div>
         <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="form">
@@ -109,8 +109,8 @@
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
           </div>
-          <p class="access-denied__title">Accès restreint</p>
-          <p class="access-denied__text">Seul l'administrateur peut consulter et gérer les comptes utilisateurs.</p>
+          <p class="access-denied__title">{{ 'PARAMETRES.ACCESS_DENIED_TITLE' | translate }}</p>
+          <p class="access-denied__text">{{ 'PARAMETRES.ACCESS_DENIED_TEXT' | translate }}</p>
         </div>
 
         <!-- Contenu admin -->
@@ -118,20 +118,20 @@
           <div class="panel__header">
             <h2 class="panel__title--inline">{{ 'PARAMETRES.ADVISORS' | translate }}</h2>
             <button class="btn btn--outline btn--sm btn--icon-text" (click)="loadConseillers()"
-              [disabled]="conseillersLoading" title="Actualiser">
+              [disabled]="conseillersLoading" title="{{ 'PARAMETRES.REFRESH_TITLE' | translate }}">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                 stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
                 [class.spinning]="conseillersLoading">
                 <polyline points="23 4 23 10 17 10" />
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
               </svg>
-              {{ 'PARAMETRES.RESET' | translate }}
+              {{ 'PARAMETRES.REFRESH' | translate }}
             </button>
           </div>
 
           <div class="list-state" *ngIf="conseillersLoading">
             <span class="spinner spinner--blue"></span>
-            <span>Chargement des comptes…</span>
+            <span>{{ 'PARAMETRES_SYS.LOADING_ACCOUNTS' | translate }}</span>
           </div>
 
           <div class="form__feedback form__feedback--error" *ngIf="conseillersError && !conseillersLoading">
@@ -139,14 +139,14 @@
           </div>
 
           <div class="table-wrap" *ngIf="!conseillersLoading && !conseillersError">
-            <table class="settings-table" aria-label="Liste des conseillers">
+            <table class="settings-table" aria-label="{{ 'PARAMETRES.ADVISORS_LIST_ARIA' | translate }}">
               <thead class="settings-table__head">
                 <tr>
-                  <th class="settings-table__th">Utilisateur</th>
+                  <th class="settings-table__th">{{ 'PARAMETRES.COLUMN_USER' | translate }}</th>
                   <th class="settings-table__th">{{ 'PARAMETRES.PHONE' | translate }}</th>
                   <th class="settings-table__th">{{ 'PARAMETRES.ROLE' | translate }}</th>
-                  <th class="settings-table__th">Statut</th>
-                  <th class="settings-table__th">Actions</th>
+                  <th class="settings-table__th">{{ 'PARAMETRES.COLUMN_STATUS' | translate }}</th>
+                  <th class="settings-table__th">{{ 'PARAMETRES.COLUMN_ACTIONS' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -172,7 +172,7 @@
                       [class.role-badge--conseiller]="c.role === 'conseiller'"
                       [class.role-badge--responsable]="c.role === 'responsable'">
                       <span class="role-badge__dot"></span>
-                      {{ c.role | titlecase }}
+                      {{ getRoleLabel(c.role) }}
                     </span>
                   </td>
 
@@ -239,7 +239,7 @@
                       <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
-                    Aucun compte trouvé.
+                    {{ 'PARAMETRES.NO_ADVISORS' | translate }}
                   </td>
                 </tr>
               </tbody>
@@ -252,7 +252,7 @@
            SYSTÈME
       ═══════════════════════════════════════════════════════════ -->
       <div class="panel" *ngIf="activeTab === 'system'">
-        <h2 class="panel__title">Paramètres système</h2>
+        <h2 class="panel__title">{{ 'PARAMETRES_SYS.SYSTEM_TITLE' | translate }}</h2>
         <form [formGroup]="systemForm" (ngSubmit)="saveSystem()" class="form">
 
           <!-- Langue -->
@@ -267,19 +267,19 @@
 
           <!-- Fuseau horaire -->
           <div class="form__group">
-            <label class="form__label">Fuseau horaire</label>
+            <label class="form__label">{{ 'PARAMETRES.TIMEZONE_LABEL' | translate }}</label>
             <select class="form__input" formControlName="timezone">
-              <option value="utc0">UTC +00:00 (GMT)</option>
-              <option value="utc1">UTC +01:00 (Paris / Douala)</option>
-              <option value="utc8">UTC +08:00 (Pékin / Shanghai)</option>
-              <option value="utc4">UTC +04:00 (Dubaï)</option>
-              <option value="utcm5">UTC -05:00 (New York)</option>
+              <option value="utc0">{{ 'PARAMETRES.TIMEZONE_UTC0' | translate }}</option>
+              <option value="utc1">{{ 'PARAMETRES.TIMEZONE_UTC1' | translate }}</option>
+              <option value="utc8">{{ 'PARAMETRES.TIMEZONE_UTC8' | translate }}</option>
+              <option value="utc4">{{ 'PARAMETRES.TIMEZONE_UTC4' | translate }}</option>
+              <option value="utcm5">{{ 'PARAMETRES.TIMEZONE_UTCM5' | translate }}</option>
             </select>
           </div>
 
           <!-- Format de date — options dynamiques selon la langue sélectionnée -->
           <div class="form__group">
-            <label class="form__label">Format de date</label>
+            <label class="form__label">{{ 'PARAMETRES.DATE_FORMAT_LABEL' | translate }}</label>
             <select class="form__input" formControlName="dateFormat">
               <option *ngFor="let fmt of dateFormatOptions" [value]="fmt.value">
                 {{ fmt.label }} — {{ fmt.example }}
@@ -294,14 +294,14 @@
                 <line x1="8" y1="2" x2="8" y2="6" />
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
-              <span>Exemple&nbsp;:&nbsp;</span>
+              <span>{{ 'PARAMETRES.DATE_PREVIEW_LABEL' | translate }}&nbsp;</span>
               <strong>{{ dateFormatOptions | dateFormatExample : systemForm.value.dateFormat }}</strong>
             </div>
           </div>
 
           <div class="form__actions">
             <button type="button" class="btn btn--outline">{{ 'PARAMETRES.CANCEL' | translate }}</button>
-            <button type="submit" class="btn btn--primary">Sauvegarder</button>
+            <button type="submit" class="btn btn--primary">{{ 'PARAMETRES.SAVE_SYSTEM' | translate }}</button>
           </div>
         </form>
       </div>
@@ -348,7 +348,7 @@
         </div>
         <div>
           <h2 class="modal__title" id="modal-add-title">{{ 'PARAMETRES.ADD_ADVISOR' | translate }}</h2>
-          <p class="modal__subtitle">Rôle défini automatiquement : <strong>Conseiller</strong></p>
+          <p class="modal__subtitle">{{ 'PARAMETRES.ADVISOR_ROLE_AUTO' | translate }}</p>
         </div>
       </div>
       <button class="modal__close" (click)="closeAdvisorModal()" aria-label="{{ 'DOSSIER_DETAIL.CLOSE' | translate }}">
@@ -365,36 +365,36 @@
       <div class="form__group">
         <label class="form__label">{{ 'PARAMETRES.USERNAME' | translate }} <span class="form__required">*</span></label>
         <input type="text" class="form__input" formControlName="username"
-          [class.form__input--error]="isInvalid('username')" placeholder="ex: k.anderson" />
-        <span class="form__error" *ngIf="isInvalid('username')">Nom d'utilisateur requis</span>
+          [class.form__input--error]="isInvalid('username')" placeholder="{{ 'PARAMETRES.USERNAME_PLACEHOLDER' | translate }}" />
+        <span class="form__error" *ngIf="isInvalid('username')">{{ 'PARAMETRES.USERNAME_REQUIRED' | translate }}</span>
       </div>
 
       <div class="form__row">
         <div class="form__group">
           <label class="form__label">{{ 'PARAMETRES.FIRST_NAME' | translate }}</label>
-          <input type="text" class="form__input" formControlName="firstName" placeholder="ex: Konan" />
+          <input type="text" class="form__input" formControlName="firstName" placeholder="{{ 'PARAMETRES.FIRST_NAME_PLACEHOLDER' | translate }}" />
         </div>
         <div class="form__group">
           <label class="form__label">{{ 'PARAMETRES.LAST_NAME' | translate }}</label>
-          <input type="text" class="form__input" formControlName="lastName" placeholder="ex: Anderson" />
+          <input type="text" class="form__input" formControlName="lastName" placeholder="{{ 'PARAMETRES.LAST_NAME_PLACEHOLDER' | translate }}" />
         </div>
       </div>
 
       <div class="form__group">
         <label class="form__label">{{ 'PARAMETRES.EMAIL' | translate }} <span class="form__required">*</span></label>
         <input type="email" class="form__input" formControlName="email" [class.form__input--error]="isInvalid('email')"
-          placeholder="conseiller@altikconsulting.com" />
-        <span class="form__error" *ngIf="isInvalid('email')">Email valide requis</span>
+          placeholder="{{ 'PARAMETRES.EMAIL_PLACEHOLDER' | translate }}" />
+        <span class="form__error" *ngIf="isInvalid('email')">{{ 'PARAMETRES.EMAIL_REQUIRED' | translate }}</span>
       </div>
 
       <div class="form__row">
         <div class="form__group">
           <label class="form__label">{{ 'PARAMETRES.PHONE' | translate }}</label>
-          <input type="tel" class="form__input" formControlName="phone" placeholder="+237 6XX XXX XXX" />
+          <input type="tel" class="form__input" formControlName="phone" placeholder="{{ 'PARAMETRES.PHONE_PLACEHOLDER' | translate }}" />
         </div>
         <div class="form__group">
           <label class="form__label">{{ 'PARAMETRES.ADDRESS' | translate }}</label>
-          <input type="text" class="form__input" formControlName="adresse" placeholder="ex: Yaoundé, Cameroun" />
+          <input type="text" class="form__input" formControlName="adresse" placeholder="{{ 'PARAMETRES.ADDRESS_PLACEHOLDER' | translate }}" />
         </div>
       </div>
 
@@ -402,7 +402,7 @@
         <label class="form__label">{{ 'PARAMETRES.PASSWORD' | translate }} <span class="form__required">*</span></label>
         <div class="form__input-wrap">
           <input [type]="showAdvisorPassword ? 'text' : 'password'" class="form__input" formControlName="password"
-            [class.form__input--error]="isInvalid('password')" placeholder="8 caractères minimum" />
+            [class.form__input--error]="isInvalid('password')" placeholder="{{ 'PARAMETRES.PASSWORD_PLACEHOLDER' | translate }}" />
           <button type="button" class="form__pwd-toggle" (click)="showAdvisorPassword = !showAdvisorPassword">
             <svg *ngIf="!showAdvisorPassword" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
               viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round"
@@ -419,7 +419,7 @@
             </svg>
           </button>
         </div>
-        <span class="form__error" *ngIf="isInvalid('password')">8 caractères minimum requis</span>
+        <span class="form__error" *ngIf="isInvalid('password')">{{ 'PARAMETRES.PASSWORD_MIN_LENGTH' | translate }}</span>
       </div>
 
       <div class="form__group">
@@ -427,8 +427,8 @@
             class="form__required">*</span></label>
         <input type="password" class="form__input" formControlName="password2"
           [class.form__input--error]="isInvalid('password2') || passwordsMismatch"
-          placeholder="Répéter le mot de passe" />
-        <span class="form__error" *ngIf="isInvalid('password2')">Confirmation requise</span>
+          placeholder="{{ 'PARAMETRES.CONFIRM_PASSWORD_PLACEHOLDER' | translate }}" />
+        <span class="form__error" *ngIf="isInvalid('password2')">{{ 'PARAMETRES.CONFIRM_PASSWORD_REQUIRED' | translate }}</span>
         <span class="form__error" *ngIf="passwordsMismatch">{{ 'PARAMETRES.PASSWORDS_MISMATCH' | translate }}</span>
       </div>
 
@@ -497,37 +497,37 @@
       <div class="form__row">
         <div class="form__group">
           <label class="form__label">{{ 'PARAMETRES.FIRST_NAME' | translate }}</label>
-          <input type="text" class="form__input" formControlName="firstName" placeholder="ex: Marie" />
+          <input type="text" class="form__input" formControlName="firstName" placeholder="{{ 'PARAMETRES.FIRST_NAME_PLACEHOLDER' | translate }}" />
         </div>
         <div class="form__group">
           <label class="form__label">{{ 'PARAMETRES.LAST_NAME' | translate }}</label>
-          <input type="text" class="form__input" formControlName="lastName" placeholder="ex: Dupont" />
+          <input type="text" class="form__input" formControlName="lastName" placeholder="{{ 'PARAMETRES.LAST_NAME_PLACEHOLDER' | translate }}" />
         </div>
       </div>
 
       <div class="form__group">
         <label class="form__label">{{ 'PARAMETRES.EMAIL' | translate }} <span class="form__required">*</span></label>
         <input type="email" class="form__input" formControlName="email"
-          [class.form__input--error]="isEditInvalid('email')" placeholder="email@exemple.com" />
-        <span class="form__error" *ngIf="isEditInvalid('email')">Email valide requis</span>
+          [class.form__input--error]="isEditInvalid('email')" placeholder="{{ 'PARAMETRES.EMAIL_PLACEHOLDER' | translate }}" />
+        <span class="form__error" *ngIf="isEditInvalid('email')">{{ 'PARAMETRES.EMAIL_REQUIRED' | translate }}</span>
       </div>
 
       <div class="form__row">
         <div class="form__group">
-          <label class="form__label">Téléphone</label>
-          <input type="tel" class="form__input" formControlName="telephone" placeholder="+237 6XX XXX XXX" />
+          <label class="form__label">{{ 'PARAMETRES.PHONE' | translate }}</label>
+          <input type="tel" class="form__input" formControlName="telephone" placeholder="{{ 'PARAMETRES.PHONE_PLACEHOLDER' | translate }}" />
         </div>
         <div class="form__group">
-          <label class="form__label">Adresse</label>
-          <input type="text" class="form__input" formControlName="adresse" placeholder="ex: Yaoundé, Cameroun" />
+          <label class="form__label">{{ 'PARAMETRES.ADDRESS' | translate }}</label>
+          <input type="text" class="form__input" formControlName="adresse" placeholder="{{ 'PARAMETRES.ADDRESS_PLACEHOLDER' | translate }}" />
         </div>
       </div>
 
       <div class="form__group">
-        <label class="form__label">Rôle</label>
+        <label class="form__label">{{ 'PARAMETRES.ROLE' | translate }}</label>
         <div class="form__select-wrap">
           <select class="form__input form__select" formControlName="role">
-            <option *ngFor="let r of roleOptions" [value]="r.value">{{ r.label }}</option>
+            <option *ngFor="let r of roleOptions" [value]="r.value">{{ r.label | translate }}</option>
           </select>
         </div>
       </div>
@@ -537,7 +537,7 @@
           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        Profil mis à jour avec succès !
+        {{ 'PARAMETRES.ADVISOR_UPDATED' | translate }}
       </div>
       <div class="form__feedback form__feedback--error" *ngIf="editError">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c"
@@ -551,11 +551,11 @@
 
       <div class="modal__actions">
         <button type="button" class="btn btn--outline" (click)="closeEditModal()" [disabled]="editLoading">
-          Annuler
+          {{ 'PARAMETRES.CANCEL' | translate }}
         </button>
         <button type="submit" class="btn btn--primary" [disabled]="editLoading">
           <span class="btn__spinner" *ngIf="editLoading"></span>
-          <ng-container *ngIf="!editLoading">Enregistrer</ng-container>
+          <ng-container *ngIf="!editLoading">{{ 'PARAMETRES.SAVE' | translate }}</ng-container>
         </button>
       </div>
     </form>
@@ -581,16 +581,12 @@
         </svg>
       </div>
 
-      <h3 class="delete-confirm__title" id="modal-delete-title">Supprimer le compte ?</h3>
-      <p class="delete-confirm__text">
-        Vous êtes sur le point de supprimer le compte de
-        <strong>{{ getFullName(deleteTarget!) }}</strong>
-        (<span class="delete-confirm__username">@{{ deleteTarget?.username }}</span>).
-        Cette action est <strong>irréversible</strong>.
+      <h3 class="delete-confirm__title" id="modal-delete-title">{{ 'PARAMETRES.DELETE_ACCOUNT_TITLE' | translate }}</h3>
+      <p class="delete-confirm__text" [innerHTML]="'PARAMETRES.DELETE_ACCOUNT_TEXT' | translate : { name: getFullName(deleteTarget!), username: deleteTarget?.username }">
       </p>
 
       <div class="delete-confirm__actions">
-        <button class="btn btn--outline" (click)="cancelDelete()" [disabled]="deleteLoading">Annuler</button>
+        <button class="btn btn--outline" (click)="cancelDelete()" [disabled]="deleteLoading">{{ 'PARAMETRES.CANCEL' | translate }}</button>
         <button class="btn btn--danger" (click)="doDelete()" [disabled]="deleteLoading">
           <span class="btn__spinner btn__spinner--white" *ngIf="deleteLoading"></span>
           <ng-container *ngIf="!deleteLoading">
@@ -599,7 +595,7 @@
               <polyline points="3 6 5 6 21 6" />
               <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
             </svg>
-            Oui, supprimer
+            {{ 'PARAMETRES.DELETE_CONFIRM' | translate }}
           </ng-container>
         </button>
       </div>

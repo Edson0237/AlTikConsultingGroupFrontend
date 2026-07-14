@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, effect } from '@angular/core';
-import { CommonModule, TitleCasePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   FormsModule, ReactiveFormsModule,
   FormBuilder, FormGroup, Validators, AbstractControl,
 } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService, UserInfo, UpdateProfilePayload } from '../../services/auth/auth.service';
 import { ConseillerService, Conseiller, ConseillerUpdatePayload } from '../../services/conseiller/conseiller.service';
 import { LanguageService, AppLanguage, LanguageOption } from '../../services/language/language.service';
@@ -58,7 +58,7 @@ const DATE_FORMATS_BY_LANG: Record<AppLanguage, DateFormatOption[]> = {
 @Component({
   selector: 'app-parametres',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TitleCasePipe, TranslatePipe, DateFormatExamplePipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, DateFormatExamplePipe],
   templateUrl: './parametres.component.html',
   styleUrls: ['./parametres.component.scss'],
 })
@@ -68,6 +68,7 @@ export class ParametresComponent implements OnInit {
   private authService = inject(AuthService);
   private conseillerService = inject(ConseillerService);
   private languageService = inject(LanguageService);
+  private translate       = inject(TranslateService);
 
   // ── Langue ────────────────────────────────────────────────────
   readonly languageOptions: LanguageOption[] = this.languageService.options;
@@ -93,9 +94,9 @@ export class ParametresComponent implements OnInit {
   activeTab = 'profile';
 
   readonly tabs: Tab[] = [
-    { id: 'profile', label: 'Profil', icon: ICON.user },
-    { id: 'security', label: 'Sécurité', icon: ICON.shield },
-    { id: 'system', label: 'Système', icon: ICON.globe },
+    { id: 'profile', label: 'PARAMETRES.TAB_PROFILE', icon: ICON.user },
+    { id: 'security', label: 'PARAMETRES.TAB_SECURITY', icon: ICON.shield },
+    { id: 'system', label: 'PARAMETRES.TAB_SYSTEM', icon: ICON.globe },
   ];
 
   // ── Forms ─────────────────────────────────────────────────────
@@ -214,7 +215,7 @@ export class ParametresComponent implements OnInit {
       next: () => {
         this.profileLoading = false;
         this.profileSuccess = true;
-        this._showProfileToast('Profil mis à jour avec succès.', 'success');
+        this._showProfileToast(this.translate.instant('PARAMETRES.PROFILE_UPDATED'), 'success');
         setTimeout(() => { this.profileSuccess = false; }, 3000);
       },
       error: (err) => {
@@ -225,7 +226,7 @@ export class ParametresComponent implements OnInit {
             .map(([f, msgs]) => `${f} : ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
             .join(' | ');
         } else {
-          this.profileError = body?.detail ?? body?.message ?? 'Une erreur est survenue.';
+          this.profileError = body?.detail ?? body?.message ?? this.translate.instant('PARAMETRES.ERROR_OCCURRED');
         }
         this._showProfileToast(this.profileError, 'error');
       },
@@ -278,7 +279,7 @@ export class ParametresComponent implements OnInit {
         this.conseillersLoading = false;
       },
       error: (err) => {
-        this.conseillersError = err?.error?.detail ?? `Erreur ${err.status}.`;
+        this.conseillersError = err?.error?.detail ?? this.translate.instant('PARAMETRES.LOAD_ERROR', { status: err.status });
         this.conseillersLoading = false;
       },
     });
@@ -299,9 +300,10 @@ export class ParametresComponent implements OnInit {
         if (i !== -1) this.conseillers[i] = updated;
         this.togglingId = null;
         this._showToast(
-          newState
-            ? `Compte de ${this.getFullName(updated)} activé`
-            : `Compte de ${this.getFullName(updated)} désactivé`,
+          this.translate.instant(
+            newState ? 'PARAMETRES.ACCOUNT_ACTIVATED_WITH_NAME' : 'PARAMETRES.ACCOUNT_DEACTIVATED_WITH_NAME',
+            { name: this.getFullName(updated) }
+          ),
           'success'
         );
       },
@@ -309,7 +311,7 @@ export class ParametresComponent implements OnInit {
         if (idx !== -1)
           this.conseillers[idx] = { ...this.conseillers[idx], is_active: !newState, actif: !newState };
         this.togglingId = null;
-        this._showToast(err?.error?.detail ?? 'Erreur lors de la modification.', 'error');
+        this._showToast(err?.error?.detail ?? this.translate.instant('PARAMETRES.TOGGLE_ERROR'), 'error');
       },
     });
   }
@@ -333,11 +335,11 @@ export class ParametresComponent implements OnInit {
         this.deleteLoading = false;
         this.showDeleteConfirm = false;
         this.deleteTarget = null;
-        this._showToast(`Compte de ${nom} supprimé avec succès.`, 'success');
+        this._showToast(this.translate.instant('PARAMETRES.ACCOUNT_DELETED_WITH_NAME', { name: nom }), 'success');
       },
       error: (err) => {
         this.deleteLoading = false;
-        this._showToast(err?.error?.message ?? 'Erreur lors de la suppression.', 'error');
+        this._showToast(err?.error?.message ?? this.translate.instant('PARAMETRES.DELETE_ERROR'), 'error');
       },
     });
   }
@@ -350,8 +352,8 @@ export class ParametresComponent implements OnInit {
   editError = '';
 
   readonly roleOptions = [
-    { value: 'conseiller', label: 'Conseiller' },
-    { value: 'admin', label: 'Administrateur' },
+    { value: 'conseiller', label: 'PARAMETRES.ROLE_CONSEILLER' },
+    { value: 'admin', label: 'PARAMETRES.ROLE_ADMIN' },
   ];
 
   openEditModal(c: Conseiller): void {
@@ -404,7 +406,7 @@ export class ParametresComponent implements OnInit {
         if (i !== -1) this.conseillers[i] = updated;
         this.editLoading = false;
         this.editSuccess = true;
-        this._showToast(`Profil de ${this.getFullName(updated)} mis à jour.`, 'success');
+        this._showToast(this.translate.instant('PARAMETRES.ADVISOR_UPDATED_WITH_NAME', { name: this.getFullName(updated) }), 'success');
         setTimeout(() => this.closeEditModal(), 1200);
       },
       error: (err) => {
@@ -415,7 +417,7 @@ export class ParametresComponent implements OnInit {
             .map(([f, msgs]) => `${f} : ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
             .join(' | ');
         } else {
-          this.editError = body?.detail ?? body?.message ?? 'Une erreur est survenue.';
+          this.editError = body?.detail ?? body?.message ?? this.translate.instant('PARAMETRES.ERROR_OCCURRED');
         }
       },
     });
@@ -431,6 +433,13 @@ export class ParametresComponent implements OnInit {
   getFullName(c: Conseiller): string {
     const name = `${c.first_name} ${c.last_name}`.trim();
     return name || c.username;
+  }
+
+  getRoleLabel(role: string | undefined | null): string {
+    if (!role) return '';
+    const key = `USERS.ROLE_${role.toUpperCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : role;
   }
 
   // ── Système : langue + format de date ────────────────────────
@@ -529,7 +538,7 @@ export class ParametresComponent implements OnInit {
             .map(([field, msgs]) => `${field} : ${(msgs as string[]).join(', ')}`)
             .join(' | ');
         } else {
-          this.advisorError = errBody?.detail ?? 'Une erreur est survenue.';
+          this.advisorError = errBody?.detail ?? this.translate.instant('PARAMETRES.ERROR_OCCURRED');
         }
       },
     });

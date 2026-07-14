@@ -82,6 +82,12 @@ export const NIVEAU_OPTIONS = [
   { value: 'autre',    labelKey: 'FILIERE_BOURSE_MANAGER.NIVEAU_AUTRE'     },
 ];
 
+export const TYPE_CHOIX_OPTIONS = [
+  { value: 'obligatoire',    labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_CHOIX_OBLIGATOIRE'  },
+  { value: 'optionnel',      labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_CHOIX_OPTIONNEL'    },
+  { value: 'chinese_language', labelKey: 'FILIERE_BOURSE_MANAGER.TYPE_CHOIX_CHINESE'    },
+];
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 @Component({
@@ -149,6 +155,7 @@ export class FiliereBourseManagerComponent implements OnInit {
   readonly typeDocOptions      = TYPE_DOC_OPTIONS;
   readonly domaineOptions      = DOMAINE_OPTIONS;
   readonly niveauOptions       = NIVEAU_OPTIONS;
+  readonly typeChoixOptions    = TYPE_CHOIX_OPTIONS;
 
   // ── Translated options ──────────────────────────────────────────
   get typeBourseOptionsWithLabels() {
@@ -165,6 +172,9 @@ export class FiliereBourseManagerComponent implements OnInit {
   }
   get niveauOptionsWithLabels() {
     return this.niveauOptions.map(opt => ({ value: opt.value, label: this.translate.instant(opt.labelKey) }));
+  }
+  get typeChoixOptionsWithLabels() {
+    return this.typeChoixOptions.map(opt => ({ value: opt.value, label: this.translate.instant(opt.labelKey) }));
   }
 
   // ── Computed : filières du catalogue non encore associées ─────
@@ -263,6 +273,7 @@ export class FiliereBourseManagerComponent implements OnInit {
       nom:         raw.nom.trim(),
       domaine:     raw.domaine,
       niveau:      raw.niveau,
+      type_choix:  raw.type_choix || 'optionnel',
       duree:       +raw.duree,
       description: raw.description || '',
       debouches:   raw.debouches   || '',
@@ -644,6 +655,7 @@ export class FiliereBourseManagerComponent implements OnInit {
       nom:         ['', [Validators.required, Validators.minLength(2)]],
       domaine:     ['', Validators.required],
       niveau:      ['', Validators.required],
+      type_choix:  ['obligatoire', Validators.required],
       duree:       [2,  [Validators.required, Validators.min(1), Validators.max(10)]],
       description: [''],
       debouches:   [''],

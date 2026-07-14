@@ -1,4 +1,6 @@
 // ── Tokens ─────────────────────────────────────────────────────────────────────
+@use 'sass:color';
+
 $blue:         #2563EB;
 $blue-light:   #EFF6FF;
 $blue-mid:     #DBEAFE;
@@ -328,7 +330,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   &__amount {
     font-size: 0.8125rem;
     font-weight: 700;
-    color: darken($green, 8%);
+    color: color.adjust($green, $lightness: -8%);
     background: $green-light;
     padding: 2px 8px;
     border-radius: 99px;
@@ -375,10 +377,10 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   letter-spacing: .04em;
   flex-shrink: 0;
 
-  &.badge--ouverte { background: $green-light;  color: darken($green, 12%);  }
+  &.badge--ouverte { background: $green-light;  color: color.adjust($green, $lightness: -12%);  }
   &.badge--fermee  { background: #F3F4F6;        color: $text-muted;          }
   &.badge--a-venir { background: $blue-light;    color: $blue;                }
-  &.badge--expiree { background: $orange-light;  color: darken($orange, 15%); }
+  &.badge--expiree { background: $orange-light;  color: color.adjust($orange, $lightness: -15%); }
 }
 
 // ── Meta tag ───────────────────────────────────────────────────────────────────
@@ -508,11 +510,25 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   border-radius: 99px;
 }
 
+.badge-type {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: $orange-light;
+  color: color.adjust($orange, $lightness: -15%);
+  padding: 2px 7px;
+  border-radius: 99px;
+
+  &--chinese {
+    background: #F3E8FF;
+    color: #7C3AED;
+  }
+}
+
 .badge-bourse-count {
   font-size: 0.7rem;
   font-weight: 700;
   background: $green-light;
-  color: darken($green, 10%);
+  color: color.adjust($green, $lightness: -10%);
   padding: 2px 7px;
   border-radius: 99px;
 }
@@ -560,7 +576,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
 
   &--delete {
     color: $red;
-    &:hover { background: $red-light; border-color: lighten($red, 25%); }
+    &:hover { background: $red-light; border-color: color.adjust($red, $lightness: 25%); }
   }
 
   &--sm { padding: 0.25rem 0.5rem; }
@@ -593,7 +609,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     background: $blue;
     color: #fff;
     &:hover:not(:disabled) {
-      background: darken($blue, 6%);
+      background: color.adjust($blue, $lightness: -6%);
       box-shadow: 0 4px 14px rgba($blue, .4);
     }
   }
@@ -609,7 +625,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     background: $red;
     color: #fff;
     &:hover:not(:disabled) {
-      background: darken($red, 6%);
+      background: color.adjust($red, $lightness: -6%);
       box-shadow: 0 4px 14px rgba($red, .35);
     }
   }
@@ -699,8 +715,8 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
 
     &--blue   { background: $blue-light;   color: $blue;                  }
     &--teal   { background: $teal-light;   color: $teal;                  }
-    &--green  { background: $green-light;  color: darken($green, 8%);     }
-    &--orange { background: $orange-light; color: darken($orange, 10%);   }
+    &--green  { background: $green-light;  color: color.adjust($green, $lightness: -8%);     }
+    &--orange { background: $orange-light; color: color.adjust($orange, $lightness: -10%);   }
     &--purple { background: $purple-light; color: $purple;                }
   }
 
@@ -873,8 +889,8 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
     font-size: 0.875rem;
     font-weight: 500;
 
-    &--success { background: $green-light; color: darken($green, 12%); }
-    &--error   { background: $red-light;   color: darken($red, 10%);   }
+    &--success { background: $green-light; color: color.adjust($green, $lightness: -12%); }
+    &--error   { background: $red-light;   color: color.adjust($red, $lightness: -10%);   }
   }
 }
 
@@ -1010,7 +1026,7 @@ $shadow-modal:0 20px 60px rgba(0,0,0,.18);
   animation: slideToast .25s ease;
   max-width: 360px;
 
-  &--success { background: darken($green, 2%); color: #fff; }
+  &--success { background: color.adjust($green, $lightness: -2%); color: #fff; }
   &--error   { background: $red;              color: #fff; }
 }
 

@@ -1,4 +1,6 @@
 // ── Tokens charte graphique ───────────────────────────────────────────────────
+@use 'sass:color';
+
 $blue:         #2563EB;
 $blue-light:   #EFF6FF;
 $blue-mid:     #DBEAFE;
@@ -258,8 +260,8 @@ $shadow-modal: 0 20px 60px rgba(0,0,0,.18);
     font-size: .8125rem;
     font-weight: 500;
 
-    &--success { background: $green-light; color: darken($green, 12%); border: 1px solid #a7f3d0; }
-    &--error   { background: $red-light;   color: darken($red, 8%);    border: 1px solid #fecaca; }
+    &--success { background: $green-light; color: color.adjust($green, $lightness: -12%); border: 1px solid #a7f3d0; }
+    &--error   { background: $red-light;   color: color.adjust($red, $lightness: -8%);    border: 1px solid #fecaca; }
   }
 
   &__role-display {
@@ -323,7 +325,7 @@ $shadow-modal: 0 20px 60px rgba(0,0,0,.18);
     background: $blue;
     color: #fff;
     &:hover:not(:disabled) {
-      background: darken($blue, 6%);
+      background: color.adjust($blue, $lightness: -6%);
       box-shadow: 0 4px 14px rgba($blue, .35);
     }
   }
@@ -332,7 +334,7 @@ $shadow-modal: 0 20px 60px rgba(0,0,0,.18);
     background: $red;
     color: #fff;
     &:hover:not(:disabled) {
-      background: darken($red, 6%);
+      background: color.adjust($red, $lightness: -6%);
       box-shadow: 0 4px 14px rgba($red, .35);
     }
   }
@@ -454,7 +456,7 @@ $shadow-modal: 0 20px 60px rgba(0,0,0,.18);
 
   &--admin {
     background: $purple-light;
-    color: darken($purple, 5%);
+    color: color.adjust($purple, $lightness: -5%);
     .role-badge__dot { background: $purple; }
   }
 
@@ -466,7 +468,7 @@ $shadow-modal: 0 20px 60px rgba(0,0,0,.18);
 
   &--responsable {
     background: $orange-light;
-    color: darken($orange, 15%);
+    color: color.adjust($orange, $lightness: -15%);
     .role-badge__dot { background: $orange; }
   }
 }
@@ -485,7 +487,7 @@ $shadow-modal: 0 20px 60px rgba(0,0,0,.18);
 
   &--active {
     background: $green-light;
-    color: darken($green, 12%);
+    color: color.adjust($green, $lightness: -12%);
     .status-badge__dot { background: $green; }
   }
 
@@ -786,7 +788,7 @@ $shadow-modal: 0 20px 60px rgba(0,0,0,.18);
   animation: slideToast .2s ease;
 
   &--success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
-  &--error   { background: $red-light; color: darken($red, 8%); border: 1px solid #fecaca; }
+  &--error   { background: $red-light; color: color.adjust($red, $lightness: -8%); border: 1px solid #fecaca; }
 }
 
 // ── Loading ───────────────────────────────────────────────────────────────────

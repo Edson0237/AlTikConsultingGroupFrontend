@@ -24,6 +24,7 @@ export interface Message {
   sender: number;
   sender_name: string;
   sender_role: 'staff' | 'client';
+  sender_avatar: string | null;
   content: string;
   is_read: boolean;
   read_at: string | null;
@@ -37,9 +38,11 @@ export interface ConversationDetail {
   user: number;
   user_name: string;
   user_email: string;
+  user_avatar: string | null;
   staff: number;
   staff_name: string;
   staff_email: string;
+  staff_avatar: string | null;
   messages: Message[];
   created_at: string;
   updated_at: string;
@@ -53,6 +56,7 @@ export interface UserForConversation {
   last_name: string;
   full_name: string;
   role: string;
+  avatar_url: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
