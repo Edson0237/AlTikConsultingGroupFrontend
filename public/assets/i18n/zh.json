@@ -1,4 +1,8 @@
 {
+  "COMMON": {
+    "SAVE": "保存",
+    "CANCEL": "取消"
+  },
   "ACCEUIL": {
     "REFRESH": "刷新",
     "LOADING_STATS": "加载统计中...",
@@ -12,7 +16,7 @@
     "ACCURACY": "准确率",
     "KPI_MESSAGING": "消息",
     "MESSAGES": "消息",
-    "CHART_MONTHLY_EVOLUTION": "月度趋势（最近6个月）",
+    "CHART_MONTHLY_EVOLUTION": "周趋势（最近12周）",
     "CHART_DOSSIER_DISTRIBUTION": "文件分布",
     "CHART_TOP_FILIERES": "热门专业",
     "CHART_RECENT_ACTIVITIES": "最近活动",
@@ -202,6 +206,29 @@
     "ERROR_MESSAGE_REQUIRED": "请输入消息。",
     "ERROR_SEND": "发送时出错。"
   },
+  "NOTIFICATION_SETTINGS": {
+    "TITLE": "自动通知设置",
+    "OPEN": "自动设置",
+    "WELCOME_TAB": "欢迎消息",
+    "FEES_TAB": "服务费用",
+    "WELCOME_TITLE_LABEL": "消息标题",
+    "WELCOME_MESSAGE_LABEL": "消息内容",
+    "WELCOME_MESSAGE_HELP": "您可以使用 {first_name} 表示用户的名字。",
+    "WELCOME_TYPE_LABEL": "通知类型",
+    "FEES_INTRO": "以下费用会自动发送给新用户。",
+    "NO_FEES": "未配置费用。",
+    "ADD_FEE": "添加费用",
+    "EDIT_FEE": "编辑",
+    "DELETE_FEE": "删除",
+    "FEE_TITLE_LABEL": "标签",
+    "FEE_AMOUNT_LABEL": "金额",
+    "FEE_CURRENCY_LABEL": "货币",
+    "FEE_DESCRIPTION_LABEL": "描述",
+    "FEE_ORDER_LABEL": "顺序",
+    "FEE_ACTIVE_LABEL": "启用",
+    "SAVED": "已保存",
+    "ERROR": "保存时出错。"
+  },
   "MESSAGING": {
     "TITLE": "消息",
     "NEW_CONVERSATION": "新对话",
@@ -239,7 +266,7 @@
     "BADGE_LAST_5_MONTHS": "最近5个月",
     "CHART_TOP_DESTINATIONS": "热门目的地",
     "BADGE_DISTRIBUTION": "分布",
-    "AI_POWERED_BY": "由 Gemini 驱动",
+    "AI_POWERED_BY": "由 Groq 驱动",
     "AI_SECTION_TITLE": "成绩单 AI 分析",
     "AI_SECTION_SUBTITLE": "根据上传的文档自动生成详细报告",
     "MINI_STAT_TOTAL": "总计",

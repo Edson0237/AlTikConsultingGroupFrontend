@@ -1,0 +1,216 @@
+@use 'sass:color';
+
+// ── Tokens communs pour les barres de filtres ───────────────────────────────
+$filter-blue: #2563EB;
+$filter-blue-light: #EFF6FF;
+$filter-blue-mid: #DBEAFE;
+$filter-red: #EF4444;
+$filter-border: #E5E7EB;
+$filter-bg: #FFFFFF;
+$filter-page-bg: #F8F9FB;
+$filter-text-dark: #111827;
+$filter-text-mid: #374151;
+$filter-text-muted: #6B7280;
+$filter-text-subtle: #9CA3AF;
+$filter-radius: 8px;
+$filter-panel-radius: 12px;
+$filter-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+
+.altik-filters {
+  // ── Ligne d'actions : recherche + bouton filtres + refresh ───────────────
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    position: relative;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: .75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $filter-text-subtle;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    padding: .5625rem 1rem .5625rem 2.25rem;
+    background: $filter-bg;
+    border: 1px solid $filter-border;
+    border-radius: $filter-radius;
+    font-size: .875rem;
+    color: $filter-text-dark;
+    outline: none;
+    width: 260px;
+    transition: border-color .15s, box-shadow .15s;
+
+    &::placeholder {
+      color: $filter-text-subtle;
+    }
+
+    &:focus {
+      border-color: $filter-blue;
+      box-shadow: 0 0 0 3px rgba($filter-blue, .1);
+    }
+  }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .5625rem .875rem;
+    background: $filter-bg;
+    border: 1px solid $filter-border;
+    border-radius: $filter-radius;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $filter-text-mid;
+    cursor: pointer;
+    transition: background .12s, border-color .12s, box-shadow .15s;
+
+    &:hover {
+      background: $filter-page-bg;
+    }
+
+    &--active {
+      background: $filter-blue-light;
+      border-color: $filter-blue-mid;
+      color: $filter-blue;
+    }
+  }
+
+  &__refresh {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $filter-bg;
+    border: 1px solid $filter-border;
+    border-radius: $filter-radius;
+    color: $filter-text-muted;
+    cursor: pointer;
+    transition: background .12s, color .12s;
+
+    &:hover:not(:disabled) {
+      background: $filter-page-bg;
+      color: $filter-blue;
+    }
+
+    &:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+  }
+
+  // ── Panneau de filtres dépliable ────────────────────────────────────────
+  &__panel {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: $filter-bg;
+    border: 1px solid $filter-border;
+    border-radius: $filter-panel-radius;
+    box-shadow: $filter-shadow;
+    flex-wrap: wrap;
+    margin-top: .75rem;
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  &__label {
+    font-size: .75rem;
+    font-weight: 600;
+    color: $filter-text-mid;
+  }
+
+  &__select {
+    padding: .5rem .75rem;
+    background: $filter-bg;
+    border: 1px solid $filter-border;
+    border-radius: $filter-radius;
+    font-size: .875rem;
+    color: $filter-text-dark;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+
+    &:focus {
+      border-color: $filter-blue;
+      box-shadow: 0 0 0 3px rgba($filter-blue, .1);
+    }
+  }
+
+  &__reset {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .5rem .875rem;
+    background: transparent;
+    border: 1px solid $filter-border;
+    border-radius: $filter-radius;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $filter-text-muted;
+    cursor: pointer;
+    transition: background .12s, color .12s;
+    white-space: nowrap;
+
+    &:hover {
+      background: $filter-page-bg;
+      color: $filter-red;
+      border-color: color.adjust($filter-red, $lightness: 25%);
+    }
+  }
+
+  // ── Variante compacte pour les chips de filtres ─────────────────────────
+  &__chips {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+    padding: .75rem 1rem;
+    background: $filter-bg;
+    border: 1px solid $filter-border;
+    border-radius: $filter-panel-radius;
+    box-shadow: $filter-shadow;
+  }
+
+  &__chip {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .45rem .75rem;
+    background: $filter-bg;
+    border: 1px solid $filter-border;
+    border-radius: $filter-radius;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: $filter-text-mid;
+    cursor: pointer;
+    transition: background .12s, border-color .12s, color .12s;
+
+    &:hover {
+      background: $filter-page-bg;
+    }
+
+    &--active {
+      background: $filter-blue-light;
+      border-color: $filter-blue-mid;
+      color: $filter-blue;
+    }
+  }
+}

@@ -5,13 +5,14 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { NotificationAdminService, NotificationItem, Conseiller, NotificationUser } from '../../services/notification-admin/notification-admin.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { NotificationCounterService } from '../../services/notification/notification-counter.service';
+import { NotificationSettingsComponent } from '../notification-settings/notification-settings.component';
 
 export type NotificationType = 'info' | 'success' | 'warning' | 'error';
 
 @Component({
   selector: 'app-notification',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, NotificationSettingsComponent],
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.scss',
 })
@@ -31,6 +32,7 @@ export class NotificationComponent implements OnInit {
 
   // ── Modal admin ─────────────────────────────────────────────────
   showModal = signal(false);
+  showSettingsModal = signal(false);
   recipientMode = signal<'conseillers' | 'candidats'>('conseillers');
   conseillers = signal<Conseiller[]>([]);
   users = signal<NotificationUser[]>([]);
@@ -140,6 +142,14 @@ export class NotificationComponent implements OnInit {
   closeModal(): void {
     this.showModal.set(false);
     this.resetModal();
+  }
+
+  openSettingsModal(): void {
+    this.showSettingsModal.set(true);
+  }
+
+  closeSettingsModal(): void {
+    this.showSettingsModal.set(false);
   }
 
   resetModal(): void {

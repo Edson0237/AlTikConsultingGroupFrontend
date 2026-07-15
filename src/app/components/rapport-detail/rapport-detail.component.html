@@ -232,15 +232,15 @@
                 <tr>
                   <td class="matiere-name">{{ m.nom_matiere }}</td>
                   <td class="matiere-note" [style.color]="getNoteColor(m.probatoire?.note_sur_20 ?? null)">
-                    {{ m.probatoire?.note !== null && m.probatoire?.note !== undefined ? (m.probatoire!.note | number:'1.2-2') : '—' }}
-                    <span *ngIf="m.probatoire?.note_sur && m.probatoire?.note !== null && m.probatoire?.note !== undefined">/{{ m.probatoire!.note_sur }}</span>
+                    {{ m.probatoire?.note_sur_20 !== null && m.probatoire?.note_sur_20 !== undefined ? (m.probatoire!.note_sur_20 | number:'1.2-2') : '—' }}
+                    <span *ngIf="m.probatoire?.note_sur_20 !== null && m.probatoire?.note_sur_20 !== undefined">/20</span>
                   </td>
                   <td>
                     {{ m.probatoire?.coefficient !== null && m.probatoire?.coefficient !== undefined ? (m.probatoire!.coefficient | number:'1.1-2') : '—' }}
                   </td>
                   <td class="matiere-note" [style.color]="getNoteColor(m.baccalaureat?.note_sur_20 ?? null)">
-                    {{ m.baccalaureat?.note !== null && m.baccalaureat?.note !== undefined ? (m.baccalaureat!.note | number:'1.2-2') : '—' }}
-                    <span *ngIf="m.baccalaureat?.note_sur && m.baccalaureat?.note !== null && m.baccalaureat?.note !== undefined">/{{ m.baccalaureat!.note_sur }}</span>
+                    {{ m.baccalaureat?.note_sur_20 !== null && m.baccalaureat?.note_sur_20 !== undefined ? (m.baccalaureat!.note_sur_20 | number:'1.2-2') : '—' }}
+                    <span *ngIf="m.baccalaureat?.note_sur_20 !== null && m.baccalaureat?.note_sur_20 !== undefined">/20</span>
                   </td>
                   <td>
                     {{ m.baccalaureat?.coefficient !== null && m.baccalaureat?.coefficient !== undefined ? (m.baccalaureat!.coefficient | number:'1.1-2') : '—' }}

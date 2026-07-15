@@ -26,9 +26,9 @@ export interface DashboardStats {
       unread_notifications: number;
     };
     charts: {
-      evolution_dossiers: Array<{ month: string; count: number }>;
-      evolution_users: Array<{ month: string; count: number }>;
-      evolution_documents: Array<{ month: string; count: number }>;
+      evolution_dossiers: Array<{ week: string; count: number }>;
+      evolution_users: Array<{ week: string; count: number }>;
+      evolution_documents: Array<{ week: string; count: number }>;
       repartition_dossiers: Array<{ type_dossier: string; count: number }>;
       top_filieres: Array<{ nom_filiere: string; count: number }>;
       documents_par_type: Array<{ type_document: string; count: number }>;

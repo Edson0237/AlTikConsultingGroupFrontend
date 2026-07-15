@@ -1,4 +1,8 @@
 {
+  "COMMON": {
+    "SAVE": "Enregistrer",
+    "CANCEL": "Annuler"
+  },
   "ACCEUIL": {
     "REFRESH": "Actualiser",
     "LOADING_STATS": "Chargement des statistiques...",
@@ -12,7 +16,7 @@
     "ACCURACY": "précision",
     "KPI_MESSAGING": "Messagerie",
     "MESSAGES": "messages",
-    "CHART_MONTHLY_EVOLUTION": "Évolution mensuelle (6 derniers mois)",
+    "CHART_MONTHLY_EVOLUTION": "Évolution hebdomadaire (12 dernières semaines)",
     "CHART_DOSSIER_DISTRIBUTION": "Répartition des dossiers",
     "CHART_TOP_FILIERES": "Top Filières",
     "CHART_RECENT_ACTIVITIES": "Activités récentes",
@@ -262,6 +266,29 @@
     "ERROR_MESSAGE_REQUIRED": "Veuillez saisir un message.",
     "ERROR_SEND": "Erreur lors de l'envoi."
   },
+  "NOTIFICATION_SETTINGS": {
+    "TITLE": "Paramètres des notifications automatiques",
+    "OPEN": "Paramètres automatiques",
+    "WELCOME_TAB": "Message de bienvenue",
+    "FEES_TAB": "Frais de service",
+    "WELCOME_TITLE_LABEL": "Titre du message",
+    "WELCOME_MESSAGE_LABEL": "Contenu du message",
+    "WELCOME_MESSAGE_HELP": "Vous pouvez utiliser {first_name} pour le prénom de l'utilisateur.",
+    "WELCOME_TYPE_LABEL": "Type de notification",
+    "FEES_INTRO": "Les frais ci-dessous sont envoyés automatiquement aux nouveaux utilisateurs.",
+    "NO_FEES": "Aucun frais configuré.",
+    "ADD_FEE": "Ajouter un frais",
+    "EDIT_FEE": "Modifier",
+    "DELETE_FEE": "Supprimer",
+    "FEE_TITLE_LABEL": "Libellé",
+    "FEE_AMOUNT_LABEL": "Montant",
+    "FEE_CURRENCY_LABEL": "Devise",
+    "FEE_DESCRIPTION_LABEL": "Description",
+    "FEE_ORDER_LABEL": "Ordre",
+    "FEE_ACTIVE_LABEL": "Actif",
+    "SAVED": "Modifications enregistrées",
+    "ERROR": "Erreur lors de l'enregistrement."
+  },
   "MESSAGING": {
     "TITLE": "Messagerie",
     "NEW_CONVERSATION": "Nouvelle conversation",
@@ -299,7 +326,7 @@
     "BADGE_LAST_5_MONTHS": "5 derniers mois",
     "CHART_TOP_DESTINATIONS": "Top destinations",
     "BADGE_DISTRIBUTION": "Répartition",
-    "AI_POWERED_BY": "Alimenté par Gemini",
+    "AI_POWERED_BY": "Alimenté par Groq",
     "AI_SECTION_TITLE": "Analyses IA des relevés de notes",
     "AI_SECTION_SUBTITLE": "Rapports détaillés générés automatiquement à partir des documents uploadés",
     "MINI_STAT_TOTAL": "Total",

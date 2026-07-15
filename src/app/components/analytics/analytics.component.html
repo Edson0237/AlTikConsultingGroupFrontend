@@ -1,23 +1,6 @@
 <div class="analytics-wrapper">
   <div class="analytics-page">
 
-    <!-- ── En-tête ─────────────────────────────────── -->
-    <div class="page-header">
-      <div class="page-header-text">
-        <h1 class="page-title">
-          <span class="title-icon">
-            <span class="material-icons">trending_up</span>
-          </span>
-          {{ 'ANALYTICS.TITLE' | translate }}
-        </h1>
-        <p class="page-subtitle">{{ 'ANALYTICS.SUBTITLE' | translate }}</p>
-      </div>
-      <button class="refresh-btn" (click)="loadRapports()" [disabled]="loading()">
-        <span class="material-icons" [class.spinning]="loading()">refresh</span>
-        {{ 'ANALYTICS.REFRESH' | translate }}
-      </button>
-    </div>
-
     <!-- ════════════════════════════════════════════════
          SECTION : Analyses IA
     ════════════════════════════════════════════════════ -->
@@ -32,6 +15,12 @@
           </div>
           <h2 class="section-title">{{ 'ANALYTICS.AI_SECTION_TITLE' | translate }}</h2>
           <p class="section-subtitle">{{ 'ANALYTICS.AI_SECTION_SUBTITLE' | translate }}</p>
+        </div>
+        <div class="section-header-right">
+          <button class="refresh-btn" (click)="loadRapports()" [disabled]="loading()">
+            <span class="material-icons" [class.spinning]="loading()">refresh</span>
+            {{ 'ANALYTICS.REFRESH' | translate }}
+          </button>
         </div>
       </div>
 

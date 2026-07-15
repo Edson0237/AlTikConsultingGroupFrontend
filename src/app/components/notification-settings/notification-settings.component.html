@@ -1,0 +1,154 @@
+<div class="settings-modal" (click)="close()">
+  <div class="settings-card" (click)="$event.stopPropagation()">
+    <div class="settings-card__header">
+      <h2 class="settings-card__title">{{ 'NOTIFICATION_SETTINGS.TITLE' | translate }}</h2>
+      <button class="settings-card__close" (click)="close()" aria-label="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="settings-tabs">
+      <button class="settings-tabs__btn" [class.active]="activeTab() === 'welcome'" (click)="setTab('welcome')">
+        {{ 'NOTIFICATION_SETTINGS.WELCOME_TAB' | translate }}
+      </button>
+      <button class="settings-tabs__btn" [class.active]="activeTab() === 'fees'" (click)="setTab('fees')">
+        {{ 'NOTIFICATION_SETTINGS.FEES_TAB' | translate }}
+      </button>
+    </div>
+
+    @if (loading()) {
+    <div class="settings-loading">
+      <div class="settings-loading__spinner"></div>
+      <p>{{ 'NOTIFICATION.LOADING' | translate }}</p>
+    </div>
+    }
+
+    @if (!loading()) {
+    <div class="settings-body">
+      @if (activeTab() === 'welcome') {
+      <div class="settings-form">
+        <div class="form-group">
+          <label>{{ 'NOTIFICATION_SETTINGS.WELCOME_TITLE_LABEL' | translate }}</label>
+          <input type="text" [(ngModel)]="welcomeTitle" />
+        </div>
+        <div class="form-group">
+          <label>{{ 'NOTIFICATION_SETTINGS.WELCOME_MESSAGE_LABEL' | translate }}</label>
+          <textarea [(ngModel)]="welcomeMessage" rows="5"></textarea>
+          <p class="form-hint">{{ 'NOTIFICATION_SETTINGS.WELCOME_MESSAGE_HELP' | translate }}</p>
+        </div>
+        <div class="form-group">
+          <label>{{ 'NOTIFICATION_SETTINGS.WELCOME_TYPE_LABEL' | translate }}</label>
+          <select [(ngModel)]="welcomeType">
+            <option value="info">{{ getTypeLabel('info') }}</option>
+            <option value="success">{{ getTypeLabel('success') }}</option>
+            <option value="warning">{{ getTypeLabel('warning') }}</option>
+            <option value="error">{{ getTypeLabel('error') }}</option>
+          </select>
+        </div>
+      </div>
+      }
+
+      @if (activeTab() === 'fees') {
+      <div class="fees-section">
+        <p class="fees-intro">{{ 'NOTIFICATION_SETTINGS.FEES_INTRO' | translate }}</p>
+
+        @if (fees().length === 0 && !editingFee()) {
+        <div class="fees-empty">{{ 'NOTIFICATION_SETTINGS.NO_FEES' | translate }}</div>
+        }
+
+        @if (fees().length > 0) {
+        <div class="fees-list">
+          @for (fee of fees(); track fee.id) {
+          <div class="fee-item">
+            <div class="fee-item__info">
+              <strong>{{ fee.title }}</strong>
+              <span>{{ fee.formatted_amount }}</span>
+              <span class="fee-item__desc">{{ fee.description }}</span>
+            </div>
+            <div class="fee-item__actions">
+              <button class="btn-text" (click)="editFee(fee)">{{ 'NOTIFICATION_SETTINGS.EDIT_FEE' | translate }}</button>
+              <button class="btn-text btn-text--danger" (click)="deleteFee(fee)">{{ 'NOTIFICATION_SETTINGS.DELETE_FEE' | translate }}</button>
+            </div>
+          </div>
+          }
+        </div>
+        }
+
+        @if (editingFee()) {
+        <div class="fee-form">
+          <h3>{{ editingFee()!.id ? ('NOTIFICATION_SETTINGS.EDIT_FEE' | translate) : ('NOTIFICATION_SETTINGS.ADD_FEE' | translate) }}</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ 'NOTIFICATION_SETTINGS.FEE_TITLE_LABEL' | translate }}</label>
+              <input type="text" [(ngModel)]="feeForm.title" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'NOTIFICATION_SETTINGS.FEE_AMOUNT_LABEL' | translate }}</label>
+              <input type="number" [(ngModel)]="feeForm.amount" />
+            </div>
+            <div class="form-group">
+              <label>{{ 'NOTIFICATION_SETTINGS.FEE_CURRENCY_LABEL' | translate }}</label>
+              <input type="text" [(ngModel)]="feeForm.currency" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>{{ 'NOTIFICATION_SETTINGS.FEE_DESCRIPTION_LABEL' | translate }}</label>
+            <textarea [(ngModel)]="feeForm.description" rows="2"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>{{ 'NOTIFICATION_SETTINGS.FEE_ORDER_LABEL' | translate }}</label>
+              <input type="number" [(ngModel)]="feeForm.order" />
+            </div>
+            <div class="form-group form-group--checkbox">
+              <input type="checkbox" id="fee-active" [(ngModel)]="feeForm.is_active" />
+              <label for="fee-active">{{ 'NOTIFICATION_SETTINGS.FEE_ACTIVE_LABEL' | translate }}</label>
+            </div>
+          </div>
+          <div class="fee-form__actions">
+            <button class="btn btn--outline" (click)="cancelFeeEdit()">{{ 'COMMON.CANCEL' | translate }}</button>
+            <button class="btn btn--primary" (click)="saveFee()" [disabled]="saving()">
+              @if (saving()) {
+              <span class="settings-loading__spinner" style="width:16px;height:16px;border-width:2px"></span>
+              }
+              @if (!saving()) {
+              {{ 'COMMON.SAVE' | translate }}
+              }
+            </button>
+          </div>
+        </div>
+        }
+
+        @if (!editingFee()) {
+        <button class="btn btn--outline" (click)="startNewFee()">
+          <span class="material-icons">add</span>
+          {{ 'NOTIFICATION_SETTINGS.ADD_FEE' | translate }}
+        </button>
+        }
+      </div>
+      }
+
+      @if (activeTab() === 'welcome') {
+      <div class="settings-actions">
+        <button class="btn btn--outline" (click)="close()">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button class="btn btn--primary" (click)="saveWelcome()" [disabled]="saving()">
+          @if (saving()) {
+          <span class="settings-loading__spinner" style="width:16px;height:16px;border-width:2px"></span>
+          }
+          @if (!saving()) {
+          {{ 'COMMON.SAVE' | translate }}
+          }
+        </button>
+      </div>
+      }
+
+      @if (error()) {
+      <div class="settings-alert settings-alert--error">{{ error() }}</div>
+      }
+      @if (success()) {
+      <div class="settings-alert settings-alert--success">{{ 'NOTIFICATION_SETTINGS.SAVED' | translate }}</div>
+      }
+    </div>
+    }
+  </div>
+</div>

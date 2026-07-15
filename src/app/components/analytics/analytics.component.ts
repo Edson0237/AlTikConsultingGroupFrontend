@@ -86,7 +86,7 @@ export class AnalyticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   viewRapport(rapport: RapportAnalyse): void {
     this.closeDetail();
-    this.router.navigate(['/analytics/rapports', rapport.id]);
+    this.router.navigate(['/dashboard-admin/rapports', rapport.id]);
   }
 
   // ── Helpers ───────────────────────────────────────────────────

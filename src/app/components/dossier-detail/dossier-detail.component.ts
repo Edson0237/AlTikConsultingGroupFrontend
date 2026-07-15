@@ -198,7 +198,7 @@ export class DossierDetailComponent implements OnInit {
         this.analyseEnCours.set(true);
         this.analyseLoading.set(false);
         this.showNotification(res.message || 'Analyse IA lancée.', 'success');
-        this.router.navigate(['/rapports']);
+        this.router.navigate(['/dashboard-admin/rapports']);
       },
       error: (err) => {
         this.analyseLoading.set(false);

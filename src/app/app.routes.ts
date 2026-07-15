@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './guards/auth-guard'; // Importation de notre guard
+import { authGuard } from './guards/auth-guard';
+import { loginGuard } from './guards/login.guard';
 
 export const routes: Routes = [
 
   // ── Auth ────────────────────────────────────────────────────────────────────
   {
     path: 'login',
+    canActivate: [loginGuard],
     loadComponent: () =>
       import('./features/auth/login/login.component')
         .then(m => m.LoginComponent)
@@ -143,13 +145,14 @@ export const routes: Routes = [
   },
 
   // ── Racine & wildcard global ────────────────────────────────────────────────
+  // Si authentifié → dashboard-admin, sinon le guard redirigera vers /login
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'dashboard-admin',
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'login'
+    redirectTo: 'dashboard-admin'
   }
 ];

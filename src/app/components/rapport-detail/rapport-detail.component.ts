@@ -113,6 +113,6 @@ export class RapportDetailComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/analytics']);
+    this.router.navigate(['/dashboard-admin/analytics']);
   }
 }

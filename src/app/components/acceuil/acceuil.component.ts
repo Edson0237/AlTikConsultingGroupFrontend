@@ -149,6 +149,12 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
     this.buildBarChart();
   }
 
+  private formatWeekLabel(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}/${month}`;
+  }
+
   private buildLineChart(): void {
     const ctx = document.getElementById('lineChart') as HTMLCanvasElement;
     if (!ctx) return;
@@ -156,20 +162,20 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
     const data = this.stats()!;
     const charts = data.charts;
 
-    const months = charts.evolution_dossiers.map((e: { month: string; count: number }) => {
-      const date = new Date(e.month);
-      return this.translate.instant(this.monthLabels[date.getMonth()]);
+    const weekLabels = charts.evolution_dossiers.map((e: { week: string; count: number }) => {
+      const date = new Date(e.week);
+      return this.formatWeekLabel(date);
     });
 
     this.lineChart?.destroy();
     this.lineChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: months,
+        labels: weekLabels,
         datasets: [
           {
             label: this.translate.instant('ACCEUIL.CHART_DATA_DOSSIERS'),
-            data: charts.evolution_dossiers.map((e: { month: string; count: number }) => e.count),
+            data: charts.evolution_dossiers.map((e: { week: string; count: number }) => e.count),
             borderColor: this.COLORS.bourses,
             backgroundColor: 'rgba(37,99,235,.08)',
             borderWidth: 2,
@@ -180,7 +186,7 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
           },
           {
             label: this.translate.instant('ACCEUIL.CHART_DATA_USERS'),
-            data: charts.evolution_users.map((e: { month: string; count: number }) => e.count),
+            data: charts.evolution_users.map((e: { week: string; count: number }) => e.count),
             borderColor: this.COLORS.users,
             backgroundColor: 'rgba(245,158,11,.08)',
             borderWidth: 2,
@@ -191,7 +197,7 @@ export class AcceuilComponent implements AfterViewInit, OnDestroy, OnInit {
           },
           {
             label: this.translate.instant('ACCEUIL.CHART_DATA_DOCUMENTS'),
-            data: charts.evolution_documents.map((e: { month: string; count: number }) => e.count),
+            data: charts.evolution_documents.map((e: { week: string; count: number }) => e.count),
             borderColor: this.COLORS.documents,
             backgroundColor: 'rgba(16,185,129,.08)',
             borderWidth: 2,

@@ -1,24 +1,61 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from 'rxjs';
+import { AuthService } from '../services/auth/auth.service';
+
+let isRefreshing = false;
+let refreshToken$ = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const token = localStorage.getItem('access_token');
+  const authService = inject(AuthService);
+  const token = authService.getToken();
 
-  // Clone la requête et ajoute le header Authorization si token présent
-  const authReq = token
-    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-    : req;
+  const withAuth = (accessToken: string | null) =>
+    accessToken
+      ? req.clone({ setHeaders: { Authorization: `Bearer ${accessToken}` } })
+      : req;
 
-  return next(authReq).pipe(
+  const handle401 = (err: HttpErrorResponse) => {
+    // Éviter une boucle sur les endpoints d'authentification
+    if (
+      req.url.includes('auth/login') ||
+      req.url.includes('auth/token/refresh')
+    ) {
+      return throwError(() => err);
+    }
+
+    if (!isRefreshing) {
+      isRefreshing = true;
+      refreshToken$.next(null);
+
+      authService.refreshToken().subscribe({
+        next: (res) => {
+          isRefreshing = false;
+          refreshToken$.next(res.access);
+        },
+        error: () => {
+          isRefreshing = false;
+          refreshToken$.next(null);
+          authService.logout();
+          router.navigate(['/login']);
+        }
+      });
+    }
+
+    return refreshToken$.pipe(
+      filter(access => access !== null),
+      take(1),
+      switchMap(access => next(withAuth(access))),
+      catchError(() => throwError(() => err))
+    );
+  };
+
+  return next(withAuth(token)).pipe(
     catchError((err: HttpErrorResponse) => {
-      // Token expiré ou invalide → redirection vers login
       if (err.status === 401) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        router.navigate(['/login']);
+        return handle401(err);
       }
       return throwError(() => err);
     })

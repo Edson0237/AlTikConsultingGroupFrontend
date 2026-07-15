@@ -1,4 +1,8 @@
 {
+  "COMMON": {
+    "SAVE": "Save",
+    "CANCEL": "Cancel"
+  },
   "ACCEUIL": {
     "REFRESH": "Refresh",
     "LOADING_STATS": "Loading statistics...",
@@ -12,7 +16,7 @@
     "ACCURACY": "accuracy",
     "KPI_MESSAGING": "Messaging",
     "MESSAGES": "messages",
-    "CHART_MONTHLY_EVOLUTION": "Monthly evolution (last 6 months)",
+    "CHART_MONTHLY_EVOLUTION": "Weekly evolution (last 12 weeks)",
     "CHART_DOSSIER_DISTRIBUTION": "File distribution",
     "CHART_TOP_FILIERES": "Top Programs",
     "CHART_RECENT_ACTIVITIES": "Recent activities",
@@ -262,6 +266,29 @@
     "ERROR_MESSAGE_REQUIRED": "Please enter a message.",
     "ERROR_SEND": "Error while sending."
   },
+  "NOTIFICATION_SETTINGS": {
+    "TITLE": "Automatic notification settings",
+    "OPEN": "Automatic settings",
+    "WELCOME_TAB": "Welcome message",
+    "FEES_TAB": "Service fees",
+    "WELCOME_TITLE_LABEL": "Message title",
+    "WELCOME_MESSAGE_LABEL": "Message content",
+    "WELCOME_MESSAGE_HELP": "You can use {first_name} for the user's first name.",
+    "WELCOME_TYPE_LABEL": "Notification type",
+    "FEES_INTRO": "These fees are automatically sent to new users.",
+    "NO_FEES": "No fees configured.",
+    "ADD_FEE": "Add fee",
+    "EDIT_FEE": "Edit",
+    "DELETE_FEE": "Delete",
+    "FEE_TITLE_LABEL": "Label",
+    "FEE_AMOUNT_LABEL": "Amount",
+    "FEE_CURRENCY_LABEL": "Currency",
+    "FEE_DESCRIPTION_LABEL": "Description",
+    "FEE_ORDER_LABEL": "Order",
+    "FEE_ACTIVE_LABEL": "Active",
+    "SAVED": "Changes saved",
+    "ERROR": "Error while saving."
+  },
   "MESSAGING": {
     "TITLE": "Messaging",
     "NEW_CONVERSATION": "New conversation",
@@ -299,7 +326,7 @@
     "BADGE_LAST_5_MONTHS": "Last 5 months",
     "CHART_TOP_DESTINATIONS": "Top destinations",
     "BADGE_DISTRIBUTION": "Distribution",
-    "AI_POWERED_BY": "Powered by Gemini",
+    "AI_POWERED_BY": "Powered by Groq",
     "AI_SECTION_TITLE": "AI analysis of transcripts",
     "AI_SECTION_SUBTITLE": "Detailed reports automatically generated from uploaded documents",
     "MINI_STAT_TOTAL": "Total",
