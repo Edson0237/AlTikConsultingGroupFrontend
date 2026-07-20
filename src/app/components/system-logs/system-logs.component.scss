@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // ── Variables ─────────────────────────────────────────────────────────────────
 $blue:   #3b82f6;
 $green:  #22c55e;
@@ -233,9 +235,9 @@ $gray:   #9ca3af;
   letter-spacing: 0.3px;
 
   &--blue   { background: #eff6ff; color: $blue; }
-  &--green  { background: #f0fdf4; color: darken($green, 10%); }
+  &--green  { background: #f0fdf4; color: color.adjust($green, $lightness: -10%); }
   &--red    { background: #fef2f2; color: $red; }
-  &--orange { background: #fffbeb; color: darken($orange, 10%); }
+  &--orange { background: #fffbeb; color: color.adjust($orange, $lightness: -10%); }
   &--purple { background: #f5f3ff; color: $purple; }
   &--gray   { background: #f9fafb; color: #4b5563; }
 }

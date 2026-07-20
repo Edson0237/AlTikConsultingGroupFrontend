@@ -39,6 +39,12 @@ export interface DossierTraite {
   date_creation: string;
   date_modification: string;
   date_transfert: string | null;
+  admission_obtenue: boolean;
+  ecole_admission: string | null;
+  date_obtention_admission: string | null;
+  rendez_visa_date: string | null;
+  rendez_visa_lieu: string | null;
+  rendez_visa_confirme: boolean;
 }
 
 export interface DossierTraiteCreate {
@@ -53,6 +59,12 @@ export interface DossierTraiteUpdate {
   notes_admin?: string;
   etablissement_cible?: string;
   date_transfert?: string | null;
+  admission_obtenue?: boolean;
+  ecole_admission?: string | null;
+  date_obtention_admission?: string | null;
+  rendez_visa_date?: string | null;
+  rendez_visa_lieu?: string | null;
+  rendez_visa_confirme?: boolean;
 }
 
 // ── Service ───────────────────────────────────────────────────────────────────

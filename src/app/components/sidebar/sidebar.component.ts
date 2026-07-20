@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 export class SidebarComponent implements OnInit, OnDestroy {
 
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
+  readonly authService = inject(AuthService);
   private readonly messagingService = inject(StaffMessagingService);
 
   readonly appName = 'ScholarTik';

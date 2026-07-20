@@ -210,6 +210,30 @@
               <span>{{ dt.notes_admin }}</span>
             </div>
           }
+
+          @if (dt.admission_obtenue) {
+            <div class="dt-info-item dt-info-item--full dt-info-item--success">
+              <span class="dt-info-label">{{ 'DOSSIERS_TRAITES.DETAIL_ADMISSION' | translate }}</span>
+              <span>
+                {{ 'DOSSIERS_TRAITES.DETAIL_ADMISSION_OBTENUE' | translate }}
+                @if (dt.ecole_admission) { — {{ dt.ecole_admission }} }
+                @if (dt.date_obtention_admission) { ({{ dt.date_obtention_admission | date:'dd/MM/yyyy' }}) }
+              </span>
+            </div>
+          }
+
+          @if (dt.rendez_visa_date) {
+            <div class="dt-info-item dt-info-item--full dt-info-item--info">
+              <span class="dt-info-label">{{ 'DOSSIERS_TRAITES.DETAIL_VISA' | translate }}</span>
+              <span>
+                {{ dt.rendez_visa_date | date:'dd/MM/yyyy HH:mm' }}
+                @if (dt.rendez_visa_lieu) { — {{ dt.rendez_visa_lieu }} }
+                @if (dt.rendez_visa_confirme) {
+                  <span class="dt-tag dt-tag--success">{{ 'DOSSIERS_TRAITES.VISA_CONFIRME' | translate }}</span>
+                }
+              </span>
+            </div>
+          }
         </div>
 
         <!-- Pièces jointes existantes -->
@@ -324,6 +348,40 @@
         <label class="form-label">{{ 'DOSSIERS_TRAITES.STATUS_NOTES_LABEL' | translate }}</label>
         <textarea class="form-input form-textarea" [(ngModel)]="statusForm.notes_admin"
           placeholder="{{ 'DOSSIERS_TRAITES.STATUS_NOTES_PLACEHOLDER' | translate }}"></textarea>
+
+        <!-- Admission -->
+        <div class="dt-form-section">
+          <h4 class="dt-form-section__title">{{ 'DOSSIERS_TRAITES.ADMISSION_SECTION' | translate }}</h4>
+          <label class="form-label form-label--checkbox">
+            <input type="checkbox" [(ngModel)]="statusForm.admission_obtenue" />
+            {{ 'DOSSIERS_TRAITES.ADMISSION_OBTENUE_LABEL' | translate }}
+          </label>
+
+          @if (statusForm.admission_obtenue) {
+            <label class="form-label">{{ 'DOSSIERS_TRAITES.ECOLE_ADMISSION_LABEL' | translate }}</label>
+            <input class="form-input" type="text" [(ngModel)]="statusForm.ecole_admission"
+              placeholder="{{ 'DOSSIERS_TRAITES.ECOLE_ADMISSION_PLACEHOLDER' | translate }}" />
+
+            <label class="form-label">{{ 'DOSSIERS_TRAITES.DATE_ADMISSION_LABEL' | translate }}</label>
+            <input class="form-input" type="date" [(ngModel)]="statusForm.date_obtention_admission" />
+          }
+        </div>
+
+        <!-- Rendez-vous visa -->
+        <div class="dt-form-section">
+          <h4 class="dt-form-section__title">{{ 'DOSSIERS_TRAITES.VISA_SECTION' | translate }}</h4>
+          <label class="form-label">{{ 'DOSSIERS_TRAITES.VISA_DATE_LABEL' | translate }}</label>
+          <input class="form-input" type="datetime-local" [(ngModel)]="statusForm.rendez_visa_date" />
+
+          <label class="form-label">{{ 'DOSSIERS_TRAITES.VISA_LIEU_LABEL' | translate }}</label>
+          <input class="form-input" type="text" [(ngModel)]="statusForm.rendez_visa_lieu"
+            placeholder="{{ 'DOSSIERS_TRAITES.VISA_LIEU_PLACEHOLDER' | translate }}" />
+
+          <label class="form-label form-label--checkbox">
+            <input type="checkbox" [(ngModel)]="statusForm.rendez_visa_confirme" />
+            {{ 'DOSSIERS_TRAITES.VISA_CONFIRME_LABEL' | translate }}
+          </label>
+        </div>
       </div>
       <div class="modal__footer">
         <button class="btn btn--outline" (click)="closeStatusModal()">{{ 'DOSSIERS_TRAITES.CANCEL' | translate }}</button>

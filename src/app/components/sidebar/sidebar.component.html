@@ -149,7 +149,7 @@
         <span>{{ 'nav.notifications' | translate }}</span>
       </a>
 
-      <a routerLink="rapports" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
+      <a *ngIf="authService.isAdmin()" routerLink="rapports" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="20" x2="18" y2="10" />
@@ -170,7 +170,7 @@
         <span>{{ 'SIDEBAR.DOSSIERS_TRAITES' | translate }}</span>
       </a>
 
-      <a routerLink="activite" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
+      <a *ngIf="authService.isAdmin()" routerLink="activite" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />

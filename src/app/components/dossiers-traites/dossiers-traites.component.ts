@@ -49,7 +49,17 @@ export class DossiersTraitesComponent implements OnInit {
 
   // ── Modal admin update statut ──────────────────────────────────
   showStatusModal   = signal(false);
-  statusForm = { statut: '' as StatutDossierTraite, notes_admin: '', etablissement_cible: '' };
+  statusForm = {
+    statut: '' as StatutDossierTraite,
+    notes_admin: '',
+    etablissement_cible: '',
+    admission_obtenue: false,
+    ecole_admission: '',
+    date_obtention_admission: '',
+    rendez_visa_date: '',
+    rendez_visa_lieu: '',
+    rendez_visa_confirme: false,
+  };
   statusLoading     = signal(false);
 
   // ── Statuts disponibles ────────────────────────────────────────
@@ -207,6 +217,12 @@ export class DossiersTraitesComponent implements OnInit {
       statut: dt.statut,
       notes_admin: dt.notes_admin,
       etablissement_cible: dt.etablissement_cible,
+      admission_obtenue: dt.admission_obtenue,
+      ecole_admission: dt.ecole_admission || '',
+      date_obtention_admission: dt.date_obtention_admission || '',
+      rendez_visa_date: dt.rendez_visa_date || '',
+      rendez_visa_lieu: dt.rendez_visa_lieu || '',
+      rendez_visa_confirme: dt.rendez_visa_confirme,
     };
     this.showStatusModal.set(true);
   }
@@ -221,6 +237,12 @@ export class DossiersTraitesComponent implements OnInit {
       statut: this.statusForm.statut,
       notes_admin: this.statusForm.notes_admin,
       etablissement_cible: this.statusForm.etablissement_cible,
+      admission_obtenue: this.statusForm.admission_obtenue,
+      ecole_admission: this.statusForm.admission_obtenue ? this.statusForm.ecole_admission || null : null,
+      date_obtention_admission: this.statusForm.admission_obtenue ? this.statusForm.date_obtention_admission || null : null,
+      rendez_visa_date: this.statusForm.rendez_visa_date || null,
+      rendez_visa_lieu: this.statusForm.rendez_visa_lieu || null,
+      rendez_visa_confirme: this.statusForm.rendez_visa_confirme,
     }).subscribe(res => {
       this.statusLoading.set(false);
       if (res.success && res.dossier_traite) {
